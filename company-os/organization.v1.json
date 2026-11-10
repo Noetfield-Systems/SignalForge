@@ -1,0 +1,614 @@
+{
+  "schema": "signalforge.company-os.organization.v1",
+  "company_id": "signalforge-company-os",
+  "tenant_project_id": "signalforge-market-intelligence",
+  "legal_entity": "Noetfield Systems Inc. (SignalForge product)",
+  "parent_controller": "sina_founder_os",
+  "operating_system": "EXISTING_FOUNDER_COMPANY_OS_RUNTIME",
+  "number_of_companies": 1,
+  "number_of_product_platforms": 1,
+  "objective": "Build and grow one credible, revenue-producing Web3/Ethereum research and community product, with explainable signals, paper-trading, token due diligence, paid research, and validated retention; no unverified revenue or live trade.",
+  "operating_continuity": {
+    "scheduler_owner": "SINA_NATIVE_WORKFORCE_RESIDENT_HEARTBEAT",
+    "event_ingress": "https://signalforge-web-production.up.railway.app/api/company-os/snapshot",
+    "scope": "signalforge-market-intelligence",
+    "acceptance": "EXISTING_COMPANY_OS_GOVERNOR",
+    "parallel_internal_teams": true,
+    "max_unverified_strategic_workpackets_per_company": 1,
+    "auto_dispatch_external_effects": false,
+    "local_scheduler_creation": false,
+    "model_team_provisioning": "REGISTER_ONLY_UNTIL_EXISTING_FABRIC_BOUND"
+  },
+  "product_family": [
+    {
+      "id": "ethereum",
+      "name": "Ethereum / EVM research",
+      "phase": "NEXT",
+      "capabilities": [
+        "ETH_market_analysis",
+        "EVM_network_provenance",
+        "verified_contract_metadata",
+        "gas_trends"
+      ],
+      "claims": "Source and licensing checks required; not an RPC-backed live analytics service yet"
+    },
+    {
+      "id": "signals",
+      "name": "Signal Intelligence",
+      "phase": "LIVE_BASELINE",
+      "capabilities": [
+        "explainable_strategy_signals",
+        "backtests",
+        "performance_tracking",
+        "watchlist"
+      ],
+      "claims": "Kraken public OHLC with explicit fallback mode; no guaranteed edge"
+    },
+    {
+      "id": "paper_trading",
+      "name": "Trading Simulation",
+      "phase": "DESIGN",
+      "capabilities": [
+        "no_money_orders",
+        "replay_historical_positions",
+        "fee_slippage_models",
+        "risk_limits"
+      ],
+      "claims": "No real broker, exchange orders, leverage or custody"
+    },
+    {
+      "id": "token_intelligence",
+      "name": "Token Research",
+      "phase": "DESIGN",
+      "capabilities": [
+        "ERC20_safety_read_only",
+        "distribution",
+        "liquidity",
+        "unlock_calendar",
+        "community_disclosure"
+      ],
+      "claims": "No token issuance, sale, marketing pumps or trading signals about unverified tokens"
+    },
+    {
+      "id": "community",
+      "name": "Signal Rooms",
+      "phase": "LIVE_BASELINE",
+      "capabilities": [
+        "posts",
+        "replies",
+        "likes",
+        "reports",
+        "admin_moderation"
+      ],
+      "claims": "Real member content, no invented discussions"
+    },
+    {
+      "id": "monetization",
+      "name": "Premium Research Membership",
+      "phase": "INTEGRATION_BASELINE",
+      "capabilities": [
+        "trial",
+        "pro",
+        "quant",
+        "Stripe_webhook",
+        "revenue_reconciliation"
+      ],
+      "claims": "Selected paid plan during trial is not a successful charge"
+    }
+  ],
+  "authority_levels": [
+    {
+      "level": 0,
+      "owner": "sina_founder_os",
+      "decisions": [
+        "founder_goal",
+        "risk_appetite",
+        "authority_limits",
+        "budget_ceiling",
+        "final_escalations"
+      ]
+    },
+    {
+      "level": 1,
+      "owner": "managing_director",
+      "decisions": [
+        "priority_ranking",
+        "role_assignment",
+        "experiment_hypothesis",
+        "workpacket_proposal"
+      ],
+      "cannot": [
+        "issue_spending_permit",
+        "declare_verified_completion",
+        "enable_live_trading"
+      ]
+    },
+    {
+      "level": 2,
+      "owner": "head_research/head_engineering/head_growth/head_commercial/head_trust/head_operations",
+      "decisions": [
+        "bounded_specialist_plans",
+        "quality_reviews",
+        "internal_task_breakdown"
+      ],
+      "cannot": [
+        "change_governor_policy",
+        "external_payment",
+        "new_token_issuance"
+      ]
+    },
+    {
+      "level": 3,
+      "owner": "specialists",
+      "decisions": [
+        "read_only_research",
+        "code_drafts",
+        "CI_tests",
+        "analysis",
+        "safe_simulation"
+      ],
+      "cannot": [
+        "self_approve",
+        "self_verify",
+        "withdraw_funds",
+        "trade_real_assets"
+      ]
+    },
+    {
+      "level": 4,
+      "owner": "independent_verifier",
+      "decisions": [
+        "evidence_PASS_FAIL_BLOCKED"
+      ],
+      "cannot": [
+        "write_product_code_as_proof",
+        "issue_company_permits",
+        "manage_own_verification"
+      ]
+    }
+  ],
+  "agents": [
+    {
+      "id": "managing_director",
+      "title": "SignalForge Managing Director",
+      "reports_to": "sina_founder_os",
+      "department": "executive",
+      "scope": [
+        "prioritize_company_goals",
+        "propose_workpackets",
+        "delegate_internal_work"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE"
+    },
+    {
+      "id": "head_research",
+      "title": "Head of Web3 Research",
+      "reports_to": "managing_director",
+      "department": "research",
+      "scope": [
+        "source_validation",
+        "market_hypotheses",
+        "competitive_intelligence"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE"
+    },
+    {
+      "id": "head_engineering",
+      "title": "Head of Product & Engineering",
+      "reports_to": "managing_director",
+      "department": "engineering",
+      "scope": [
+        "github_pull_requests",
+        "railway_read_only",
+        "product_delivery"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE"
+    },
+    {
+      "id": "head_growth",
+      "title": "Head of Community & Growth",
+      "reports_to": "managing_director",
+      "department": "growth",
+      "scope": [
+        "organic_acquisition",
+        "community_activation",
+        "retention_experiments"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE"
+    },
+    {
+      "id": "head_commercial",
+      "title": "Head of Revenue & Customer",
+      "reports_to": "managing_director",
+      "department": "commercial",
+      "scope": [
+        "trial_to_paid_research",
+        "pricing_experiments",
+        "customer_support"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE"
+    },
+    {
+      "id": "head_trust",
+      "title": "Head of Trust & Risk",
+      "reports_to": "managing_director",
+      "department": "trust",
+      "scope": [
+        "privacy_reviews",
+        "content_risk",
+        "security_policy"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE"
+    },
+    {
+      "id": "head_operations",
+      "title": "Head of Operations & Finance",
+      "reports_to": "managing_director",
+      "department": "operations",
+      "scope": [
+        "service_observability",
+        "cost_visibility",
+        "incident_coordination"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE"
+    },
+    {
+      "id": "ethereum_analyst",
+      "title": "Ethereum Ecosystem Researcher",
+      "reports_to": "head_research",
+      "department": "research",
+      "scope": [
+        "ETH",
+        "L1",
+        "EVM_data_provenance",
+        "network_gas",
+        "protocol_research"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE"
+    },
+    {
+      "id": "onchain_analyst",
+      "title": "Onchain & Smart Contract Researcher",
+      "reports_to": "head_research",
+      "department": "research",
+      "scope": [
+        "ERC20_read_only",
+        "contract_metadata",
+        "liquidity_evidence",
+        "honeypot_flagging"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE"
+    },
+    {
+      "id": "tokenomics_analyst",
+      "title": "Token Intelligence Analyst",
+      "reports_to": "head_research",
+      "department": "research",
+      "scope": [
+        "token_supply",
+        "vesting",
+        "concentration",
+        "utility_evidence",
+        "risk_disclosures"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE"
+    },
+    {
+      "id": "quant_researcher",
+      "title": "Quant Signals Researcher",
+      "reports_to": "head_research",
+      "department": "research",
+      "scope": [
+        "signals",
+        "walk_forward",
+        "backtest",
+        "data_leakage_review"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE"
+    },
+    {
+      "id": "market_data_engineer",
+      "title": "Market Data & Indexing Engineer",
+      "reports_to": "head_engineering",
+      "department": "engineering",
+      "scope": [
+        "Kraken_read_only",
+        "Ethereum_RPC_read_only",
+        "provenance",
+        "latency_health"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE"
+    },
+    {
+      "id": "backend_engineer",
+      "title": "Bun/Postgres Backend Engineer",
+      "reports_to": "head_engineering",
+      "department": "engineering",
+      "scope": [
+        "GitHub_coding",
+        "schema_migrations_with_approval",
+        "API_tests"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE"
+    },
+    {
+      "id": "frontend_engineer",
+      "title": "Premium UX/Product Engineer",
+      "reports_to": "head_engineering",
+      "department": "engineering",
+      "scope": [
+        "WebUI",
+        "mobile",
+        "accessibility",
+        "onboarding"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE"
+    },
+    {
+      "id": "paper_trading_engineer",
+      "title": "Paper Trade Simulation Engineer",
+      "reports_to": "head_engineering",
+      "department": "engineering",
+      "scope": [
+        "paper_positions",
+        "risk_scenarios",
+        "reproducible_fills",
+        "no_real_orders"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE"
+    },
+    {
+      "id": "qa_engineer",
+      "title": "Integration QA Engineer",
+      "reports_to": "head_engineering",
+      "department": "engineering",
+      "scope": [
+        "unit_tests",
+        "browser_E2E",
+        "CI",
+        "regression"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE"
+    },
+    {
+      "id": "community_lead",
+      "title": "Signal Rooms Community Operator",
+      "reports_to": "head_growth",
+      "department": "growth",
+      "scope": [
+        "moderation_queue_proposals",
+        "member_quality",
+        "community_programs"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE"
+    },
+    {
+      "id": "seo_content_lead",
+      "title": "Evidence Content & SEO Researcher",
+      "reports_to": "head_growth",
+      "department": "growth",
+      "scope": [
+        "source_linked_explainers",
+        "research_cards",
+        "organic_share"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE"
+    },
+    {
+      "id": "lifecycle_growth",
+      "title": "Lifecycle & CRM Operator",
+      "reports_to": "head_growth",
+      "department": "growth",
+      "scope": [
+        "activation_cohorts",
+        "opt_in_emails",
+        "referral_attribution"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE"
+    },
+    {
+      "id": "billing_operator",
+      "title": "Subscription & Payment Analyst",
+      "reports_to": "head_commercial",
+      "department": "commercial",
+      "scope": [
+        "Stripe_read_only",
+        "webhook_reconciliation",
+        "refund_workflow_proposals"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE"
+    },
+    {
+      "id": "customer_success",
+      "title": "Customer Success Specialist",
+      "reports_to": "head_commercial",
+      "department": "commercial",
+      "scope": [
+        "onboarding_support",
+        "feedback_classification",
+        "privacy_safe_support"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE"
+    },
+    {
+      "id": "security_auditor",
+      "title": "Security/Privacy Auditor",
+      "reports_to": "head_trust",
+      "department": "trust",
+      "scope": [
+        "auth",
+        "CSRF",
+        "data_minimization",
+        "token_issuance_boundary"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE"
+    },
+    {
+      "id": "moderation_risk",
+      "title": "Content & Manipulation Reviewer",
+      "reports_to": "head_trust",
+      "department": "trust",
+      "scope": [
+        "pump_and_dump_detection",
+        "sponsored_disclosure",
+        "abuse_escalation"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE"
+    },
+    {
+      "id": "sre_operator",
+      "title": "Site Reliability Engineer",
+      "reports_to": "head_operations",
+      "department": "operations",
+      "scope": [
+        "Railway_logs",
+        "Postgres_health",
+        "rollback_proposals",
+        "incident_response"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE"
+    },
+    {
+      "id": "finance_analyst",
+      "title": "Revenue & Unit Economics Analyst",
+      "reports_to": "head_operations",
+      "department": "operations",
+      "scope": [
+        "settled_cash_only",
+        "cloud_costs",
+        "gross_margin",
+        "forecast"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE"
+    },
+    {
+      "id": "independent_verifier",
+      "title": "Independent Evidence Verifier",
+      "reports_to": "sina_founder_os",
+      "department": "verification",
+      "scope": [
+        "independent_GitHub_sha",
+        "Railway_deployed_sha",
+        "signed_receipt",
+        "billing_independent_confirmation"
+      ],
+      "model_tier": "deterministic",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE"
+    }
+  ],
+  "global_nonnegotiables": [
+    "NO_REAL_MONEY_TRADES",
+    "NO_BROKER_EXECUTION",
+    "NO_TOKEN_ISSUANCE_OR_PUMP_AUTOMATION",
+    "NO_WALLET_CUSTODY",
+    "NO_CREDENTIAL_EXFILTRATION",
+    "NO_UNAPPROVED_EXTERNAL_OUTREACH",
+    "NO_UNVERIFIED_REVENUE_CLAIMS",
+    "NO_SELF_VERIFICATION",
+    "FAIL_CLOSED_ON_MISSING_EVIDENCE"
+  ],
+  "version": "2026-11-10"
+}
