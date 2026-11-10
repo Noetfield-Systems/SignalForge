@@ -8,7 +8,8 @@
     "start": "bun run src/server.ts",
     "dev": "bun --watch src/server.ts",
     "check": "bun build src/server.ts --target=bun --external=postgres --outfile=/tmp/signalforge-build-check.js",
-    "test": "bun test tests"
+    "test": "bun test tests",
+    "forecast": "bun run scripts/forecast.ts"
   },
   "dependencies": {
     "postgres": "3.4.5"
