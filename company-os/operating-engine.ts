@@ -7,6 +7,7 @@
  * A proposal is never a trading order, a payment, a permit, or proof.
  */
 import organization from "./organization.v1.json";
+import {evaluateCompanyPolicy, type CompanyMetrics} from "../src/company-os-policy.ts";
 
 export type Snapshot = {
  schemaVersion:string;tenant:string;environment:string;generatedAt:string;
@@ -17,6 +18,7 @@ export type Snapshot = {
  moderation:{open:number};
  product:{events7d:number};
  signals:{recorded:number;resolved:number};
+ operatingMetrics?:CompanyMetrics;
 };
 type Role = (typeof organization.agents)[number];
 export type ProposedWork = {
@@ -92,6 +94,7 @@ export function validateSnapshot(input:unknown, now:Date=new Date()):Snapshot{
   s.users.trials>s.users.total||s.community.posts7d>s.community.posts||
   s.community.authors>s.users.total||s.signals.resolved>s.signals.recorded)
   throw Error("AGGREGATE_INVARIANT_FAILED");
+ if(s.operatingMetrics)evaluateCompanyPolicy(s.operatingMetrics);
  return s;
 }
 const candidate=(id:string,owner:string,weight:number,business_value:string,title:string,objective:string,why:string,verify:string[],deps:string[]=[]):Candidate=>({
@@ -100,6 +103,7 @@ const candidate=(id:string,owner:string,weight:number,business_value:string,titl
 export function compileOperatingBoard(raw:unknown, at:Date=new Date()){
  verifySingleCompanyHierarchy();
  const s=validateSnapshot(raw,at);
+ const livePolicy=s.operatingMetrics?evaluateCompanyPolicy(s.operatingMetrics):null;
  const todo:Candidate[]=[
  candidate("SF-P0-BILLING-PROOF","billing_operator",99,"collected_cash",
   "Prove trial → paid → entitlement → refund with independent payment receipts",
@@ -171,6 +175,28 @@ export function compileOperatingBoard(raw:unknown, at:Date=new Date()){
   "Live aggregates include "+s.users.trials+" trial accounts and "+s.users.paying+" source-reported paying accounts.",
   ["All paid claims reconcile to Stripe receipts","Trial and renewal UX independently exercised","No involuntary emails"]));
  }
+ if(livePolicy){
+  const owners:Record<string,string>={
+   "SF-P0-BILLING_RECONCILE":"billing_operator",
+   "SF-P0-MODERATION_OVERDUE":"moderation_risk",
+   "SF-P0-ACTIVATION_REPAIR":"lifecycle_growth",
+   "SF-P0-RETENTION_REPAIR":"customer_success",
+   "SF-P0-TRIAL_CONVERSION_REPAIR":"billing_operator"
+  };
+  for(const rule of livePolicy.decisions){
+   const owner=owners[rule.code];
+   todo.push(candidate(rule.code,owner,rule.priority,
+    rule.code.includes("BILLING")||rule.code.includes("TRIAL")?"collected_cash":"activation_retention",
+    "Resolve observed M20 issue: "+rule.code,
+    rule.next_action,
+    "Server-observed source cohorts: numerator "+rule.numerator+
+     (rule.denominator===null?"":", eligible denominator "+rule.denominator)+
+     ". Requires independently verified work outcome.",
+    ["Use source-bound workstream and exact GitHub SHA",
+     "Independently re-fetch product or payment evidence",
+     "No live funds, customer actions, external dispatch or financial advice without existing authority"]));
+  }
+ }
  todo.sort((a,b)=>b.weight-a.weight||a.id.localeCompare(b.id));
  const date=at.toISOString().slice(0,10);
  const proposals:ProposedWork[]=todo.map(t=>{
@@ -200,8 +226,14 @@ export function compileOperatingBoard(raw:unknown, at:Date=new Date()){
    active7d:s.users.active7d,community_posts7d:s.community.posts7d,
    open_reports:s.moderation.open,signal_records:s.signals.recorded,
    source_reported_paying:s.users.paying,verified_collected_cash_cad:null,
-   meaningful_activation_rate:null,d7_retention_rate:null,
-   paid_conversion_rate:null
+   meaningful_activation_rate:s.operatingMetrics&&s.operatingMetrics.eligible24h>=100
+    ?Number((s.operatingMetrics.activated24h/s.operatingMetrics.eligible24h).toFixed(4)):null,
+   d7_retention_rate:s.operatingMetrics&&s.operatingMetrics.eligibleDay7>=100
+    ?Number((s.operatingMetrics.returnedDay7/s.operatingMetrics.eligibleDay7).toFixed(4)):null,
+   paid_conversion_rate:s.operatingMetrics&&s.operatingMetrics.maturedTrials>=100
+    ?Number((s.operatingMetrics.invoicePaidMatured/s.operatingMetrics.maturedTrials).toFixed(4)):null,
+   source_reported_policy_issues:livePolicy?livePolicy.decisions.map(x=>x.code):[],
+   source_operating_metrics:s.operatingMetrics||null
   },
   constraints:{
    global_scope:"ONE_PLATFORM_WEB3_ETHEREUM_SIGNALS_TOKEN_RESEARCH",
