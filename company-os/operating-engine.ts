@@ -105,12 +105,12 @@ export function compileOperatingBoard(raw:unknown, at:Date=new Date()){
  const s=validateSnapshot(raw,at);
  const livePolicy=s.operatingMetrics?evaluateCompanyPolicy(s.operatingMetrics):null;
  const todo:Candidate[]=[
- candidate("SF-P0-BILLING-PROOF","billing_operator",99,"collected_cash",
+ candidate("SF-P0-01","billing_operator",99,"collected_cash",
   "Prove trial → paid → entitlement → refund with independent payment receipts",
   "Reconcile Stripe customer/subscription/payment events, no-card trial expiry, idempotent signed webhooks, cancellations and refunds. Differentiate priced plans, trial selections, MRR and actual settled CAD cash.",
   "Snapshot has no independent payment ledger or cash-settlement proof.",
   ["A real authorized micro-charge and refund (when founder approves) have third-party ledger refs","Webhook signature and idempotent replay verified","Entitlements match signed payment state","Receipt records cash separately from selected trial plan"]),
- candidate("SF-P0-COHORT-METRICS","lifecycle_growth",96,"activation_retention",
+ candidate("SF-P0-02","lifecycle_growth",96,"activation_retention",
   "Instrument real first research action, trial cohort and day-7 return",
   "Add privacy-minimized canonical product events with human/bot exclusion, signup attribution and cohort denominators; expose only aggregate analytics to Sina OS.",
   "Source counts signups and activity, but cannot yet prove meaningful activation or retention cohorts.",
@@ -159,7 +159,7 @@ export function compileOperatingBoard(raw:unknown, at:Date=new Date()){
   "Review anonymous-to-signed-in journey, topic prompts and approved onboarding, without fake seeding or automated member posts.",
   "There are genuine new signups but no published posts in the seven-day aggregate.",
   ["Measure post conversion with eligible cohort denominator","No test or synthetic participants counted","Moderator abuse policy active"],
-  ["SF-P0-COHORT-METRICS"]));
+  ["SF-P0-02"]));
  }
  if(s.signals.recorded>0){
   todo.push(candidate("SF-P1-SIGNAL-TRACK-RECORD","quant_researcher",85,"product_credibility",
