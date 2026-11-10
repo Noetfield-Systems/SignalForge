@@ -152,6 +152,16 @@ test("real database community lifecycle, security boundaries and Company OS cont
   expect(snap.data.privacy.identifiersIncluded).toBe(false);
   expect(JSON.stringify(snap.data)).not.toContain(email);
   expect(JSON.stringify(snap.data)).not.toContain("falsifiable invalidation");
+  const ops=await request("/api/company-os/operations",{headers:{authorization:"Bearer "+SECRET}});
+  expect(ops.response.status).toBe(200);
+  expect(ops.data.managed_platforms).toBe(1);
+  expect(ops.data.company_operating_team).toBe(26);
+  expect(ops.data.tenant).toBe("signalforge-market-intelligence");
+  expect(ops.data.operating_state.verified_collected_cash_cad).toBeNull();
+  expect(ops.data.workpackets.every((x:any)=>x.resources.real_trades_allowed===false)).toBe(true);
+  expect(JSON.stringify(ops.data)).not.toContain(email);
+  expect((await request("/api/company-os/operations")).response.status).toBe(401);
+
 
   expect((await request("/api/v1/strategies")).response.status).toBe(401);
 },40000);
