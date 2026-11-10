@@ -1,0 +1,11 @@
+.git
+.github
+tests
+services
+compat
+node_modules
+*.log
+.env
+.env.*
+!.env.example
+README.md
