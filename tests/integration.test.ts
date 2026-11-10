@@ -35,7 +35,7 @@ beforeAll(async ()=>{
   const output=await new Response(service.stderr).text().catch(()=>"");
   service.kill();
   throw new Error("SignalForge failed to start against disposable PostgreSQL: "+output.slice(0,2500));
-},30000);
+});
 
 afterAll(async ()=>{
   if(service){service.kill();}
@@ -79,7 +79,7 @@ test("real database community lifecycle, security boundaries and Company OS cont
   expect(signup.data.user.email).toBe(email);
   expect(signup.data.trial.cardRequired).toBe(false);
   const cookie=(signup.response.headers.get("set-cookie")||"").split(";")[0];
-  expect(cookie).toStartWith("sf_session=");
+  expect(cookie.startsWith("sf_session=")).toBe(true);
   const me=await request("/api/auth/me",{headers:{cookie}});
   expect(me.data.user.email).toBe(email);
 
