@@ -36,6 +36,8 @@ jobs:
           bun-version: 1.2.23
       - name: Install exact production dependency
         run: bun install
+      - name: Validate scoped Company OS GitHub Runner Python syntax
+        run: python3 -m py_compile scripts/company-os-delivery.py scripts/company-os-readback.py
       - name: Compile runtime
         run: bun run check
       - name: Build deployable production Docker image
