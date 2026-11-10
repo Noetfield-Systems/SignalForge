@@ -101,7 +101,25 @@ def main():
     claim=send("/claim",{},token)
     if claim.get("state")!="LEASED":
         step_output(state="IDLE")
-        print(json.dumps({"state":claim.get("state"),"mutations":0}))
+        # A verified, authenticated Company OS claim may include aggregate
+        # eligibility diagnostics. No task text, identity, tokens or content.
+        readiness=claim.get("readiness")
+        safe={}
+        if isinstance(readiness,dict) and readiness.get("schema")=="sina.company-delivery.readiness.v1":
+            for key in ("eligible","bound_tasks","ack_quarantined",
+                        "awaiting_ack","missing_decision"):
+                value=readiness.get(key)
+                if type(value) is int and 0<=value<=100000:
+                    safe[key]=value
+            states=readiness.get("task_states")
+            if isinstance(states,dict):
+                safe["task_states"]={k:v for k,v in states.items()
+                    if k in ("DRAFT","QUEUED","RUNNING","NEEDS_REVIEW",
+                             "FAILED","RECOVERY_NEEDED")
+                    and type(v) is int and 0<=v<=100000}
+        print(json.dumps({"state":claim.get("state"),"readiness":safe,
+                          "mutations":0,"independently_verified":False},
+                         sort_keys=True))
         return
     workstream=claim["workstream_id"]
     if not HEX.fullmatch(workstream) or claim.get("project_id")!="signalforge-market-intelligence":
@@ -150,7 +168,9 @@ def main():
                      "--title","Company OS: SignalForge capability "+workstream[:12],
                      "--body",body,timeout=90)
         except RuntimeError as exc:
-            if "GitHub Actions is not permitted to create or approve pull requests" not in str(exc):
+            if not any(k in str(exc) for k in (
+                "GitHub Actions is not permitted to create or approve pull requests",
+                "Resource not accessible by integration")):
                 raise
             print("GITHUB_PR_POLICY_DENIED_BRANCH_AND_TESTS_RETAINED")
         if pr is not None and not re.fullmatch(r"https://github\.com/Noetfield-Systems/SignalForge/pull/[1-9][0-9]{0,8}",pr):
