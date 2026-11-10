@@ -109,7 +109,7 @@ async function recordProductAction(userId:string,eventName:string,key:string){
  // Only server-observed authenticated actions enter conversion cohorts.
  // Event keys are scoped, deterministic, replay-safe and contain no PII.
  if(!dbReady||!db)return;
- try{await db.unsafe("INSERT INTO product_events(user_id,event_name,source,event_key) VALUES($1,$2,'server_observed',$3) ON CONFLICT(event_key) DO NOTHING",
+ try{await db.unsafe("INSERT INTO product_events(user_id,event_name,source,event_key) VALUES($1,$2,'server_observed',$3) ON CONFLICT DO NOTHING",
   [userId,eventName,key]);}catch(e:any){console.error("company event record failed",e?.message||"unknown")}
 }
 async function operationalCohorts(){
