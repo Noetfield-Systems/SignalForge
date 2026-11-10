@@ -142,6 +142,24 @@ test("real database community lifecycle, security boundaries and Company OS cont
   const hiddenFeed=await request("/api/community/posts?category=analysis");
   expect(hiddenFeed.data.items.some((p:any)=>p.id===postId)).toBe(false);
 
+  const missingGate=await request("/api/company-os/evidence-gate",{
+    method:"POST",headers:{"content-type":"application/json"},
+    body:JSON.stringify({project_id:"signalforge-market-intelligence"})
+  });
+  expect(missingGate.response.status).toBe(401);
+  const gate=await request("/api/company-os/evidence-gate",{
+    method:"POST",headers:{"content-type":"application/json",authorization:"Bearer "+SECRET},
+    body:JSON.stringify({
+      project_id:"signalforge-market-intelligence",workstream_id:"a".repeat(32),
+      source:{artifact_sha:"b".repeat(40),ref:"receipt:source/test"},
+      verification:{project_id:"signalforge-market-intelligence",workstream_id:"a".repeat(32),
+        artifact_sha:"b".repeat(40),result:"PASS",receipt_ref:"receipt:claimed/test"}
+    })
+  });
+  expect(gate.response.status).toBe(200);
+  expect(gate.data.independent_completion_verified).toBe(false);
+  expect(gate.data.governor_permits_issued).toBe(0);
+  expect(gate.data.state).toBe("RECEIPT_CLAIM_READY_FOR_INDEPENDENT_VERIFIER");
   const snap=await request("/api/company-os/snapshot",{headers:{authorization:"Bearer "+SECRET}});
   expect(snap.response.status).toBe(200);
   expect(snap.data.schemaVersion).toBe("1.0.0");
