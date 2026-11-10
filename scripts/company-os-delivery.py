@@ -111,12 +111,13 @@ def main():
                 value=readiness.get(key)
                 if type(value) is int and 0<=value<=100000:
                     safe[key]=value
-            states=readiness.get("task_states")
-            if isinstance(states,dict):
-                safe["task_states"]={k:v for k,v in states.items()
-                    if k in ("DRAFT","QUEUED","RUNNING","NEEDS_REVIEW",
-                             "FAILED","RECOVERY_NEEDED")
-                    and type(v) is int and 0<=v<=100000}
+            for field in ("task_states","engineer_task_states"):
+                states=readiness.get(field)
+                if isinstance(states,dict):
+                    safe[field]={k:v for k,v in states.items()
+                        if k in ("DRAFT","QUEUED","RUNNING","NEEDS_REVIEW",
+                                 "FAILED","RECOVERY_NEEDED")
+                        and type(v) is int and 0<=v<=100000}
         print(json.dumps({"state":claim.get("state"),"readiness":safe,
                           "mutations":0,"independently_verified":False},
                          sort_keys=True))
