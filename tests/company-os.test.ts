@@ -36,8 +36,8 @@ test("real-source-shaped observations create ranked evidence-gated per-team work
  expect(board.operating_state.meaningful_activation_rate).toBeNull();
  expect(board.workpackets[0].id).toBe("SF-P0-OPEN-REPORTS");
  const ids=board.workpackets.map(x=>x.id);
- expect(ids).toContain("SF-P0-BILLING-PROOF");
- expect(ids).toContain("SF-P0-COHORT-METRICS");
+ expect(ids).toContain("SF-P0-01");
+ expect(ids).toContain("SF-P0-02");
  expect(ids).toContain("SF-P1-ETH-DATA");
  expect(ids).toContain("SF-P1-ONCHAIN-TOKEN");
  for(const packet of board.workpackets){
@@ -61,7 +61,7 @@ test("stable same-day decision on same data, never invents activation rate or mo
 });
 test("different observed conditions reorder safe priorities, no manufactured trades",()=>{
  const a=compileOperatingBoard(make({moderation:{open:0},community:{posts:3,posts7d:2,authors:2}}),at);
- expect(a.workpackets[0].id).toBe("SF-P0-BILLING-PROOF");
+ expect(a.workpackets[0].id).toBe("SF-P0-01");
  expect(a.workpackets.map(x=>x.id)).not.toContain("SF-P0-OPEN-REPORTS");
  expect(a.workpackets.map(x=>x.id)).not.toContain("SF-P1-COMMUNITY-ACTIVATION");
  expect(a.constraints.no_live_trading).toBe(true);
