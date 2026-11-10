@@ -69,6 +69,8 @@ jobs:
           bun-version: "1.2.23"
       - name: Install exact SignalForge production dependencies
         run: bun install
+      - name: Syntax-check authenticated Company OS delivery scripts
+        run: python3 -m py_compile scripts/company-os-delivery.py scripts/company-os-readback.py
       - name: Claim canonical scoped WorkPacket and build one bounded PR candidate
         id: deliver
         env:
