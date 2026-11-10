@@ -11,6 +11,14 @@ SignalForge is a read-only crypto market research product with a member communit
 - [Scenario assumptions](strategy/m20-scenarios.v1.json)
 - Recalculate with `bun run forecast` (explicitly illustrative, all verified cash remains unknown).
 
+## One operating company: SignalForge Web3 / Ethereum
+
+- [Company OS operating manual](company-os/OPERATING-MANUAL.md): one managing director, Ethereum/onchain/quant, paper-trading engineering, token research, community, revenue, risk, SRE and independent verifier.
+- [26 governed role contracts](company-os/organization.v1.json); these are virtual role definitions, not 26 newly provisioned workers.
+- [Deterministic operating engine](company-os/operating-engine.ts): evaluates actual authenticated aggregate inputs and emits prioritized, zero-external-effect WorkPacket **candidates**. Use `GET /api/company-os/operations` with the existing server-to-server Company OS workload key.
+
+A single Sina Founder OS mission M20 remains the source of executive authority and existing Agent Fabric/Company OS owns actual execution, permissions and verification. No new scheduler or parallel agent registry.
+
 ## Architecture
 
 This repository is now the **canonical SignalForge product source**. It is intentionally separate from the Sina Founder OS / Company OS governance repository. Existing corporate operating infrastructure is reused rather than duplicated.
