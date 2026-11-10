@@ -18,7 +18,7 @@ This repository is now the **canonical SignalForge product source**. It is inten
 | Lifecycle email worker | `services/lifecycle-worker/railway-function.ts` | existing independent Railway Function, source imported |
 | Portfolio mission, business-priority Goalkeeper, governance and execution | `Noetfield-Systems/sina_founder_os` | Sina Founder OS, not reimplemented here |
 
-**Deployment transition:** The currently live `signalforge-web` was originally a Railway Bun Function with a compressed source/bootstrap workaround. This repository provides a normal Docker/Bun service, with the same application logic separated into independent code and HTML assets. Production switching is done through an explicitly staged Railway source/config migration, with health checks and old deployment rollback. A passing CI alone is **not** evidence that Railway has switched its source.
+**Deployment commissioned:** On 2026-11-10, Railway `signalforge-web` switched from the original compressed Bun Function to the GitHub-backed Docker/Bun source on `main` (commit `0eb762ee46362353135eaa631084c5c692194104`, Railway deployment `2d1cdbc6-ad93-4b9f-b49b-ad5d375abf04`, status SUCCESS). The pre-migration Function and bootstrap remain archived under `compat/` for rollback. Existing domain, PostgreSQL, secrets, growth and lifecycle services were preserved. Customer payment and moderation E2E still require separate evidence.
 
 ## Development
 
@@ -85,4 +85,4 @@ Existing Founder OS service settings (not committed): `SIGNALFORGE_METRICS_URL` 
 - Human accounts, Stripe webhooks, moderation and recovery are independently verified before a broad public launch.
 - Every significant release needs the GitHub commit, CI result, Railway deployment ID, request-level acceptance evidence and an explicit rollback route.
 
-**Status:** application source and operating contracts are versioned; community and Company OS telemetry were operational on the existing Railway Function. Migration to GitHub-backed runtime is a separate commissioning gate.
+**Status (2026-11-10):** GitHub-backed application is live on Railway; healthcheck HTTP 200, unauthenticated community writes HTTP 401, non-admin moderation HTTP 403; CI passes on ephemeral PostgreSQL plus Docker build. A post-migration authenticated Company OS snapshot GET was observed as HTTP 200. Independent real customer/billing, full moderator and disaster-recovery journeys are **not yet certified**. See `status/COMMISSIONING-2026-11-10.md`.
