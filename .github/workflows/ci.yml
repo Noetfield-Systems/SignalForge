@@ -38,6 +38,8 @@ jobs:
         run: bun install
       - name: Compile runtime
         run: bun run check
+      - name: Build deployable production Docker image
+        run: docker build --tag signalforge:ci .
       - name: Test real PostgreSQL signup, community moderation and Company OS read-only snapshot
         run: bun run test
       - name: Verify product structure and no leaked environmental secret files
