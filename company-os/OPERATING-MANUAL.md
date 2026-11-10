@@ -1,4 +1,7 @@
 # SIGNALFORGE COMPANY OS — ONE PLATFORM, ONE EXECUTIVE BRAIN
+
+> **Founder OS-first correction, 2026-11-10:** This file describes SignalForge as one **real proving product** operated by the reusable Company OS. The primary technology/product being created is Sina/Company OS itself, which should discover, build, verify, operate, monetize and improve products without repeated Founder prompts. Neither the 26 role contracts nor SignalForge feature work constitute the completion of autonomous OS engineering. Preserve this manual's detailed SignalForge teams and tasks as an example, not as the top-level business or OS architecture. Canonical parent: [Sina OS-first complete rewrite](https://github.com/Noetfield-Systems/sina_founder_os/blob/main/architecture/OS-FIRST-COMPANY-OS-END-TO-END-v2.fa.md), [machine-readable direction lock](https://github.com/Noetfield-Systems/sina_founder_os/blob/main/architecture/OS-FIRST-FOUNDER-INTENT-LOCK-v2.json). Continue using existing M20/Agent Fabric/Runway/Governor/Verifier and unchanged product/legal boundaries.
+
 **Status:** executable read-only decision compiler + typed organization, with the existing Sina Founder/Company OS responsible for dispatch. 2026-11-10.
 
 ## 0. A single firm, not a portfolio
