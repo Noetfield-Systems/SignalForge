@@ -1,0 +1,132 @@
+name: SINA Company OS - governed SignalForge code delivery
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch: {}
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sina-company-os-delivery-signalforge
+  cancel-in-progress: false
+
+jobs:
+  candidate:
+    if: >-
+      ${{ github.event_name != 'issues' || (github.event.issue.title == 'SINA: Run Company OS Delivery' && github.event.issue.user.login == 'kazemnezhadsina144-dot') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: signalforge_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d signalforge_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/signalforge_test
+      DATABASE_SSL: disable
+      NODE_ENV: test
+    outputs:
+      state: ${{ steps.deliver.outputs.state }}
+      head_sha: ${{ steps.deliver.outputs.head_sha }}
+      workstream: ${{ steps.deliver.outputs.workstream }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.2.23"
+      - name: Install exact SignalForge production dependencies
+        run: bun install
+      - name: Claim canonical scoped WorkPacket and build one bounded PR candidate
+        id: deliver
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 scripts/company-os-delivery.py
+      - name: Preserve exact source and candidate evidence
+        if: ${{ steps.deliver.outputs.state == 'OPENED' || steps.deliver.outputs.state == 'BRANCH_READY' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: sina-signalforge-workpacket-${{ github.run_id }}
+          path: company-delivery-evidence.json
+          if-no-files-found: error
+          retention-days: 30
+
+  independent-readback:
+    if: ${{ needs.candidate.outputs.state == 'OPENED' || needs.candidate.outputs.state == 'BRANCH_READY' }}
+    needs: candidate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write
+      actions: read
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: signalforge_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d signalforge_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/signalforge_test
+      DATABASE_SSL: disable
+      NODE_ENV: test
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.candidate.outputs.head_sha }}
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.2.23"
+      - uses: actions/download-artifact@v4
+        with:
+          name: sina-signalforge-workpacket-${{ github.run_id }}
+          path: /tmp/sina-company-evidence
+      - name: Independent immutable-source readback and real application tests
+        env:
+          SINA_EVIDENCE_FILE: /tmp/sina-company-evidence/company-delivery-evidence.json
+        run: |
+          bun install
+          rm -f bun.lock bun.lockb
+          python3 scripts/company-os-readback.py
