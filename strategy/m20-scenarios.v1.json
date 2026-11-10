@@ -1,0 +1,77 @@
+{
+  "schema": "signalforge.m20.revenue-scenarios.v1",
+  "as_of_utc": "2026-11-10",
+  "currency": "CAD",
+  "pricing_basis": {
+    "pro_monthly": 29,
+    "quant_monthly": 99,
+    "pro_share": 0.85,
+    "quant_share": 0.15,
+    "trial_days": 30,
+    "method": "Proposal-only monthly-billed subscription mix using listed SignalForge prices; excludes annual prepayments, tax, payment fees and refunds"
+  },
+  "baseline": {
+    "new_signups": "NOT_MEASURED_HERE",
+    "paying_users": "NOT_INDEPENDENTLY_VERIFIED",
+    "collected_cash": "NOT_VERIFIED"
+  },
+  "confidence": "ILLUSTRATIVE_SCENARIOS_NOT_STATISTICAL_FORECASTS",
+  "caveats": [
+    "No user-acquisition baseline or verified payment conversion data was provided.",
+    "Trial checkout currently saves selected plan during trial and must not be treated as collected cash.",
+    "Matured cohorts are 30+ days after signup, not total signups.",
+    "Retention factor is a simplifying assumption, not measured churn.",
+    "MRR is gross modeled recurring subscription value, not collected cash or profit."
+  ],
+  "scenarios": [
+    {
+      "case": "conservative",
+      "day": 90,
+      "cumulative_new_signups": 180,
+      "matured_trial_users": 90,
+      "trial_to_paid_rate": 0.03,
+      "paid_retention_factor": 0.85
+    },
+    {
+      "case": "base",
+      "day": 90,
+      "cumulative_new_signups": 650,
+      "matured_trial_users": 400,
+      "trial_to_paid_rate": 0.05,
+      "paid_retention_factor": 0.85
+    },
+    {
+      "case": "stretch",
+      "day": 90,
+      "cumulative_new_signups": 2200,
+      "matured_trial_users": 1500,
+      "trial_to_paid_rate": 0.08,
+      "paid_retention_factor": 0.85
+    },
+    {
+      "case": "conservative",
+      "day": 180,
+      "cumulative_new_signups": 900,
+      "matured_trial_users": 650,
+      "trial_to_paid_rate": 0.03,
+      "paid_retention_factor": 0.8
+    },
+    {
+      "case": "base",
+      "day": 180,
+      "cumulative_new_signups": 3500,
+      "matured_trial_users": 2800,
+      "trial_to_paid_rate": 0.06,
+      "paid_retention_factor": 0.8
+    },
+    {
+      "case": "stretch",
+      "day": 180,
+      "cumulative_new_signups": 12000,
+      "matured_trial_users": 9000,
+      "trial_to_paid_rate": 0.09,
+      "paid_retention_factor": 0.8
+    }
+  ],
+  "initial_cohort_rule": "First 30 days of new-user signups do not automatically generate cash under the present 30-day no-card trial; existing users/early paid upgrades are separate evidence-gated exceptions."
+}
