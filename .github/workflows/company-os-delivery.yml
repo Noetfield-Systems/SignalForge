@@ -1,6 +1,12 @@
 name: SINA Company OS - governed SignalForge code delivery
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/company-os-delivery.yml"
+      - "scripts/company-os-delivery.py"
+      - "scripts/company-os-readback.py"
   schedule:
     - cron: "*/30 * * * *"
   workflow_dispatch: {}
