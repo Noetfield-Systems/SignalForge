@@ -77,3 +77,30 @@ test("rejects stale, untrusted, cross-tenant, synthetic or malformed snapshots",
  ];
  for(const bad of invalid)expect(()=>validateSnapshot(bad,at)).toThrow();
 });
+
+
+test("one existing operating brain incorporates measured M20 cohorts and bounded specialist decisions",()=>{
+ const observed={eligible24h:200,activated24h:28,eligibleDay7:120,returnedDay7:12,
+  maturedTrials:100,invoicePaidMatured:2,overdueReports:2,failedInvoices7d:1};
+ const board=compileOperatingBoard(make({operatingMetrics:observed}),at);
+ expect(board.operating_state.meaningful_activation_rate).toBe(0.14);
+ expect(board.operating_state.d7_retention_rate).toBe(0.1);
+ expect(board.operating_state.paid_conversion_rate).toBe(0.02);
+ expect(board.operating_state.source_reported_policy_issues).toContain("SF-P0-BILLING_RECONCILE");
+ expect(board.operating_state.source_reported_policy_issues).toContain("SF-P0-ACTIVATION_REPAIR");
+ const action=board.workpackets.find(x=>x.id==="SF-P0-BILLING_RECONCILE");
+ expect(action?.owner_role_id).toBe("billing_operator");
+ expect(action?.authority).toBe("PROPOSAL_ONLY_EXISTING_GOVERNOR_REQUIRED");
+ expect(action?.resources.external_effects_allowed).toBe(false);
+ expect(board.operating_state.verified_collected_cash_cad).toBeNull();
+});
+test("no fake growth claims for insufficient cohorts and invalid counts",()=>{
+ const metrics={eligible24h:55,activated24h:2,eligibleDay7:0,returnedDay7:0,
+  maturedTrials:0,invoicePaidMatured:0,overdueReports:0,failedInvoices7d:0};
+ const board=compileOperatingBoard(make({operatingMetrics:metrics}),at);
+ expect(board.operating_state.meaningful_activation_rate).toBeNull();
+ expect(board.operating_state.d7_retention_rate).toBeNull();
+ expect(board.operating_state.paid_conversion_rate).toBeNull();
+ expect(board.operating_state.source_reported_policy_issues).toEqual([]);
+ expect(()=>compileOperatingBoard(make({operatingMetrics:{...metrics,eligible24h:1,activated24h:2}}),at)).toThrow();
+});
