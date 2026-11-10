@@ -1,0 +1,49 @@
+name: SignalForge production readiness
+on:
+  push:
+    branches: [main, "feat/**", "fix/**"]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  production-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: signalforge_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d signalforge_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/signalforge_test
+      DATABASE_SSL: disable
+      NODE_ENV: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.2.23
+      - name: Install exact production dependency
+        run: bun install
+      - name: Compile runtime
+        run: bun run check
+      - name: Test real PostgreSQL signup, community moderation and Company OS read-only snapshot
+        run: bun run test
+      - name: Verify product structure and no leaked environmental secret files
+        run: |
+          test -f Dockerfile && test -f railway.json
+          test -f public/index.html && test -f public/welcome.html
+          test -f services/growth-assets/railway-function.ts
+          test -f services/lifecycle-worker/railway-function.ts
+          ! git ls-files | grep -E '^\.env$|^\.env\.production$'
