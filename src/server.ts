@@ -4,7 +4,7 @@ const HTML = await Bun.file(new URL("../public/index.html", import.meta.url)).te
 const PORT = Number(Bun.env.PORT || 8080);
 const BASE_URL = Bun.env.BASE_URL || "https://signalforge-web-production.up.railway.app";
 const DB_URL = Bun.env.DATABASE_URL || "";
-const db = DB_URL ? postgres(DB_URL, { max: 8, idle_timeout: 30, connect_timeout: 12, ssl: "require" }) : null;
+const db = DB_URL ? postgres(DB_URL, { max: 8, idle_timeout: 30, connect_timeout: 12, ssl: (Bun.env.NODE_ENV === "test" && Bun.env.DATABASE_SSL === "disable") ? false : "require" }) : null;
 let dbReady = false;
 const cache = new Map<string, { at: number; data: any }>();
 const rate = new Map<string, { n: number; at: number }>();
