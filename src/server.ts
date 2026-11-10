@@ -1,4 +1,5 @@
 import postgres from "postgres";
+import {assessCompanyOutcome} from "../company-os/shared-evidence-gate.mjs";
 import { compileOperatingBoard } from "../company-os/operating-engine.ts";
 import { evaluateCompanyPolicy } from "./company-os-policy";
 const SIGNALFORGE_MARKETING_HTML = await Bun.file(new URL("../public/welcome.html", import.meta.url)).text();
@@ -169,6 +170,19 @@ return json({error:"Not found"},404)
 }
 
 async function handler(req:Request){const u=new URL(req.url),path=u.pathname,method=req.method;if(method==="GET"&&(path==="/welcome"||path==="/start"))return new Response(SIGNALFORGE_MARKETING_HTML,{headers:{"content-type":"text/html; charset=utf-8","cache-control":"public,max-age=300","x-content-type-options":"nosniff"}});if(method==="OPTIONS")return new Response(null,{status:204,headers:{"Access-Control-Allow-Origin":u.origin,"Access-Control-Allow-Credentials":"true","Access-Control-Allow-Headers":"content-type,authorization","Access-Control-Allow-Methods":"GET,POST,OPTIONS"}});if(path==="/api/health"){let database=false;try{if(dbReady&&db){await db.unsafe("SELECT 1");database=true}}catch{}return json({ok:true,service:"SIGNALFORGE",version:"0.4.0",database:database?"connected":"not_ready",marketData:"Kraken public OHLC",mode:"read-only signals; no broker execution",now:new Date().toISOString()})}
+if(path==="/api/company-os/evidence-gate"&&method==="POST"){
+ if(!Bun.env.SIGNALFORGE_COMPANY_OS_KEY || !await safeToken(req))
+  return json({error:"Company OS operator identity required"},401);
+ if(!String(req.headers.get("content-type")||"").startsWith("application/json"))
+  return json({error:"JSON required"},415);
+ if(Number(req.headers.get("content-length")||0)>4096)
+  return json({error:"Request too large"},413);
+ const raw=await req.text();
+ if(raw.length>4096)return json({error:"Request too large"},413);
+ let evidence:any;
+ try{evidence=JSON.parse(raw)}catch{return json({error:"Malformed JSON"},400)}
+ return json(assessCompanyOutcome(evidence));
+}
 if(path==="/api/company-os/snapshot"&&method==="GET")return companySnapshot(req);
 if(path==="/api/company-os/operations"&&method==="GET"){
  const snapshot=await companySnapshot(req);
