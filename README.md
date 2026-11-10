@@ -5,6 +5,12 @@
 
 SignalForge is a read-only crypto market research product with a member community, historical backtesting, a provenance-aware track record and account-based access. **It is not a broker, a trade execution service, a profit guarantee or an investment adviser.**
 
+## M20 operating forecast (planning, not observed revenue)
+
+- [180-day operating plan and Company OS work gates](strategy/M20-180-DAY-OPERATING-PLAN.md)
+- [Scenario assumptions](strategy/m20-scenarios.v1.json)
+- Recalculate with `bun run forecast` (explicitly illustrative, all verified cash remains unknown).
+
 ## Architecture
 
 This repository is now the **canonical SignalForge product source**. It is intentionally separate from the Sina Founder OS / Company OS governance repository. Existing corporate operating infrastructure is reused rather than duplicated.
