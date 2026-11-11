@@ -1,9 +1,11 @@
 import postgres from "postgres";
+import { researchSolanaToken, TokenRadarError, validSolanaAddress } from "./token-radar.mjs";
 import {assessCompanyOutcome} from "../company-os/shared-evidence-gate.mjs";
 import { compileOperatingBoard } from "../company-os/operating-engine.ts";
 import { evaluateCompanyPolicy } from "./company-os-policy";
 const SIGNALFORGE_MARKETING_HTML = await Bun.file(new URL("../public/welcome.html", import.meta.url)).text();
 const HTML = await Bun.file(new URL("../public/index.html", import.meta.url)).text();
+const TOKEN_RADAR_HTML = await Bun.file(new URL("../public/token-radar.html", import.meta.url)).text();
 const PORT = Number(Bun.env.PORT || 8080);
 const BASE_URL = Bun.env.BASE_URL || "https://signalforge-web-production.up.railway.app";
 const DB_URL = Bun.env.DATABASE_URL || "";
@@ -170,6 +172,29 @@ return json({error:"Not found"},404)
 }
 
 async function handler(req:Request){const u=new URL(req.url),path=u.pathname,method=req.method;if(method==="GET"&&(path==="/welcome"||path==="/start"))return new Response(SIGNALFORGE_MARKETING_HTML,{headers:{"content-type":"text/html; charset=utf-8","cache-control":"public,max-age=300","x-content-type-options":"nosniff"}});if(method==="OPTIONS")return new Response(null,{status:204,headers:{"Access-Control-Allow-Origin":u.origin,"Access-Control-Allow-Credentials":"true","Access-Control-Allow-Headers":"content-type,authorization","Access-Control-Allow-Methods":"GET,POST,OPTIONS"}});if(path==="/api/health"){let database=false;try{if(dbReady&&db){await db.unsafe("SELECT 1");database=true}}catch{}return json({ok:true,service:"SIGNALFORGE",version:"0.4.0",database:database?"connected":"not_ready",marketData:"Kraken public OHLC",mode:"read-only signals; no broker execution",now:new Date().toISOString()})}
+if(method==="GET" && (path==="/radar" || path.startsWith("/tokens/solana/"))){
+ const address=path.startsWith("/tokens/solana/")?path.slice("/tokens/solana/".length):null;
+ if(address && !validSolanaAddress(address))return new Response("Invalid Solana token address",{status:404,headers:{"content-type":"text/plain; charset=utf-8"}});
+ const document=address?TOKEN_RADAR_HTML.replace("<title>Token Radar · SignalForge</title>","<title>Solana token "+address+" · Token Radar · SignalForge</title>"):TOKEN_RADAR_HTML;
+ return new Response(document,{headers:{"content-type":"text/html; charset=utf-8","cache-control":"public,max-age=60","x-content-type-options":"nosniff"}});
+}
+if(path==="/api/tokens/lookup" || path.startsWith("/api/tokens/solana/")){
+ if(method!=="GET")return json({error:"METHOD_NOT_ALLOWED"},405);
+ if(rateLimit(req,24))return json({error:"RATE_LIMITED"},429,{"retry-after":"60"});
+ const chain=u.searchParams.get("chain")||"solana";
+ if(chain!=="solana")return json({error:"UNSUPPORTED_CHAIN"},400);
+ const mint=path.startsWith("/api/tokens/solana/")?path.slice("/api/tokens/solana/".length):u.searchParams.get("address")||"";
+ if(!validSolanaAddress(mint))return json({error:"INVALID_SOLANA_ADDRESS"},400);
+ try{
+  const report=await researchSolanaToken(mint);
+  return json(report,200,{"x-content-type-options":"nosniff"});
+ }catch(error){
+  const code=error instanceof TokenRadarError?error.code:"RESEARCH_UNAVAILABLE";
+  const status=error instanceof TokenRadarError?error.status:503;
+  console.error("Token Radar upstream unavailable:",code);
+  return json({error:code,source:"DEX Screener",mode:"SOURCE_UNAVAILABLE",simulated:false},status,{"retry-after":"30"});
+ }
+}
 if(path==="/api/company-os/evidence-gate"&&method==="POST"){
  if(!Bun.env.SIGNALFORGE_COMPANY_OS_KEY || !await safeToken(req))
   return json({error:"Company OS operator identity required"},401);
