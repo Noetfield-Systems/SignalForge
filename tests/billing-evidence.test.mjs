@@ -31,6 +31,7 @@ test("paid SignalForge invoice grants only price and payment evidence",()=>{
 test("unpaid, free, foreign currency, unknown price and unrelated Stripe products fail closed",()=>{
  for(const obj of [
   invoice({status:"open",paid:false}),
+  invoice({paid_out_of_band:true}),
   invoice({amount_paid:0}),
   invoice({amount_paid:-1}),
   invoice({currency:"usd"}),
