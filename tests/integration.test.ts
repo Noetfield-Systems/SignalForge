@@ -279,3 +279,29 @@ test("Token Radar watchlists enforce user isolation, provenance-backed history a
  const afterDelete=await request("/api/tokens/watchlist",{headers:headers(first.cookie)});
  expect(afterDelete.data.items.some((x:any)=>x.address===SOL)).toBe(false);
 },45000);
+
+
+test("Token Radar organic distribution has canonical public reports, truthful sitemaps, and excludes private pages",async()=>{
+ const SOL="So11111111111111111111111111111111111111112";
+ const r=await fetch(BASE+"/robots.txt");
+ expect(r.status).toBe(200);
+ const robots=await r.text();
+ expect(robots).toContain("Disallow: /api/");
+ expect(robots).toContain("Disallow: /app");
+ expect(robots).toContain("Sitemap:");
+ const s=await fetch(BASE+"/sitemap.xml");
+ expect(s.status).toBe(200);
+ const xml=await s.text();
+ expect(xml).toContain("<urlset");
+ expect(xml).toContain("/radar</loc>");
+ expect(xml).toContain("/welcome</loc>");
+ expect(xml).not.toContain("/api/auth/");
+ const report=await fetch(BASE+"/tokens/solana/"+SOL);
+ expect(report.status).toBe(200);
+ const html=await report.text();
+ expect(html).toContain('<link rel="canonical" href="https://signalforge-web-production.up.railway.app/tokens/solana/'+SOL+'">');
+ expect(html).toContain('content="Solana '+SOL+' market research');
+ expect(html).toContain('id="shareTelegram"');
+ expect(html).toContain('id="shareX"');
+ expect(html).not.toContain("Noetfield Starter");
+});
