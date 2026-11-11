@@ -60,7 +60,10 @@ test("real database community lifecycle, security boundaries and Company OS cont
 
   let welcome=await fetch(BASE+"/welcome");
   expect(welcome.status).toBe(200);
-  expect(await welcome.text()).toContain("SignalForge");
+  const welcomeHtml = await welcome.text();
+  expect(welcomeHtml).toContain("SignalForge");
+  expect(welcomeHtml).toContain("Research the token.");
+  expect(welcomeHtml).toContain("CAD $29/month");
 
   let empty=await request("/api/community/posts");
   expect(empty.response.status).toBe(200);
