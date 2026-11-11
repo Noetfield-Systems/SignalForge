@@ -22,7 +22,7 @@ beforeAll(async ()=>{
   service = Bun.spawn(["bun", "run", "src/server.ts"],{
     cwd: new URL("../", import.meta.url).pathname,
     env: {...Bun.env, NODE_ENV:"test",DATABASE_SSL:"disable",PORT:String(PORT),
-      SIGNALFORGE_COMPANY_OS_KEY:SECRET,SIGNALFORGE_ADMIN_EMAIL:"admin@signalforge.test"},
+      SIGNALFORGE_COMPANY_OS_KEY:SECRET,SIGNALFORGE_ADMIN_EMAIL:"admin@signalforge.test",SIGNALFORGE_STRIPE_PRO_MONTHLY_URL:"https://buy.stripe.com/test_signalforge_checkout"},
     stdout:"pipe",stderr:"pipe",
   });
   for(let i=0;i<80;i++){
@@ -82,6 +82,17 @@ test("real database community lifecycle, security boundaries and Company OS cont
   expect(cookie.startsWith("sf_session=")).toBe(true);
   const me=await request("/api/auth/me",{headers:{cookie}});
   expect(me.data.user.email).toBe(email);
+  // Trial remains uncharged until a user explicitly invokes the payment handoff.
+  // An explicit paid upgrade must yield a secure external checkout URL, not a charge.
+  const paidOptIn=await request("/api/checkout",{method:"POST",headers:headers(cookie),
+    body:JSON.stringify({plan:"pro",period:"month",payNow:true})});
+  expect(paidOptIn.response.status).toBe(200);
+  expect(paidOptIn.data.url.startsWith("https://buy.stripe.com/")).toBe(true);
+  expect(paidOptIn.data.url).toContain("client_reference_id=");
+  expect(paidOptIn.data.saved).toBeUndefined();
+  const afterOffer=await request("/api/auth/me",{headers:{cookie}});
+  expect(afterOffer.data.user.subscription_status).toBe("trialing");
+
 
   const invalid=await request("/api/community/posts",{
     method:"POST",headers:headers(cookie),body:JSON.stringify({title:"Short",body:"Tiny",category:"questions"})
@@ -202,4 +213,15 @@ test("Token Radar public route and invalid-source research boundary", async () =
   expect(unsupported.data.error).toBe("UNSUPPORTED_CHAIN");
   const wrongMethod = await request("/api/tokens/lookup", {method:"POST"});
   expect(wrongMethod.response.status).toBe(405);
+  const historyInvalid=await request("/api/tokens/history?address=bad");
+  expect(historyInvalid.response.status).toBe(400);
+  expect(historyInvalid.data.error).toBe("INVALID_SOLANA_ADDRESS");
+  const history=await request("/api/tokens/history?address=So11111111111111111111111111111111111111112");
+  expect(history.response.status).toBe(200);
+  expect(history.data.chainId).toBe("solana");
+  expect(Array.isArray(history.data.items)).toBe(true);
+  expect(["INSUFFICIENT_HISTORY","CHANGE_AVAILABLE"]).toContain(history.data.status);
+  expect(history.data.items.length).toBeLessThanOrEqual(48);
+  const wrongHistoryMethod=await request("/api/tokens/history",{method:"POST"});
+  expect(wrongHistoryMethod.response.status).toBe(405);
 });
