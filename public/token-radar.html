@@ -102,7 +102,17 @@ footer{border-top:1px solid #294151;padding:25px 0 42px;display:flex;justify-con
   <div><h2 style="font-size:14px;margin:15px 0 8px">Saved tokens</h2><div id="savedTokens" class="pools"><div class="muted">Sign in to view your list.</div></div></div>
   <div><div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap"><h2 style="font-size:14px;margin:15px 0 8px">Change notifications</h2><button class="outline" id="markAlertsRead" type="button" style="padding:6px 9px;font-size:11px">Mark all read</button></div><div id="alertFeed" class="pools"><div class="muted">Source-backed notifications appear here after a monitored change.</div></div></div>
 </div>
-<small class="muted">Background refresh examines eligible opted-in tokens on the existing scheduled worker. Events are created only when material source-observed changes occur; delivery is in-app, not email or SMS.</small>
+<small class="muted">Background refresh examines eligible opted-in tokens on the existing scheduled worker. In-app events come only from material source-observed changes; optional premium email digests are controlled separately below.</small>
+</section>
+<section class="panel section" id="digestSettings" style="margin:18px 0 24px;border-color:#3d857a" aria-label="Premium email digest settings">
+ <div class="label">MONITORING / PREMIUM RESEARCH</div>
+ <h2>Daily observed-change digest</h2>
+ <p>Get one email on days when your monitored tokens have new, source-observed changes. No synthetic alerts, unsolicited messages or guaranteed market coverage. Available during the no-card full-access trial and with active Pro/Quant. It is off unless you explicitly opt in.</p>
+ <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+  <button class="btn" type="button" id="digestToggle" disabled>Checking eligibility…</button>
+  <span id="digestStatus" role="status" aria-live="polite" class="muted">Loading private digest settings…</span>
+ </div>
+ <small class="muted">At most one daily email after 16:00 UTC, and only if new observed changes exist. Provider acceptance does not guarantee inbox delivery. Stop at any time here or through the link in each digest. <a class="source" href="/app?view=pricing">Compare plans ↗</a></small>
 </section>
 <div class="info"><b>Research boundaries</b> — DEX pool observations are third-party data that may be delayed, incomplete or inaccurate. A recorded observation timestamp is not a verified onchain transaction time. Change events compare stored source observations; an absent event is not proof of safety, and a pool omitted by the provider is not proof of removal. Contract and holder risk have not been assessed. In-app notifications are not guaranteed immediate or comprehensive.</div>
 </main>
@@ -220,6 +230,35 @@ $("notesList").addEventListener("click",async ev=>{
  }catch(err){$("notesStatus").textContent=err?.message||"Delete failed";btn.disabled=false;}
 });
 
+let digestState=null;
+async function loadDigestPreferences(){
+ const btn=$("digestToggle"),label=$("digestStatus");
+ try{
+  const res=await fetch("/api/tokens/digest",{credentials:"same-origin",cache:"no-store"});
+  if(res.status===401){btn.disabled=true;btn.textContent="Sign in to enable";label.textContent="Sign in through the research terminal to manage daily digest emails.";digestState=null;return;}
+  const data=await res.json();if(!res.ok)throw Error(data.error||"Digest settings unavailable");
+  digestState=data;
+  btn.textContent=data.configuredEnabled?"Disable email digest":"Enable daily email digest";
+  btn.disabled=!data.configuredEnabled&&(!data.eligible||data.monitoredTokens===0);
+  label.textContent=data.configuredEnabled&&data.eligible
+   ?"Enabled for "+data.monitoredTokens+" monitored token(s) · only new source-backed changes"
+   :data.configuredEnabled&&!data.eligible
+   ?"Suspended: your premium membership or trial is not currently active. You may turn off the preference."
+   :!data.eligible?"Pro/Quant or an active full-access trial required. In-app notifications remain free."
+   :data.monitoredTokens===0?"Save a token and enable monitoring before opting in.":"Off · no digest email will be sent";
+ }catch(err){btn.disabled=true;label.textContent=err?.message||"Digest settings unavailable.";}
+}
+$("digestToggle").addEventListener("click",async()=>{
+ const btn=$("digestToggle"),label=$("digestStatus");
+ if(!digestState)return;btn.disabled=true;
+ try{
+  const res=await fetch("/api/tokens/digest",{method:"POST",credentials:"same-origin",
+   headers:{"content-type":"application/json"},body:JSON.stringify({enabled:!digestState.configuredEnabled})});
+  const data=await res.json();
+  if(!res.ok)throw Error(data.detail||data.error||"Could not update digest");
+  await loadDigestPreferences();
+ }catch(err){label.textContent=err?.message||"Could not update digest";btn.disabled=false;}
+});
 let centerLoading=false;
 async function loadCustomerCenter(){
  if(centerLoading)return;
@@ -235,6 +274,7 @@ async function loadCustomerCenter(){
    $("myRadarStatus").innerHTML='Sign in to save tokens and view change events. <a href="/app" class="source">Open account / Sign in ↗</a>';
    $("savedTokens").innerHTML='<div class="muted">Sign in through the research terminal to access your saved tokens.</div>';
    $("alertFeed").innerHTML='<div class="muted">Private source-backed change notifications are visible after sign-in.</div>';
+   loadDigestPreferences();
    return;
   }
   if(!savedResponse.ok||!alertResponse.ok)throw Error("Unable to retrieve private activity right now.");
@@ -242,6 +282,7 @@ async function loadCustomerCenter(){
   const items=Array.isArray(saved.items)?saved.items.filter(x=>validMintForUi(x.address)).slice(0,100):[];
   const events=Array.isArray(notifications.items)?notifications.items.filter(x=>validMintForUi(x.address)).slice(0,50):[];
   $("myRadarStatus").textContent=items.length+" saved token(s) · "+events.filter(x=>!x.readAt).length+" unread / "+events.length+" recent notification(s) · in-app delivery";
+  loadDigestPreferences();
   $("savedTokens").innerHTML=items.length?items.map(x=>
    '<article class="pool"><div style="min-width:0"><a class="source" href="/tokens/solana/'+e(encodeURIComponent(x.address))+'"><b>'+e(x.address.slice(0,7))+'…'+e(x.address.slice(-6))+'</b></a><small>Solana · '+(x.inAppAlerts?'Monitoring enabled':'Monitoring paused')+'</small></div>'+
    '<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:end"><button type="button" class="outline" style="padding:6px 9px;font-size:11px" data-token-action="toggle" data-mint="'+e(x.address)+'" data-enabled="'+(x.inAppAlerts?'true':'false')+'">'+(x.inAppAlerts?'Pause':'Monitor')+'</button>'+

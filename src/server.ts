@@ -82,6 +82,9 @@ await db.unsafe("CREATE INDEX IF NOT EXISTS token_change_events_lookup_idx ON to
 await db.unsafe("CREATE TABLE IF NOT EXISTS token_watchlist_items (user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,chain_id TEXT NOT NULL DEFAULT 'solana',address TEXT NOT NULL,in_app_alerts BOOLEAN NOT NULL DEFAULT FALSE,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),PRIMARY KEY(user_id,chain_id,address))");
 await db.unsafe("CREATE TABLE IF NOT EXISTS token_alert_events (id BIGSERIAL PRIMARY KEY,user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,change_event_id BIGINT NOT NULL REFERENCES token_change_events(id) ON DELETE CASCADE,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),read_at TIMESTAMPTZ,UNIQUE(user_id,change_event_id))");
 await db.unsafe("CREATE INDEX IF NOT EXISTS token_alert_events_user_idx ON token_alert_events(user_id,id DESC)");
+await db.unsafe("CREATE TABLE IF NOT EXISTS token_digest_preferences(user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,enabled BOOLEAN NOT NULL DEFAULT FALSE,opted_in_at TIMESTAMPTZ,opted_out_at TIMESTAMPTZ,updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())");
+await db.unsafe("CREATE TABLE IF NOT EXISTS token_digest_deliveries(id BIGSERIAL PRIMARY KEY,user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,digest_date DATE NOT NULL,status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','sending','accepted','cancelled','failed')),attempts INTEGER NOT NULL DEFAULT 0,scheduled_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),accepted_at TIMESTAMPTZ,provider_message_id TEXT,last_error TEXT,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),UNIQUE(user_id,digest_date))");
+await db.unsafe("CREATE INDEX IF NOT EXISTS token_digest_due_idx ON token_digest_deliveries(status,scheduled_at)");
 await db.unsafe("CREATE TABLE IF NOT EXISTS token_research_notes (id BIGSERIAL PRIMARY KEY,user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,chain_id TEXT NOT NULL DEFAULT 'solana',address TEXT NOT NULL,kind TEXT NOT NULL CHECK (kind IN ('note','thesis')),body TEXT NOT NULL,invalidation TEXT,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())");
 await db.unsafe("CREATE INDEX IF NOT EXISTS token_research_notes_owner_idx ON token_research_notes(user_id,chain_id,address,id DESC)");
 dbReady=true;return true}
@@ -311,6 +314,53 @@ if(path==="/api/tokens/watchlist"){
   return json(await removeSavedToken(db,user.id,mint));
  }
  return json({error:"METHOD_NOT_ALLOWED"},405);
+}
+function hasPremiumMonitoring(user:any){
+ return user?.billing_risk_status==="clear"&&(
+  user.subscription_status==="active"&&["pro","quant"].includes(user.plan)||
+  user.subscription_status==="trialing"&&Number(user.trial_days_remaining)>0
+ );
+}
+if(path==="/digest/unsubscribe"){
+ if(method!=="GET"&&method!=="POST")return json({error:"METHOD_NOT_ALLOWED"},405);
+ if(!dbReady||!db)return json({error:"ACCOUNT_STORAGE_UNAVAILABLE"},503);
+ if(method==="POST"&&!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
+ if(method==="POST"&&Number(req.headers.get("content-length")||0)>512)return json({error:"BODY_TOO_LARGE"},413);
+ const token=method==="GET"?(u.searchParams.get("token")||""):
+  (new URLSearchParams((await req.text()).slice(0,512))).get("token")||"";
+ if(!/^(?:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}){2}$/i.test(token))
+  return new Response("Invalid unsubscribe link.",{status:400,headers:{"content-type":"text/plain; charset=utf-8","referrer-policy":"no-referrer","cache-control":"no-store"}});
+ const header={"content-type":"text/html; charset=utf-8","cache-control":"no-store","referrer-policy":"no-referrer","x-robots-tag":"noindex,nofollow","x-content-type-options":"nosniff"};
+ if(method==="GET")return new Response('<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Stop SignalForge token digests</title><main style="font:16px/1.6 system-ui;max-width:600px;margin:12vh auto;padding:24px"><h1>Stop token digest emails</h1><p>Confirm to disable all SignalForge token-change digest emails for your account. Your research and in-app alerts remain available.</p><form method="post" action="/digest/unsubscribe"><input type="hidden" name="token" value="'+token+'"><button style="padding:12px 18px;background:#0c604f;color:white;border:0;border-radius:8px">Stop token digests</button></form></main>',{headers:header});
+ const rows=await db.unsafe("UPDATE token_digest_preferences p SET enabled=FALSE,opted_out_at=NOW(),updated_at=NOW() FROM users u WHERE p.user_id=u.id AND u.lifecycle_unsubscribe_token=$1 RETURNING p.user_id",[token]);
+ if(rows.length)await db.unsafe("UPDATE token_digest_deliveries SET status='cancelled',updated_at=NOW() WHERE user_id=$1 AND status IN ('pending','failed')",[rows[0].user_id]);
+ return new Response("<!doctype html><meta charset=utf-8><title>Token digests stopped</title><main style='font:16px/1.6 system-ui;max-width:600px;margin:12vh auto;padding:24px'><h1>Token digests stopped</h1><p>If you had an active subscription to token digest emails, it has been disabled. Your in-app research remains available.</p><a href='/radar'>Return to Token Radar</a></main>",{headers:header});
+}
+if(path==="/api/tokens/digest"){
+ if(!["GET","POST"].includes(method))return json({error:"METHOD_NOT_ALLOWED"},405);
+ if(!dbReady||!db)return json({error:"ACCOUNT_STORAGE_UNAVAILABLE"},503);
+ const user=await userFor(req);if(!user)return json({error:"SIGN_IN_REQUIRED"},401);
+ if(method==="POST"&&!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
+ if(method==="POST"&&rateLimit(req,10,"token-digest"))return json({error:"RATE_LIMITED"},429);
+ if(method==="POST"){
+  if(Number(req.headers.get("content-length")||0)>512)return json({error:"BODY_TOO_LARGE"},413);
+  const body=await req.json().catch(()=>({}));
+  if(typeof body.enabled!=="boolean")return json({error:"ENABLED_BOOLEAN_REQUIRED"},400);
+  if(body.enabled&&!hasPremiumMonitoring(user))return json({error:"PLAN_REQUIRED",detail:"Opt-in email digests are included with active Pro/Quant or your no-card full-access trial.",upgradeUrl:"/app?view=pricing"},402);
+  if(body.enabled){
+   const w=await db.unsafe("SELECT 1 FROM token_watchlist_items WHERE user_id=$1 AND chain_id='solana' AND in_app_alerts=TRUE LIMIT 1",[user.id]);
+   if(!w.length)return json({error:"NO_MONITORED_TOKENS",detail:"Save a token and enable monitoring first."},409);
+  }
+  await db.unsafe("INSERT INTO token_digest_preferences(user_id,enabled,opted_in_at,opted_out_at) VALUES($1,$2,CASE WHEN $2 THEN NOW() ELSE NULL END,CASE WHEN $2 THEN NULL ELSE NOW() END) ON CONFLICT(user_id) DO UPDATE SET enabled=EXCLUDED.enabled,opted_in_at=CASE WHEN EXCLUDED.enabled THEN NOW() ELSE token_digest_preferences.opted_in_at END,opted_out_at=CASE WHEN EXCLUDED.enabled THEN NULL ELSE NOW() END,updated_at=NOW()",[user.id,body.enabled]);
+  if(!body.enabled)await db.unsafe("UPDATE token_digest_deliveries SET status='cancelled',updated_at=NOW() WHERE user_id=$1 AND status='pending'",[user.id]);
+  await recordProductAction(user.id,body.enabled?"token_digest_opted_in":"token_digest_opted_out","digest-opt:"+user.id+":"+body.enabled+":"+Math.floor(Date.now()/86400000));
+ }
+ const [prefs,counts]=await Promise.all([
+  db.unsafe("SELECT enabled,opted_in_at AS \"optedInAt\",opted_out_at AS \"optedOutAt\" FROM token_digest_preferences WHERE user_id=$1",[user.id]),
+  db.unsafe("SELECT COUNT(*)::int AS n FROM token_watchlist_items WHERE user_id=$1 AND chain_id='solana' AND in_app_alerts=TRUE",[user.id])
+ ]);
+ const configured=prefs[0]?.enabled===true;
+ return json({enabled:configured&&hasPremiumMonitoring(user),configuredEnabled:configured,eligible:hasPremiumMonitoring(user),monitoredTokens:counts[0]?.n||0,cadence:"AT_MOST_ONCE_DAILY_AFTER_16_UTC_IF_SOURCE_OBSERVED_CHANGES",channel:"OPT_IN_EMAIL",source:"DEX Screener through stored authenticated in-app change events",paymentEvidence:"TRIAL_OR_SIGNED_PAID_ENTITLEMENT",lastDeliveryStatus:"PROVIDER_ACCEPTANCE_ONLY_NOT_INBOX_PROOF"});
 }
 if(path==="/api/tokens/notifications/read"){
  if(method!=="POST")return json({error:"METHOD_NOT_ALLOWED"},405);
