@@ -203,3 +203,71 @@ test("Token Radar public route and invalid-source research boundary", async () =
   const wrongMethod = await request("/api/tokens/lookup", {method:"POST"});
   expect(wrongMethod.response.status).toBe(405);
 });
+
+
+test("Token Radar watchlists enforce user isolation, provenance-backed history and deduplicated in-app alerts",async()=>{
+ const SOL="So11111111111111111111111111111111111111112";
+ const USDC="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+ const PAIR="58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2";
+ const history=await request("/api/tokens/history?address="+SOL);
+ expect(history.response.status).toBe(200);
+ expect(history.data.historyStatus).toBe("INSUFFICIENT_HISTORY");
+ expect((await request("/api/tokens/watchlist")).response.status).toBe(401);
+ expect((await request("/api/tokens/notifications")).response.status).toBe(401);
+ const makeUser=async()=>{
+  const email="token-radar-"+crypto.randomUUID().slice(0,8)+"@signalforge.test";
+  const response=await request("/api/auth/signup",{
+   method:"POST",headers:headers(),body:JSON.stringify({email,password:"TokenRadarTest#123456",emailConsent:false})
+  });
+  expect(response.response.status).toBe(201);
+  return {cookie:(response.response.headers.get("set-cookie")||"").split(";")[0],id:response.data.user.id};
+ };
+ const first=await makeUser(),second=await makeUser();
+ const save=await request("/api/tokens/watchlist",{
+  method:"POST",headers:headers(first.cookie),body:JSON.stringify({address:SOL,inAppAlerts:true})
+ });
+ expect(save.response.status).toBe(201);
+ expect(save.data.inAppAlerts).toBe(true);
+ const saved=await request("/api/tokens/watchlist",{headers:headers(first.cookie)});
+ expect(saved.response.status).toBe(200);
+ expect(saved.data.items.some((x:any)=>x.address===SOL&&x.inAppAlerts)).toBe(true);
+ const other=await request("/api/tokens/watchlist",{headers:headers(second.cookie)});
+ expect(other.data.items.some((x:any)=>x.address===SOL)).toBe(false);
+ const crossSite=await request("/api/tokens/watchlist",{method:"POST",headers:{...headers(first.cookie),origin:"https://bad-origin.example"},body:JSON.stringify({address:SOL})});
+ expect(crossSite.response.status).toBe(403);
+ const pg=await import("postgres");
+ const {normalizeDexPairs}=await import("../src/token-radar.mjs");
+ const {persistTokenObservation}=await import("../src/token-radar-storage.mjs");
+ const db=pg.default(Bun.env.DATABASE_URL!,{ssl:false,max:2});
+ const source=(price:number,liquidity:number,volume:number,at:number)=>{
+  const pair={chainId:"solana",pairAddress:PAIR,dexId:"raydium",
+   baseToken:{address:SOL,name:"Wrapped SOL",symbol:"SOL"},
+   quoteToken:{address:USDC,name:"USD Coin",symbol:"USDC"},
+   priceUsd:String(price),liquidity:{usd:liquidity},volume:{h24:volume},
+   txns:{h24:{buys:30,sells:20}},priceChange:{h24:3},pairCreatedAt:1700000000000};
+  return {...normalizeDexPairs([pair],SOL,at),cacheStatus:"FRESH_FETCH"};
+ };
+ try{
+  const firstSnapshot=await persistTokenObservation(db,source(10,100000,50000,1794370000000));
+  expect(["INITIAL_OBSERVATION","NO_MATERIAL_CHANGE"].includes(firstSnapshot.status)).toBe(true);
+  const secondSnapshot=await persistTokenObservation(db,source(15,50000,150000,1794370060000));
+  expect(secondSnapshot.status).toBe("SIGNIFICANT_CHANGE");
+  expect(secondSnapshot.newEvents).toBeGreaterThan(0);
+  const duplicate=await persistTokenObservation(db,source(15,50000,150000,1794370120000));
+  expect(duplicate.newEvents).toBe(0);
+  const timeline=await request("/api/tokens/history?address="+SOL);
+  expect(timeline.response.status).toBe(200);
+  expect(timeline.data.historyStatus).toBe("AVAILABLE");
+  expect(timeline.data.events.some((x:any)=>x.type==="LIQUIDITY_CHANGE")).toBe(true);
+  const notice=await request("/api/tokens/notifications",{headers:headers(first.cookie)});
+  expect(notice.response.status).toBe(200);
+  expect(notice.data.channel).toBe("IN_APP_ONLY");
+  expect(notice.data.items.some((x:any)=>x.address===SOL&&x.type==="LIQUIDITY_CHANGE")).toBe(true);
+  const otherNotices=await request("/api/tokens/notifications",{headers:headers(second.cookie)});
+  expect(otherNotices.data.items).toHaveLength(0);
+ }finally{await db.end();}
+ const removed=await request("/api/tokens/watchlist?address="+SOL,{method:"DELETE",headers:headers(first.cookie)});
+ expect(removed.response.status).toBe(200);
+ const afterDelete=await request("/api/tokens/watchlist",{headers:headers(first.cookie)});
+ expect(afterDelete.data.items.some((x:any)=>x.address===SOL)).toBe(false);
+},45000);
