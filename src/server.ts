@@ -258,6 +258,16 @@ if(path==="/api/tokens/watchlist"){
  }
  return json({error:"METHOD_NOT_ALLOWED"},405);
 }
+if(path==="/api/tokens/notifications/read"){
+ if(method!=="POST")return json({error:"METHOD_NOT_ALLOWED"},405);
+ if(!dbReady||!db)return json({error:"ACCOUNT_STORAGE_UNAVAILABLE"},503);
+ const user=await userFor(req);if(!user)return json({error:"SIGN_IN_REQUIRED"},401);
+ if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
+ const b=await req.json().catch(()=>({}));
+ if(b.all!==true)return json({error:"ALL_FLAG_REQUIRED"},400);
+ const updated=await db.unsafe("UPDATE token_alert_events SET read_at=NOW() WHERE user_id=$1 AND read_at IS NULL RETURNING id",[user.id]);
+ return json({ok:true,updated:updated.length});
+}
 if(path==="/api/tokens/notifications"){
  if(method!=="GET")return json({error:"METHOD_NOT_ALLOWED"},405);
  if(!dbReady||!db)return json({error:"ACCOUNT_STORAGE_UNAVAILABLE"},503);
