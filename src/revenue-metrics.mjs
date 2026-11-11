@@ -9,7 +9,11 @@ export const SIGNALFORGE_PRICE_IDS = Object.freeze({
  SF_PRICE_QUANT_Y:"price_1UYxf7L4BR0lqapB0mN9QfRg"
 });
 
-function objectOf(row){return row?.payload?.data?.object||null}
+function objectOf(row){
+ const raw=row?.payload;
+ try{const payload=typeof raw==="string"?JSON.parse(raw):raw;return payload?.data?.object||null}
+ catch{return null}
+}
 function idOf(raw){return typeof raw==="string"?raw:raw?.id||null}
 function isGenuineUser(user){return user?.role==="user"&&!/@signalforge\.test$|@example\.com$|@signalforge\.invalid$/i.test(user.email||"")}
 
