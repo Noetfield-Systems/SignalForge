@@ -258,6 +258,7 @@ test("Token Radar watchlists enforce user isolation, provenance-backed history a
   const timeline=await request("/api/tokens/history?address="+SOL);
   expect(timeline.response.status).toBe(200);
   expect(timeline.data.historyStatus).toBe("AVAILABLE");
+  console.log("TOKEN_RADAR_TIMELINE_DEBUG",JSON.stringify({secondSnapshot,duplicate,events:timeline.data.events}));
   expect(timeline.data.events.some((x:any)=>x.type==="LIQUIDITY_CHANGE")).toBe(true);
   const notice=await request("/api/tokens/notifications",{headers:headers(first.cookie)});
   expect(notice.response.status).toBe(200);
