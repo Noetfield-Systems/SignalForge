@@ -66,6 +66,7 @@ async function deliverTokenDigests(){
  const hour=Bun.env.NODE_ENV==="test"&&Bun.env.TOKEN_DIGEST_TEST_FORCE_HOUR==="16"
    ?16:new Date().getUTCHours();
  if(hour<16){console.log("TOKEN_DIGEST_WAIT_WINDOW",hour);return}
+ await db.unsafe("UPDATE token_digest_deliveries SET status='pending',scheduled_at=NOW(),updated_at=NOW(),last_error='Recovered stale claim' WHERE status='sending' AND updated_at<NOW()-INTERVAL '20 minutes'");
  const eligible="u.billing_risk_status='clear' AND (u.subscription_status='active' AND u.plan IN ('pro','quant') OR u.subscription_status='trialing' AND u.trial_ends_at>NOW())";
  const synthetic="u.role='user' AND u.email NOT LIKE '%@signalforge.test' AND u.email NOT LIKE '%@example.com' AND u.email NOT LIKE '%@signalforge.invalid'";
  const pending=await db.unsafe("INSERT INTO token_digest_deliveries(user_id,digest_date) "+
