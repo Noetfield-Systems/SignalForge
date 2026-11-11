@@ -242,6 +242,39 @@ if(path==="/api/tokens/history" || /^\/api\/tokens\/solana\/[^/]+\/history$/.tes
  try{return json(await getTokenHistory(db,mint))}
  catch(e){console.error("Token history unavailable",String(e).slice(0,100));return json({error:"HISTORY_UNAVAILABLE"},503)}
 }
+
+if(path==="/api/tokens/notes"){
+ if(!["GET","POST","DELETE"].includes(method))return json({error:"METHOD_NOT_ALLOWED"},405);
+ if(!dbReady||!db)return json({error:"RESEARCH_STORAGE_UNAVAILABLE"},503);
+ const owner=await userFor(req);
+ if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+ if(method==="GET"){
+  const address=u.searchParams.get("address")||"";
+  if(!validSolanaAddress(address))return json({error:"INVALID_SOLANA_ADDRESS"},400);
+  const items=await db.unsafe("SELECT id,kind,body,invalidation,created_at AS \"createdAt\",updated_at AS \"updatedAt\" FROM token_research_notes WHERE user_id=$1 AND chain_id='solana' AND address=$2 ORDER BY id DESC LIMIT 100",[owner.id,address]);
+  return json({address,items,source:"USER_AUTHORED_PRIVATE_NOTES",verifiedMarketFacts:false});
+ }
+ if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
+ if(method==="DELETE"){
+  const id=u.searchParams.get("id")||"";
+  if(!validResearchNoteId(id))return json({error:"INVALID_NOTE_ID"},400);
+  const deleted=await db.unsafe("DELETE FROM token_research_notes WHERE id=$1 AND user_id=$2 RETURNING id",[id,owner.id]);
+  return deleted.length?json({ok:true,deletedId:String(id)}):json({error:"NOTE_NOT_FOUND"},404);
+ }
+ if(Number(req.headers.get("content-length")||0)>4000)return json({error:"NOTE_PAYLOAD_TOO_LARGE"},413);
+ const raw=await req.text();
+ if(raw.length>4000)return json({error:"NOTE_PAYLOAD_TOO_LARGE"},413);
+ let input:any;
+ try{input=JSON.parse(raw)}catch{return json({error:"INVALID_JSON"},400)}
+ const validation=validateResearchNote(input,validSolanaAddress);
+ if(validation.error)return json({error:validation.error},400);
+ const note=validation.value;
+ const count=await db.unsafe("SELECT COUNT(*)::int AS n FROM token_research_notes WHERE user_id=$1",[owner.id]);
+ if(count[0]?.n>=100)return json({error:"NOTE_LIMIT_REACHED"},409);
+ const rows=await db.unsafe("INSERT INTO token_research_notes(user_id,chain_id,address,kind,body,invalidation) VALUES($1,'solana',$2,$3,$4,$5) RETURNING id,kind,body,invalidation,created_at AS \"createdAt\"",[owner.id,note.address,note.kind,note.body,note.invalidation]);
+ await recordProductAction(owner.id,"research_note_created","research-note:"+owner.id+":"+rows[0].id);
+ return json({note:rows[0],address:note.address},201);
+}
 if(path==="/api/tokens/watchlist"){
  if(!dbReady||!db)return json({error:"ACCOUNT_STORAGE_UNAVAILABLE"},503);
  const user=await userFor(req);
