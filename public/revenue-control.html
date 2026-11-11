@@ -41,12 +41,28 @@ async function load(){
   $("status").textContent=d.status+" · "+new Date(d.asOf).toLocaleString();
   $("cards").replaceChildren();$("funnel").replaceChildren();$("evidence").replaceChildren();
   tile("Account entitlements",a.activePaidEntitlementsReportedByApp??"—","Source: application database; confirm against Stripe");
+  tile("Authenticated token researchers · 30d",f.authenticatedTokenResearchersLast30Days??"—","Successful source-backed token research, not raw pageviews");
+  tile("Returning researchers · 30d",f.returnDayResearchersLast30Days??"—","Real research actions on at least two distinct UTC dates");
+  tile("Linked paying customers",b.linkedPaidSubscriberUsers??"—","Unique accounts linked to signed SignalForge invoice proof");
   tile("Recognized paid invoices",b.recognizedPaidInvoices??"—","Exact SignalForge SKU · signed webhook");
   tile("Gross invoice activity (CAD)","$"+Number(b.sourceReportedGrossPaidCad||0).toLocaleString("en-CA",{minimumFractionDigits:2,maximumFractionDigits:2}),"Not settled cash or net revenue");
   tile("Active free trials",a.activeFreeTrials??"—","Not paid subscriptions");
   tile("Checkout started · 30d",f.checkoutStartedUsersLast30Days??"—","Authenticated, server-observed");
   tile("Settled net cash","Not reconciled","Requires Stripe balance/payout verification");
-  for(const [k,v] of [["Genuine user accounts",a.genuineAccounts],["Signups · last 30 days",a.signupsLast30Days],["Users saving tokens · last 30 days",f.researchActionsLast30Days?.tokenWatchlistAdded],["Checkout started users · last 30 days",f.checkoutStartedUsersLast30Days],["Completed checkout users · retained events",b.checkoutCompletedUsers],["Recognized paid invoices",b.recognizedPaidInvoices]])addRow($("funnel"),k,v??"Unknown");
+  for(const [k,v] of [
+   ["Qualified human visitors · 30 days",f.qualifiedPublicVisitorsLast30Days??"NOT MEASURED"],
+   ["Genuine registered accounts",a.genuineAccounts],
+   ["Signups · last 30 days",a.signupsLast30Days],
+   ["Token researchers · 30 days",f.authenticatedTokenResearchersLast30Days],
+   ["Research journal adopters · 30 days",f.journalAdoptersLast30Days],
+   ["Users saving tokens · 30 days",f.researchActionsLast30Days?.tokenWatchlistAdded],
+   ["Returning researchers · distinct days",f.returnDayResearchersLast30Days],
+   ["Pricing viewers · 30 days",f.pricingViewersLast30Days],
+   ["Report share button users · 30 days",f.shareButtonUsersLast30Days],
+   ["Checkout started users · 30 days",f.checkoutStartedUsersLast30Days],
+   ["Completed checkout users · retained events",b.checkoutCompletedUsers],
+   ["Linked paid subscriber users · retained events",b.linkedPaidSubscriberUsers],
+   ["Recognized paid invoices · retained events",b.recognizedPaidInvoices]])addRow($("funnel"),k,v??"Unknown");
   for(const [k,v] of [["Linked paid invoices",b.linkedPaidInvoices],["Unmatched paid invoices",b.unmatchedPaidInvoices],["Failed invoice events",b.failedInvoiceEvents],["Related refund events",b.linkedRefundEvents],["Related dispute events",b.linkedDisputeEvents],["Stripe events inspected",d.coverage?.eventsProcessed],["Full history included",d.coverage?.completeForAllHistory?"Yes":"No"]])addRow($("evidence"),k,v??"Unknown");
   $("cautions").textContent=(d.cautions||[]).join(" ")+" Direct Stripe payouts, fees and settlement have not been reconciled by this page.";
  }catch(e){$("status").textContent="Not available";$("error").textContent=String(e.message||e)}
