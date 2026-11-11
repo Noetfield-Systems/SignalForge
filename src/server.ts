@@ -3,6 +3,7 @@ import { researchSolanaToken, TokenRadarError, validSolanaAddress } from "./toke
 import {assessCompanyOutcome} from "../company-os/shared-evidence-gate.mjs";
 import { compileOperatingBoard } from "../company-os/operating-engine.ts";
 import { evaluateCompanyPolicy } from "./company-os-policy";
+import { stripeCheckoutUrlKey } from "./billing-keys";
 const SIGNALFORGE_MARKETING_HTML = await Bun.file(new URL("../public/welcome.html", import.meta.url)).text();
 const HTML = await Bun.file(new URL("../public/index.html", import.meta.url)).text();
 const TOKEN_RADAR_HTML = await Bun.file(new URL("../public/token-radar.html", import.meta.url)).text();
@@ -106,7 +107,7 @@ async function backtestResponse(symbol:string,interval:number,strategy:string){c
 async function stripeCheckout(user:any,plan:string,period:string){
  const p=plan==="quant"?"quant":"pro",i=period==="year"?"year":"month";
  if(user.subscription_status==="active"&&user.stripe_subscription_id)return json({error:"You already have an active subscription. Use Manage billing."},409);
- const k="SIGNALFORGE_STRIPE_"+p.toUpperCase()+"_"+i.toUpperCase()+"_URL",link=Bun.env[k];
+ const k=stripeCheckoutUrlKey(p,i),link=Bun.env[k];
  if(!link)return json({error:"Paid checkout is not configured for this plan."},503);
  let dest:URL;
  try{dest=new URL(link);if(dest.protocol!=="https:"||!["buy.stripe.com","checkout.stripe.com"].includes(dest.hostname))throw Error("Unexpected payment host")}
