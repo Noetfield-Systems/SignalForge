@@ -64,7 +64,7 @@ async function signed(type:string,object:any,id?:string){
  const bytes=new Uint8Array(await crypto.subtle.sign("HMAC",key,new TextEncoder().encode(t+"."+raw)));
  const sig="t="+t+",v1="+[...bytes].map(x=>x.toString(16).padStart(2,"0")).join("");
  const response=await fetch(BASE+"/stripe/webhook",{method:"POST",headers:{"stripe-signature":sig,"content-type":"application/json"},body:raw});
- return {status:response.status,data:await response.json()};
+ return {status:response.status,data:await response.json(),eventId:eid};
 }
 const session=(uid:string,cus:string,sub:string)=>({
  object:"checkout.session",mode:"subscription",status:"complete",payment_status:"paid",
@@ -79,6 +79,8 @@ test("signed completed checkout never activates access; only exact paid SKU invo
  const uid=await newTrial(),cus="cus_Alpha001",sub="sub_Alpha001";
  const first=await signed("checkout.session.completed",session(uid,cus,sub));
  expect(first.status).toBe(200);
+ const sourceRow=await sql.unsafe("SELECT jsonb_typeof(payload) AS kind FROM payment_events WHERE stripe_event_id=$1",[first.eventId]);
+ expect(sourceRow[0]?.kind).toBe("object");
  let u=await account(uid);
  expect(u.subscription_status).toBe("trialing");
  expect(u.stripe_subscription_id).toBe(sub);
@@ -198,10 +200,6 @@ test("public analytics events cannot forge paid, server-observed user conversion
   expect(accepted.source).toBe("CLIENT_REPORTED_UNTRUSTED");
   expect(accepted.verified).toBe(false);
   const rows=await sql.unsafe("SELECT user_id,event_name,source,metadata FROM product_events WHERE event_name='pricing_view' AND metadata->>'feature'=$1 ORDER BY id DESC",[marker]);
-  if(rows.length!==1){
-   const recent=await sql.unsafe("SELECT user_id,event_name,source,metadata FROM product_events WHERE event_name='pricing_view' ORDER BY id DESC LIMIT 6");
-   throw Error("Client telemetry marker absent: "+JSON.stringify({marker,recent}).slice(0,2500));
-  }
   expect(rows).toHaveLength(1);
   expect(rows[0].user_id).toBe(null);
   expect(rows[0].source).toBe("client_reported");
