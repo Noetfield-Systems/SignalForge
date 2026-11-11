@@ -61,7 +61,7 @@ export async function initRadar(db:SQL){
   await db.unsafe("CREATE TABLE IF NOT EXISTS token_watch_events (id BIGSERIAL PRIMARY KEY, user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE, mint TEXT NOT NULL, snapshot_id UUID NOT NULL REFERENCES token_research_snapshots(id), event_key TEXT NOT NULL UNIQUE, event_type TEXT NOT NULL, detail JSONB NOT NULL, read_at TIMESTAMPTZ, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())");
   await db.unsafe("CREATE INDEX IF NOT EXISTS token_watch_events_user_idx ON token_watch_events(user_id,created_at DESC)");
 }
-function changes(a:any,b:any){
+export function changes(a:any,b:any){
   const events:any[]=[];
   for(const [field,threshold,label] of [["priceUsd",0.05,"PRICE_MOVE"],["liquidityUsd",0.10,"LIQUIDITY_MOVE"],["volume24hUsd",0.25,"VOLUME_MOVE"]] as const){
     const old=a?.market?.[field],next=b?.market?.[field];
@@ -84,6 +84,7 @@ async function store(db:SQL,research:any){
 }
 export async function handleRadar(req:Request,db:SQL|null,user:any,companyTokenValid=false):Promise<Response>{
   const url=new URL(req.url),path=url.pathname,method=req.method;
+  const origin=req.headers.get("origin");if((method==="POST"||method==="DELETE")&&path!=="/api/token-radar/refresh"&&origin&&origin!==url.origin)return send({error:"Cross-origin write denied"},403);
   if(path==="/api/token-radar/refresh"&&method==="POST"){
     if(!companyTokenValid)return send({error:"Workload authorization required"},401);
     if(!db)return send({error:"Database not ready"},503);
