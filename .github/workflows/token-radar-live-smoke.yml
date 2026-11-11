@@ -119,3 +119,31 @@ jobs:
           grep -q 'id="shareX"' /tmp/radar-shared.html
           grep -q '<link rel="canonical" href="https://signalforge-web-production.up.railway.app/tokens/solana/' /tmp/radar-shared.html
           echo "LIVE_SOCIAL_SHARING_VERIFIED"
+
+
+      - name: Verify deployed private journal and admin revenue boundaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsS --max-time 20 "$BASE/radar" -o /tmp/radar-v2.html
+          grep -q 'id="researchNotes"' /tmp/radar-v2.html
+          grep -q 'id="noteForm"' /tmp/radar-v2.html
+          for route in /admin/revenue /api/admin/revenue; do
+            code=$(curl -sS --max-time 20 -o /tmp/revenue-private.json -w "%{http_code}" "$BASE$route")
+            test "$code" = "403"
+            python3 - <<'PY'
+          import json
+          o=json.load(open("/tmp/revenue-private.json"))
+          assert o.get("error")=="Admin access required",o
+          PY
+          done
+          code=$(curl -sS --max-time 20 -o /tmp/notes-private.json -w "%{http_code}" "$BASE/api/tokens/notes?address=$MINT")
+          test "$code" = "401"
+          python3 - <<'PY'
+          import json
+          o=json.load(open("/tmp/notes-private.json"))
+          assert o.get("error")=="SIGN_IN_REQUIRED",o
+          PY
+          code=$(curl -sS --max-time 20 -o /tmp/notes-private-write.json -w "%{http_code}" -X POST -H 'content-type: application/json' --data '{"address":"So11111111111111111111111111111111111111112","kind":"note","body":"Unauthorized write must fail"}' "$BASE/api/tokens/notes")
+          test "$code" = "401"
+          echo "LIVE_RESEARCH_NOTES_UI_VERIFIED; PRIVATE_NOTES_GET_POST_DENIED; PRIVATE_REVENUE_GET_DENIED"
