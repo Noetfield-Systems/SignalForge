@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080e18">
+<meta name="description" content="Research Solana tokens with source-linked DEX liquidity, trading activity, pool age and verifiable observations. No account required.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="SignalForge Token Radar — Source-linked Solana research">
+<meta property="og:description" content="Token markets, liquidity and activity with visible sources and observation time.">
+<title>Token Radar · SignalForge</title>
+<style>
+:root{color-scheme:dark;--bg:#080e18;--panel:#101e2b;--panel2:#142532;--line:#284052;--text:#ecf6fc;--muted:#96aebb;--green:#6cf2c5;--amber:#f7cf7c;--blue:#8fbaff}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(1100px 500px at 64% -10%,#15423d77,transparent 70%),radial-gradient(820px 400px at 7% 38%,#20345a44,transparent 70%),var(--bg);color:var(--text);font:15px/1.6 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+a{color:inherit}button,input{font:inherit}button{cursor:pointer}a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(--green);outline-offset:3px}
+.wrap{width:min(1150px,calc(100% - 44px));margin:auto}
+nav{display:flex;align-items:center;justify-content:space-between;gap:15px;border-bottom:1px solid #31526266;padding:24px 0}
+.brand{font-weight:850;font-size:15px;letter-spacing:.17em;text-decoration:none;display:flex;gap:11px;align-items:center}.mark{width:35px;height:35px;border-radius:11px;background:linear-gradient(140deg,#77ffcb,#76a9ff);display:grid;place-items:center;color:#09202b;font-size:22px;letter-spacing:-.09em}
+.navlinks{display:flex;gap:23px;align-items:center;color:#b5cbd4;font-size:13px}.navlinks a{text-decoration:none}.navlinks a:hover{color:var(--green)}.pill{border:1px solid #397366;border-radius:99px;padding:7px 12px;font-size:11px;color:var(--green);white-space:nowrap}
+.hero{padding:72px 0 34px;max-width:900px}.eyebrow{color:var(--green);letter-spacing:.2em;font-size:11px;font-weight:700;text-transform:uppercase}h1{font-weight:720;font-size:clamp(48px,7vw,90px);line-height:1.03;letter-spacing:-.07em;margin:22px 0}h1 em{font-style:normal;background:linear-gradient(100deg,#b0ffe6,#7eabf7);-webkit-background-clip:text;background-clip:text;color:transparent}.lead{color:#acbeca;max-width:680px;line-height:1.8;font-size:17px;margin-bottom:27px}
+.searchbox{display:flex;gap:9px;align-items:stretch;border:1px solid #447c79;background:linear-gradient(145deg,#142531,#0f1b28);box-shadow:0 18px 60px #0006,0 0 50px #39c99b10;padding:9px;border-radius:16px;max-width:875px}
+.searchbox input{min-width:0;width:100%;flex:1;background:transparent;border:0;outline:none;color:#fff;padding:13px 16px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px}
+.searchbox input::placeholder{color:#74909c}.btn{background:linear-gradient(110deg,#71f5ca,#9df6de);color:#09231e;border:0;border-radius:10px;font-weight:850;padding:13px 23px;white-space:nowrap}
+.btn:hover{filter:brightness(1.08)}.hint{display:flex;flex-wrap:wrap;gap:10px;align-items:center;color:#8297a6;font-size:12px;margin-top:13px}.linkbutton{background:none;border:0;padding:0;color:#8ee9ce;text-decoration:underline;text-underline-offset:3px}
+.panel{background:linear-gradient(155deg,#142331,#101925);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 10px 32px #0002}.panelhead{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:18px;align-items:center}.label{font-size:11px;letter-spacing:.13em;color:#92b5b9;text-transform:uppercase}.panelhead strong{font-size:15px}
+.status{padding:22px 0 17px;color:#9db3c1;font-size:13px;min-height:34px}.status.error{color:#ffb7b7}.status.success{color:var(--green)}
+#report[hidden]{display:none}.report-top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:15px;align-items:center;padding:27px}.asset{font-size:clamp(25px,4vw,39px);letter-spacing:-.045em;margin:3px 0}.sub{color:#9bb0bc;font-size:12px;overflow-wrap:anywhere}.pilltag{border:1px solid #406f68;border-radius:100px;padding:8px 13px;color:#b6ffdf;font-size:11px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.metric{padding:23px;border-right:1px solid var(--line)}.metric:last-child{border-right:0}.metric b{display:block;font-size:clamp(22px,2.7vw,31px);letter-spacing:-.04em;font-variant-numeric:tabular-nums;margin:8px 0 3px;overflow-wrap:anywhere}.metric small{color:#8ca4b3;font-size:11px}
+.two{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(260px,.85fr);gap:15px;margin:16px 0}.section{padding:24px}.section h2{font-size:18px;letter-spacing:-.025em;margin:0 0 6px}.section p{color:#a9b8c4;font-size:12px;margin:2px 0 20px}.detail{display:flex;gap:15px;justify-content:space-between;border-bottom:1px solid #263b49;padding:11px 0;color:#aac1c9;font-size:13px}.detail strong{color:#edf7fb;text-align:right;font-weight:600}.muted{color:#96adbc}.pools{display:grid;gap:9px;margin-top:15px}.pool{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px;border:1px solid #2e4554;border-radius:11px;background:#0e1925}.pool b{font-size:13px}.pool small{display:block;color:#879fac;font-size:11px}.poolright{text-align:right}.source{color:#95b5bf;text-decoration:none}.source:hover{color:var(--green)}.actionbar{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 28px}.outline{border:1px solid #37615f;background:#14252d;color:#d9fff2;border-radius:9px;padding:12px 16px}.outline:hover{border-color:var(--green)}.info{border:1px solid #3c4e5e;border-radius:13px;padding:18px 20px;color:#aebfcc;background:#12202c;margin:18px 0 54px;font-size:12px;line-height:1.8}.info b{color:#e8f6f5}
+footer{border-top:1px solid #294151;padding:25px 0 42px;display:flex;justify-content:space-between;gap:15px;color:#879eac;font-size:12px}
+.skeleton{height:170px;background:linear-gradient(100deg,#142632,#29413c,#142632);background-size:200%;animation:shimmer 1.8s linear infinite;border-radius:14px;margin-top:10px}@keyframes shimmer{to{background-position-x:-200%}}
+@media(max-width:780px){.two{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.metric:nth-child(2){border-right:0}.metric:nth-child(-n+2){border-bottom:1px solid var(--line)}.hero{padding:49px 0 22px}.navlinks{gap:12px}.pill{display:none}}
+@media(max-width:510px){.wrap{width:min(100% - 28px,1150px)}.navlinks a:nth-child(2){display:none}.searchbox{flex-direction:column}.searchbox input{font-size:12px}.btn{width:100%}.stats{grid-template-columns:1fr}.metric{border-right:0!important;border-bottom:1px solid var(--line)}.metric:last-child{border-bottom:0}.report-top,.section{padding:19px}.hero h1{font-size:48px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav aria-label="Main navigation">
+<a class="brand" href="/welcome"><span class="mark" aria-hidden="true">S</span>SIGNALFORGE</a>
+<div class="navlinks"><a href="/radar" aria-current="page">Token Radar</a><a href="/app">Research terminal</a><span class="pill">SOLANA · PUBLIC RESEARCH</span></div>
+</nav>
+<main>
+<section class="hero">
+<div class="eyebrow">Token Intelligence / Read-only research</div>
+<h1>Know what the<br><em>market reveals.</em></h1>
+<p class="lead">Inspect a Solana token's observable pools, liquidity and trading activity. Every number has a source, a timestamp and a clear limit. Start without an account.</p>
+<form id="search" class="searchbox" autocomplete="off"><label for="mint" class="sr-only" style="position:absolute;left:-9999px">Solana token mint address</label>
+<input id="mint" spellcheck="false" aria-label="Solana token mint address" placeholder="Paste a Solana token mint address" required maxlength="44">
+<button class="btn" id="submit" type="submit">Research token →</button></form>
+<div class="hint">Try a known token: <button type="button" class="linkbutton" id="trySol">Wrapped SOL</button> <span>·</span> Pool data from DEX Screener <span>·</span> No wallet connection required</div>
+</section>
+<div id="status" class="status" role="status" aria-live="polite">Enter a token mint to begin your research.</div>
+<div id="loading" class="skeleton" hidden aria-label="Loading token market observations"></div>
+<section id="report" hidden aria-label="Token research report">
+<div class="panel">
+<div class="report-top"><div><div class="label">SOLANA / TOKEN RESEARCH</div><h2 class="asset" id="asset">—</h2><div class="sub" id="address"></div></div><span class="pilltag" id="sourceStatus">SOURCE-LINKED</span></div>
+<div class="stats">
+<div class="metric"><span class="label">Primary-pool price</span><b id="price">—</b><small id="change">24h change · unavailable</small></div>
+<div class="metric"><span class="label">Pool liquidity</span><b id="liquidity">—</b><small>USD · reported by source</small></div>
+<div class="metric"><span class="label">Trading volume</span><b id="volume">—</b><small>USD · 24h as reported</small></div>
+<div class="metric"><span class="label">24h transactions</span><b id="transactions">—</b><small id="txnDetail">Buy/sell counts if available</small></div>
+</div>
+</div>
+<div class="two">
+<div class="panel section"><div class="label">01 / Liquidity venues</div><h2>Observable pools</h2><p>Primary pool selected by reported USD liquidity. Pool data is not a token safety assessment.</p><div class="pools" id="pools"></div></div>
+<div class="panel section"><div class="label">02 / Evidence</div><h2>Source & freshness</h2><p>Know exactly what this report does and does not verify.</p>
+<div class="detail"><span>Provider</span><strong id="sourceName">—</strong></div>
+<div class="detail"><span>Retrieved</span><strong id="observedAt">—</strong></div>
+<div class="detail"><span>Data freshness</span><strong>Provider-cached</strong></div>
+<div class="detail"><span>Pool age</span><strong id="poolAge">—</strong></div>
+<div class="detail"><span>Historical change</span><strong>Insufficient history</strong></div>
+<div class="detail"><span>Contract / holders risk</span><strong>Not assessed</strong></div>
+</div>
+</div>
+<div class="actionbar"><button class="btn" id="share" type="button">Copy report link</button><a class="outline" id="solscan" rel="noopener noreferrer" target="_blank">View in Solscan ↗</a><a class="outline" id="dex" rel="noopener noreferrer" target="_blank">Open primary pool ↗</a><a class="outline" href="/app">Open SignalForge terminal ↗</a></div>
+</section>
+<div class="info"><b>Research boundaries</b> — DEX pool observations are third-party market data and may be delayed, incomplete or inaccurate. The retrieved timestamp is not a verified onchain event timestamp. No rug-pull, ownership, contract-safety or holder-concentration assessment is supplied. Historical monitoring and alerts are separate upcoming capabilities; this report does not claim to track changes until observations have been persisted.</div>
+</main>
+<footer><span>© 2026 SignalForge · Evidence before execution</span><span>Read-only research. No financial advice, custody or trade execution.</span></footer>
+</div>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const e=v=>String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const money=n=>typeof n==="number"&&Number.isFinite(n)?"$"+(n<0.01?n.toLocaleString("en-US",{maximumSignificantDigits:4}):n.toLocaleString("en-US",{minimumFractionDigits:n<1?4:2,maximumFractionDigits:n<1?6:2})):"Not reported";
+const short=n=>typeof n==="number"&&Number.isFinite(n)?"$"+Intl.NumberFormat("en-US",{notation:"compact",maximumFractionDigits:2}).format(n):"Not reported";
+const num=n=>typeof n==="number"&&Number.isFinite(n)?Intl.NumberFormat("en-US").format(n):"Not reported";
+const safeLink=u=>typeof u==="string"&&/^https:\/\/(?:dexscreener\.com\/solana\/|solscan\.io\/token\/)[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(u)?u:"#";
+const SOL="So11111111111111111111111111111111111111112";
+let currentAddress=null;
+function status(message,kind=""){ $("status").textContent=message;$("status").className="status "+kind; }
+function setLoading(on){$("loading").hidden=!on;$("submit").disabled=on;$("submit").textContent=on?"Retrieving source…":"Research token →";}
+function show(report){
+const p=report.primaryPool;
+$("report").hidden=false;
+$("asset").textContent=report.token?report.token.name+" ("+report.token.symbol+")":"Unlisted token";
+$("address").textContent=report.address;
+$("sourceStatus").textContent=report.status==="OBSERVED"?"OBSERVED · SOURCE-LINKED":"NO POOLS OBSERVED";
+$("price").textContent=money(p?.priceUsd);
+$("liquidity").textContent=short(p?.liquidityUsd);
+$("volume").textContent=short(p?.volume24hUsd);
+const txns=p?.buys24h!=null&&p?.sells24h!=null?p.buys24h+p.sells24h:null;
+$("transactions").textContent=num(txns);
+$("txnDetail").textContent=txns==null?"Counts unavailable":num(p.buys24h)+" buys · "+num(p.sells24h)+" sells";
+$("change").textContent=p?.priceChange24hPct!=null?"24h price change: "+p.priceChange24hPct.toFixed(2)+"%":"24h price change not reported";
+$("sourceName").textContent=report.source.name;
+$("observedAt").textContent=new Date(report.source.observedAt).toLocaleString();
+$("poolAge").textContent=p?.ageHours!=null?p.ageHours+" hours (approx.)":"Unavailable";
+$("solscan").href=safeLink(report.explorerUrl);
+$("dex").hidden=!p;
+if(p)$("dex").href=safeLink(p.explorerUrl);
+const pools=report.pools.slice(0,20).map((x,i)=>'<div class="pool"><div><b>'+e(x.base.symbol)+' / '+e(x.quote.symbol)+'</b><small>'+e(x.dex)+(i===0?' · PRIMARY POOL':'')+' · '+e(x.address.slice(0,8))+'…</small></div><div class="poolright"><b>'+e(short(x.liquidityUsd))+' liquidity</b><small><a class="source" href="'+e(safeLink(x.explorerUrl))+'" target="_blank" rel="noopener noreferrer">View source ↗</a></small></div></div>');
+$("pools").innerHTML=pools.length?pools.join(""):'<div class="muted">No DEX liquidity pools were returned by the provider. This does not prove a token is nonexistent or safe.</div>';
+}
+async function lookup(mint,push=true){
+mint=mint.trim();$("report").hidden=true;setLoading(true);status("Checking the Solana address and fetching reported pools…");
+try{
+const r=await fetch("/api/tokens/lookup?chain=solana&address="+encodeURIComponent(mint),{headers:{"accept":"application/json"}});
+const j=await r.json();
+if(!r.ok)throw new Error(j.error==="INVALID_SOLANA_ADDRESS"?"Invalid Solana mint address. Paste a Base58-encoded 32-byte address.":j.error==="PROVIDER_UNAVAILABLE"||j.error==="PROVIDER_RATE_LIMITED"?"Market data provider is currently unavailable; no substitute data is shown.":"Research unavailable ("+String(j.error||r.status)+").");
+currentAddress=mint;
+if(push)history.pushState(null,"","/tokens/solana/"+encodeURIComponent(mint));
+document.title=(j.token?.symbol||"Solana token")+" · Token Radar · SignalForge";
+show(j);
+status(j.status==="OBSERVED"?"Live provider response received · "+j.poolCount+" observed pool(s) · "+(j.cacheStatus==="CACHED"?"cached observation":"new fetch"):"No pools returned by the provider for this address.","success");
+}catch(err){status(err?.message||"Unable to load this token.","error");}
+finally{setLoading(false);}
+}
+$("search").addEventListener("submit",ev=>{ev.preventDefault();lookup($("mint").value);});
+$("trySol").addEventListener("click",()=>{$("mint").value=SOL;lookup(SOL);});
+$("share").addEventListener("click",async()=>{if(!currentAddress)return;const link=location.origin+"/tokens/solana/"+currentAddress;try{await navigator.clipboard.writeText(link);$("share").textContent="Copied report link";}catch{$("share").textContent=link;}});
+window.addEventListener("popstate",()=>{const p=location.pathname.match(/^\/tokens\/solana\/([^/]+)$/);if(p){$("mint").value=decodeURIComponent(p[1]);lookup($("mint").value,false);}else{$("report").hidden=true;status("Enter a token mint to begin your research.");}});
+const initial=location.pathname.match(/^\/tokens\/solana\/([^/]+)$/);
+if(initial){try{$("mint").value=decodeURIComponent(initial[1]);lookup($("mint").value,false);}catch{status("Invalid token URL.","error");}}
+</script>
+</body></html>
