@@ -20,6 +20,7 @@ test("only recognized, paid and nonzero SignalForge invoices count; Checkout alo
  assert.equal(out.checkoutCompletedUsers,1);
  assert.equal(out.recognizedPaidInvoices,1);
  assert.equal(out.linkedPaidInvoices,1);
+ assert.equal(out.linkedPaidSubscriberUsers,1);
  assert.equal(out.unmatchedPaidInvoices,0);
  assert.equal(out.sourceReportedGrossPaidCadMinor,2900);
  assert.equal(out.linkedRefundEvents,1);
@@ -50,4 +51,22 @@ test("failed invoice events only count for bound SignalForge customers",()=>{
  const out=summarizeBillingEvents([checkout,failure,unrelated],[user]);
  assert.equal(out.failedInvoiceEvents,1);
  assert.equal(out.sourceReportedGrossPaidCadMinor,0);
+});
+
+test("a legitimate subscription renewal increases invoices, not unique paid customers",()=>{
+ const rows=[
+  checkout,
+  event("invoice.paid",invoice("in_initial",SIGNALFORGE_PRICE_IDS.SF_PRICE_PRO_M,2900),"evt_initial"),
+  event("invoice.paid",invoice("in_renewal",SIGNALFORGE_PRICE_IDS.SF_PRICE_PRO_M,2900),"evt_renewal")
+ ];
+ const o=summarizeBillingEvents(rows,[user]);
+ assert.equal(o.linkedPaidInvoices,2);
+ assert.equal(o.linkedPaidSubscriberUsers,1);
+ assert.equal(o.sourceReportedGrossPaidCadMinor,5800);
+});
+test("a completed unrelated Stripe Payment Link does not count as a SignalForge customer",()=>{
+ const unrelated={...checkout,payload:{data:{object:{...checkout.payload.data.object,payment_link:"plink_UnrelatedProduct"}}}};
+ const o=summarizeBillingEvents([unrelated],[user]);
+ assert.equal(o.checkoutCompletedUsers,0);
+ assert.equal(o.linkedPaidSubscriberUsers,0);
 });
