@@ -182,3 +182,31 @@ test("earlier genuine checkout intent survives later plan selection, then paid S
   current_period_end:expiry+86400*30,cancel_at_period_end:false,items:{data:[{price:{id:"price_SFQuantMonth01"}}]}});
  expect((await account(uid)).cancel_at_period_end).toBe(false);
 });
+
+test("public analytics events cannot forge paid, server-observed user conversion or retain arbitrary PII",async()=>{
+ const uid=await newTrial(),marker="spoof-"+crypto.randomUUID();
+ const data={name:"pricing_view",userId:uid,source:"server_observed",
+  metadata:{plan:"pro",feature:marker,email:"private@example.com",unexpected:{secret:"never"}}};
+ try{
+  const badOrigin=await fetch(BASE+"/events",{method:"POST",headers:{"content-type":"application/json",origin:"https://attacker.invalid"},body:JSON.stringify(data)});
+  expect(badOrigin.status).toBe(403);
+  const tooLarge=await fetch(BASE+"/events",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({...data,padding:"x".repeat(3000)})});
+  expect(tooLarge.status).toBe(413);
+  const r=await fetch(BASE+"/events",{method:"POST",headers:{"content-type":"application/json",origin:"https://signalforge-web-production.up.railway.app"},body:JSON.stringify(data)});
+  expect(r.status).toBe(202);
+  const accepted=await r.json();
+  expect(accepted.source).toBe("CLIENT_REPORTED_UNTRUSTED");
+  expect(accepted.verified).toBe(false);
+  const rows=await sql.unsafe("SELECT user_id,event_name,source,metadata FROM product_events WHERE event_name='pricing_view' AND metadata->>'feature'=$1 ORDER BY id DESC",[marker]);
+  expect(rows).toHaveLength(1);
+  expect(rows[0].user_id).toBe(null);
+  expect(rows[0].source).toBe("client_reported");
+  expect(rows[0].metadata.plan).toBe("pro");
+  expect(rows[0].metadata.email).toBeUndefined();
+  expect(rows[0].metadata.unexpected).toBeUndefined();
+  const forged=await sql.unsafe("SELECT COUNT(*)::int AS n FROM product_events WHERE user_id=$1 AND event_name='pricing_view' AND source='server_observed'",[uid]);
+  expect(forged[0].n).toBe(0);
+ }finally{
+  await sql.unsafe("DELETE FROM product_events WHERE event_name='pricing_view' AND metadata->>'feature'=$1",[marker]);
+ }
+});
