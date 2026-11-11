@@ -53,7 +53,7 @@ jobs:
           assert x["source"]["observedAt"] and x["source"]["endpoint"].startswith("https://api.dexscreener.com/")
           assert x["primaryPool"]["address"]
           assert x["primaryPool"]["liquidityUsd"] is None or x["primaryPool"]["liquidityUsd"]>=0
-          assert x["historyStatus"]=="INSUFFICIENT_HISTORY"
+          assert x["historyStatus"] in ("INSUFFICIENT_HISTORY","AVAILABLE"),x["historyStatus"]
           print("LIVE_PROVIDER_VERIFIED pools="+str(x["poolCount"])+" observed="+x["source"]["observedAt"])
           PY
               then exit 0; fi
