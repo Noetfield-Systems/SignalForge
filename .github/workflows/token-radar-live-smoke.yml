@@ -1,0 +1,72 @@
+name: SignalForge Token Radar external production smoke
+on:
+  pull_request:
+    paths: [".github/workflows/token-radar-live-smoke.yml"]
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/token-radar-live-smoke.yml"
+      - "src/token-radar.mjs"
+      - "src/server.ts"
+      - "public/token-radar.html"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-production-token:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    env:
+      BASE: https://signalforge-web-production.up.railway.app
+      MINT: So11111111111111111111111111111111111111112
+    steps:
+      - name: Verify public radar and invalid-address contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsS --max-time 20 "$BASE/radar" -o /tmp/radar.html
+          grep -q 'Know what the' /tmp/radar.html
+          curl -fsS --max-time 20 "$BASE/tokens/solana/$MINT" -o /tmp/report.html
+          grep -q 'Solana token So11111111111111111111111111111111111111112' /tmp/report.html
+          invalid_code=$(curl -sS --max-time 20 -o /tmp/invalid.json -w "%{http_code}" "$BASE/api/tokens/lookup?chain=solana&address=INVALID")
+          test "$invalid_code" = "400"
+          python3 - <<'PY'
+          import json
+          data=json.load(open("/tmp/invalid.json"))
+          assert data["error"]=="INVALID_SOLANA_ADDRESS",data
+          print("PUBLIC_PAGE_OK; SHARE_URL_OK; INVALID_MINT_REJECTED")
+          PY
+      - name: Verify real upstream Solana pools and provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3 4; do
+            code=$(curl -sS --max-time 25 -o /tmp/token.json -w "%{http_code}" "$BASE/api/tokens/lookup?chain=solana&address=$MINT" || true)
+            if test "$code" = "200"; then
+              if python3 - <<'PY'
+          import json
+          x=json.load(open("/tmp/token.json"))
+          assert x["chainId"]=="solana"
+          assert x["address"]=="So11111111111111111111111111111111111111112"
+          assert x["status"]=="OBSERVED" and x["poolCount"]>0
+          assert x["source"]["name"]=="DEX Screener"
+          assert x["source"]["observedAt"] and x["source"]["endpoint"].startswith("https://api.dexscreener.com/")
+          assert x["primaryPool"]["address"]
+          assert x["primaryPool"]["liquidityUsd"] is None or x["primaryPool"]["liquidityUsd"]>=0
+          assert x["historyStatus"]=="INSUFFICIENT_HISTORY"
+          print("LIVE_PROVIDER_VERIFIED pools="+str(x["poolCount"])+" observed="+x["source"]["observedAt"])
+          PY
+              then exit 0; fi
+            fi
+            echo "Attempt $attempt: HTTP $code; retrying before declaring failure"
+            sleep 6
+          done
+          python3 - <<'PY'
+          import json
+          try:
+              x=json.load(open("/tmp/token.json"))
+              print("INDEPENDENT_LIVE_CHECK_FAILED status="+str(x.get("status",x.get("error","UNKNOWN"))))
+          except Exception:
+              print("INDEPENDENT_LIVE_CHECK_FAILED response_unreadable")
+          PY
+          exit 1
