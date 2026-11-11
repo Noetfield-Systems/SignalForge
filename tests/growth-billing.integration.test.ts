@@ -198,6 +198,10 @@ test("public analytics events cannot forge paid, server-observed user conversion
   expect(accepted.source).toBe("CLIENT_REPORTED_UNTRUSTED");
   expect(accepted.verified).toBe(false);
   const rows=await sql.unsafe("SELECT user_id,event_name,source,metadata FROM product_events WHERE event_name='pricing_view' AND metadata->>'feature'=$1 ORDER BY id DESC",[marker]);
+  if(rows.length!==1){
+   const recent=await sql.unsafe("SELECT user_id,event_name,source,metadata FROM product_events WHERE event_name='pricing_view' ORDER BY id DESC LIMIT 6");
+   throw Error("Client telemetry marker absent: "+JSON.stringify({marker,recent}).slice(0,2500));
+  }
   expect(rows).toHaveLength(1);
   expect(rows[0].user_id).toBe(null);
   expect(rows[0].source).toBe("client_reported");
