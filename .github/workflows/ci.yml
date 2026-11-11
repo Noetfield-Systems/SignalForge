@@ -40,6 +40,10 @@ jobs:
         run: python3 -m py_compile scripts/company-os-delivery.py scripts/company-os-readback.py
       - name: Compile runtime
         run: bun run check
+      - name: Compile live Railway Growth Function source
+        run: bun build services/growth-assets/railway-function.ts --target=bun --external=postgres --outfile=/tmp/signalforge-growth-function-check.js
+      - name: Verify signed billing entitlement policy tests
+        run: bun test tests/billing-evidence.test.mjs
       - name: Build deployable production Docker image
         run: docker build --tag signalforge:ci .
       - name: Test real PostgreSQL signup, community moderation and Company OS read-only snapshot
