@@ -77,6 +77,17 @@ footer{border-top:1px solid #294151;padding:25px 0 42px;display:flex;justify-con
 <p>Source-linked snapshots show only changes actually seen by SignalForge. Monitoring is observation-based, not blockchain risk certification.</p>
 <div id="historyList" class="pools"><div class="muted">Research a token to review its history.</div></div>
 </section>
+<section class="panel section" id="researchNotes" style="margin:17px 0" aria-label="Private research journal">
+<div class="label">04 / Research memory</div><h2>Research notes and falsifiable theses</h2>
+<p>Private, user-authored context, not verified market evidence. Record what would invalidate a thesis.</p>
+<div id="notesStatus" class="muted" role="status" aria-live="polite">Research a token to open your journal.</div>
+<div id="notesList" class="pools">No research notes yet.</div>
+<form id="noteForm" style="display:grid;gap:10px;max-width:740px;margin-top:17px">
+<label for="noteKind">Entry type</label><select id="noteKind" style="padding:11px;background:#101e2b;color:white;border:1px solid #386071;border-radius:8px"><option value="note">Research note</option><option value="thesis">Falsifiable thesis</option></select>
+<label for="noteBody">Your research</label><textarea id="noteBody" required minlength="5" maxlength="1600" placeholder="Write an evidence question or hypothesis" style="min-height:110px;resize:vertical;padding:13px;background:#101e2b;color:white;border:1px solid #386071;border-radius:8px"></textarea>
+<div id="invalidationWrap" hidden><label for="noteInvalidation">What would invalidate your thesis?</label><input id="noteInvalidation" maxlength="800" placeholder="Specify a testable invalidation condition" style="width:100%;padding:11px;background:#101e2b;color:white;border:1px solid #386071;border-radius:8px"></div>
+<button class="btn" id="noteSubmit" type="submit" style="justify-self:start">Save private note</button></form>
+</section>
 <div class="actionbar"><button class="outline" id="saveToken" type="button">☆ Save and enable in-app alerts</button><button class="btn" id="share" type="button">Copy report link</button><button class="outline" id="shareTelegram" type="button">Share to Telegram</button><button class="outline" id="shareX" type="button">Share to X</button><a class="outline" id="solscan" rel="noopener noreferrer" target="_blank">View in Solscan ↗</a><a class="outline" id="dex" rel="noopener noreferrer" target="_blank">Open primary pool ↗</a><a class="outline" href="/app">Open SignalForge terminal ↗</a></div>
 </section>
 <section class="panel section" id="myRadar" aria-label="Personal token watchlist and in-app alerts" style="margin:22px 0 26px">
@@ -149,6 +160,40 @@ try{
 }catch{list.textContent="Source-linked history temporarily unavailable.";}
 }
 const validMintForUi = address => typeof address==="string"&&/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address);
+
+async function loadResearchNotes(mint){
+ const list=$("notesList"),notice=$("notesStatus");
+ list.textContent="Retrieving private journal…";
+ try{
+  const res=await fetch("/api/tokens/notes?address="+encodeURIComponent(mint),{credentials:"same-origin"});
+  if(mint!==currentAddress)return;
+  if(res.status===401){notice.textContent="Sign in through the Research Terminal to access your private research notes.";list.innerHTML='<a href="/app" class="source">Sign in ↗</a>';return;}
+  const data=await res.json();if(!res.ok)throw Error(data.error||"Research notes unavailable.");
+  const items=Array.isArray(data.items)?data.items:[];
+  notice.textContent=items.length+" private entries · user-authored, not verified market claims";
+  list.innerHTML=items.length?items.map(x=>'<article class="pool" style="display:block;white-space:normal"><div style="display:flex;justify-content:space-between;gap:12px"><small>'+e(x.kind==="thesis"?"THESIS":"NOTE")+' · '+e(new Date(x.createdAt).toLocaleString())+'</small><button type="button" class="outline" style="padding:5px 10px" data-note-delete="'+e(String(x.id))+'">Delete</button></div><div style="white-space:pre-wrap;overflow-wrap:anywhere">'+e(x.body||"")+'</div>'+(x.invalidation?'<small>Invalidation: '+e(x.invalidation)+'</small>':"")+'</article>').join(""):'<div class="muted">No private research notes yet.</div>';
+ }catch(err){if(mint===currentAddress){notice.textContent=err?.message||"Journal unavailable";list.textContent="Research notes unavailable.";}}
+}
+$("noteKind").addEventListener("change",()=>{$("invalidationWrap").hidden=$("noteKind").value!=="thesis";$("noteInvalidation").required=$("noteKind").value==="thesis";});
+$("noteForm").addEventListener("submit",async ev=>{
+ ev.preventDefault();if(!currentAddress){$("notesStatus").textContent="Research a token before saving.";return;}
+ const mint=currentAddress,btn=$("noteSubmit");btn.disabled=true;
+ try{
+  const res=await fetch("/api/tokens/notes",{method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},body:JSON.stringify({address:mint,kind:$("noteKind").value,body:$("noteBody").value,invalidation:$("noteInvalidation").value})});
+  const data=await res.json();if(!res.ok)throw Error(data.error||"Save failed");
+  $("noteBody").value="";$("noteInvalidation").value="";if(mint===currentAddress)await loadResearchNotes(mint);
+ }catch(err){$("notesStatus").textContent=err?.message||"Could not save research entry.";}finally{btn.disabled=false;}
+});
+$("notesList").addEventListener("click",async ev=>{
+ const btn=ev.target.closest("button[data-note-delete]");if(!btn)return;btn.disabled=true;
+ const mint=currentAddress;
+ try{
+  const res=await fetch("/api/tokens/notes?id="+encodeURIComponent(btn.dataset.noteDelete),{method:"DELETE",credentials:"same-origin"});
+  const data=await res.json();if(!res.ok)throw Error(data.error||"Delete failed");
+  if(mint===currentAddress)await loadResearchNotes(mint);
+ }catch(err){$("notesStatus").textContent=err?.message||"Delete failed";btn.disabled=false;}
+});
+
 let centerLoading=false;
 async function loadCustomerCenter(){
  if(centerLoading)return;
@@ -235,6 +280,7 @@ $("saveToken").textContent="☆ Save and enable in-app alerts";
 if(push)history.pushState(null,"","/tokens/solana/"+encodeURIComponent(mint));
 document.title=(j.token?.symbol||"Solana token")+" · Token Radar · SignalForge";
 show(j);
+loadResearchNotes(mint);
 status(j.status==="OBSERVED"?"Live provider response received · "+j.poolCount+" observed pool(s) · "+(j.cacheStatus==="CACHED"?"cached observation":"new fetch"):"No pools returned by the provider for this address.","success");
 }catch(err){status(err?.message||"Unable to load this token.","error");}
 finally{setLoading(false);}
