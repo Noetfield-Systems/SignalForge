@@ -1,5 +1,5 @@
 import postgres from "postgres";
-const PORT=Number(Bun.env.PORT||8080),DB_URL=Bun.env.DATABASE_URL||"",db=DB_URL?postgres(DB_URL,{max:6,idle_timeout:30,connect_timeout:12,ssl:"require"}):null;
+const PORT=Number(Bun.env.PORT||8080),DB_URL=Bun.env.DATABASE_URL||"",db=DB_URL?postgres(DB_URL,{max:6,idle_timeout:30,connect_timeout:12,ssl:Bun.env.NODE_ENV==="test"&&Bun.env.DATABASE_SSL==="disable"?false:"require"}):null;
 const rates=new Map<string,{n:number,at:number}>();
 function limited(ip:string,limit:number){const n=Date.now(),o=rates.get(ip);if(!o||n-o.at>60000){rates.set(ip,{n:1,at:n});return false}return ++o.n>limit}
 const leadPage="";
@@ -50,7 +50,7 @@ async function webhook(req:Request){
  try{
   const duplicate=await db.begin(async tx=>{
    const o=evt.data?.object||{},type=String(evt.type||""),id=String(evt.id||"");
-   if(!/^evt_[a-zA-Z0-9]+$/.test(id))return false;
+   if(!/^evt_[a-zA-Z0-9_-]+$/.test(id))return false;
    const ref=String(o.client_reference_id||"");
    const uid=type.startsWith("checkout.session.")&&/^[0-9a-f-]{36}$/i.test(ref)?ref:null;
    const ins=await tx.unsafe("INSERT INTO payment_events(stripe_event_id,event_type,user_id,payload) VALUES($1,$2,$3,$4::jsonb) ON CONFLICT(stripe_event_id) DO NOTHING RETURNING id",[id,type,uid,JSON.stringify(evt)]);
