@@ -72,7 +72,12 @@ footer{border-top:1px solid #294151;padding:25px 0 42px;display:flex;justify-con
 <div class="detail"><span>Contract / holders risk</span><strong>Not assessed</strong></div>
 </div>
 </div>
-<div class="actionbar"><button class="btn" id="share" type="button">Copy report link</button><a class="outline" id="solscan" rel="noopener noreferrer" target="_blank">View in Solscan ↗</a><a class="outline" id="dex" rel="noopener noreferrer" target="_blank">Open primary pool ↗</a><a class="outline" href="/app">Open SignalForge terminal ↗</a></div>
+<section class="panel section" style="margin:17px 0" aria-label="Research change timeline">
+<div class="label">03 / Research history</div><h2>What changed since the last observation?</h2>
+<p>Source-linked snapshots show only changes actually seen by SignalForge. Monitoring is observation-based, not blockchain risk certification.</p>
+<div id="historyList" class="pools"><div class="muted">Research a token to review its history.</div></div>
+</section>
+<div class="actionbar"><button class="outline" id="saveToken" type="button">☆ Save and enable in-app alerts</button><button class="btn" id="share" type="button">Copy report link</button><a class="outline" id="solscan" rel="noopener noreferrer" target="_blank">View in Solscan ↗</a><a class="outline" id="dex" rel="noopener noreferrer" target="_blank">Open primary pool ↗</a><a class="outline" href="/app">Open SignalForge terminal ↗</a></div>
 </section>
 <div class="info"><b>Research boundaries</b> — DEX pool observations are third-party market data and may be delayed, incomplete or inaccurate. The retrieved timestamp is not a verified onchain event timestamp. No rug-pull, ownership, contract-safety or holder-concentration assessment is supplied. Historical monitoring and alerts are separate upcoming capabilities; this report does not claim to track changes until observations have been persisted.</div>
 </main>
@@ -91,6 +96,7 @@ let currentAddress=null;
 function status(message,kind=""){ $("status").textContent=message;$("status").className="status "+kind; }
 function setLoading(on){$("loading").hidden=!on;$("submit").disabled=on;$("submit").textContent=on?"Retrieving source…":"Research token →";}
 function show(report){
+loadHistory(report.address);
 const p=report.primaryPool;
 $("report").hidden=false;
 $("asset").textContent=report.token?report.token.name+" ("+report.token.symbol+")":"Unlisted token";
@@ -112,6 +118,23 @@ if(p)$("dex").href=safeLink(p.explorerUrl);
 const pools=report.pools.slice(0,20).map((x,i)=>'<div class="pool"><div><b>'+e(x.base.symbol)+' / '+e(x.quote.symbol)+'</b><small>'+e(x.dex)+(i===0?' · PRIMARY POOL':'')+' · '+e(x.address.slice(0,8))+'…</small></div><div class="poolright"><b>'+e(short(x.liquidityUsd))+' liquidity</b><small><a class="source" href="'+e(safeLink(x.explorerUrl))+'" target="_blank" rel="noopener noreferrer">View source ↗</a></small></div></div>');
 $("pools").innerHTML=pools.length?pools.join(""):'<div class="muted">No DEX liquidity pools were returned by the provider. This does not prove a token is nonexistent or safe.</div>';
 }
+async function loadHistory(address){
+const list=$("historyList");
+list.textContent="Loading observed research history…";
+try{
+ const response=await fetch("/api/tokens/history?address="+encodeURIComponent(address),{headers:{"accept":"application/json"}});
+ const data=await response.json();
+ if(currentAddress!==address)return;
+ if(!response.ok){list.textContent="History currently unavailable; fresh market data may still be available.";return;}
+ if(!data.observations.length){list.textContent="No persisted observations yet. The first live retrieval will establish a baseline.";return;}
+ const latest=data.observations[0];
+ let html='<div class="detail"><span>Recorded observations</span><strong>'+e(String(data.observations.length))+' recent snapshots</strong></div>';
+ html+='<div class="detail"><span>Last observed</span><strong>'+e(new Date(latest.observedAt).toLocaleString())+'</strong></div>';
+ if(!data.events.length)html+='<div class="muted">No material change detected yet. A first observation is not a change event.</div>';
+ else html+=data.events.slice(0,12).map(x=>'<div class="pool"><div><b>'+e(x.type.replaceAll("_"," "))+'</b><small>'+e(new Date(x.observedAt).toLocaleString())+' · Reported change, not proof of token safety</small></div><div class="poolright"><b>'+e(typeof x.deltaPct==="number"?x.deltaPct.toFixed(2)+"%":"Pool observation")+'</b></div></div>').join("");
+ list.innerHTML=html;
+}catch{list.textContent="Source-linked history temporarily unavailable.";}
+}
 async function lookup(mint,push=true){
 mint=mint.trim();$("report").hidden=true;setLoading(true);status("Checking the Solana address and fetching reported pools…");
 try{
@@ -119,6 +142,7 @@ const r=await fetch("/api/tokens/lookup?chain=solana&address="+encodeURIComponen
 const j=await r.json();
 if(!r.ok)throw new Error(j.error==="INVALID_SOLANA_ADDRESS"?"Invalid Solana mint address. Paste a Base58-encoded 32-byte address.":j.error==="PROVIDER_UNAVAILABLE"||j.error==="PROVIDER_RATE_LIMITED"?"Market data provider is currently unavailable; no substitute data is shown.":"Research unavailable ("+String(j.error||r.status)+").");
 currentAddress=mint;
+$("saveToken").textContent="☆ Save and enable in-app alerts";
 if(push)history.pushState(null,"","/tokens/solana/"+encodeURIComponent(mint));
 document.title=(j.token?.symbol||"Solana token")+" · Token Radar · SignalForge";
 show(j);
@@ -128,6 +152,19 @@ finally{setLoading(false);}
 }
 $("search").addEventListener("submit",ev=>{ev.preventDefault();lookup($("mint").value);});
 $("trySol").addEventListener("click",()=>{$("mint").value=SOL;lookup(SOL);});
+$("saveToken").addEventListener("click",async()=>{
+ if(!currentAddress)return;
+ const button=$("saveToken");button.disabled=true;
+ try{
+  const account=await fetch("/api/auth/me",{credentials:"same-origin"}).then(r=>r.json());
+  if(!account.user){status("Sign in through the research terminal first, then return to save this token.","error");return;}
+  const response=await fetch("/api/tokens/watchlist",{method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},body:JSON.stringify({address:currentAddress,inAppAlerts:true})});
+  const data=await response.json();
+  if(!response.ok)throw new Error(data.error||"Unable to save token");
+  button.textContent="✓ Saved · in-app alerts enabled";
+  status("Token saved to your personal watchlist. Source-backed change events appear in your in-app alert history.","success");
+ }catch(err){status(err?.message||"Unable to save token.","error");}finally{button.disabled=false;}
+});
 $("share").addEventListener("click",async()=>{if(!currentAddress)return;const link=location.origin+"/tokens/solana/"+currentAddress;try{await navigator.clipboard.writeText(link);$("share").textContent="Copied report link";}catch{$("share").textContent=link;}});
 window.addEventListener("popstate",()=>{const p=location.pathname.match(/^\/tokens\/solana\/([^/]+)$/);if(p){$("mint").value=decodeURIComponent(p[1]);lookup($("mint").value,false);}else{$("report").hidden=true;status("Enter a token mint to begin your research.");}});
 const initial=location.pathname.match(/^\/tokens\/solana\/([^/]+)$/);
