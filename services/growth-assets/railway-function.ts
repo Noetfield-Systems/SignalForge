@@ -15,6 +15,15 @@ function sfPrice(id:string){
  const matches=pairs.filter(([key])=>Bun.env[key]&&Bun.env[key]===id);
  return matches.length===1?{priceId:id,plan:matches[0][1],period:matches[0][2]}:null;
 }
+// Verified against the live Noetfield Stripe Payment Link catalog (2026-11-11).
+// Only these links are allowed to bind a paid SignalForge subscription.
+// Shared Stripe account: other company product checkout sessions must never bind.
+const SIGNALFORGE_PAYMENT_LINKS:Record<string,{plan:"pro"|"quant";period:"month"|"year"}>={
+ "plink_1UYy8tL4BR0lqapBDHnvVO5k":{plan:"pro",period:"month"},
+ "plink_1UYy8vL4BR0lqapBJ8pENtc7":{plan:"pro",period:"year"},
+ "plink_1UYy8xL4BR0lqapBpvPPv26u":{plan:"quant",period:"month"},
+ "plink_1UYy8yL4BR0lqapBcocRlAvy":{plan:"quant",period:"year"}
+};
 function asStripeId(raw:any,prefix:string){
  const id=typeof raw==="string"?raw:raw?.id;
  return typeof id==="string"&&id.startsWith(prefix)?id:null;
@@ -58,8 +67,10 @@ async function webhook(req:Request){
    if(type==="checkout.session.completed"||type==="checkout.session.async_payment_succeeded"){
     // A completed session binds identifiers ONLY; it is not proof of an invoice, product or money.
     const customer=asStripeId(o.customer,"cus_"),sub=asStripeId(o.subscription,"sub_");
-    if(o.mode!=="subscription"||o.status!=="complete"||!uid||!customer||!sub)return false;
-    const a=await tx.unsafe("SELECT id FROM users WHERE id=$1 AND selected_plan IN ('pro','quant') AND selected_period IN ('month','year') AND (stripe_customer_id IS NULL OR stripe_customer_id=$2) AND (stripe_subscription_id IS NULL OR stripe_subscription_id=$3) LIMIT 1",[uid,customer,sub]);
+    const sourceLink=asStripeId(o.payment_link,"plink_");
+    const originSku=sourceLink?SIGNALFORGE_PAYMENT_LINKS[sourceLink]:null;
+    if(o.mode!=="subscription"||o.status!=="complete"||!uid||!customer||!sub||!originSku||evt.livemode!==true)return false;
+    const a=await tx.unsafe("SELECT id FROM users WHERE id=$1 AND selected_plan=$2 AND selected_period=$3 AND (stripe_customer_id IS NULL OR stripe_customer_id=$4) AND (stripe_subscription_id IS NULL OR stripe_subscription_id=$5) LIMIT 1",[uid,originSku.plan,originSku.period,customer,sub]);
     if(!a.length)return false;
     await tx.unsafe("UPDATE users SET stripe_customer_id=COALESCE(stripe_customer_id,$1),stripe_subscription_id=COALESCE(stripe_subscription_id,$2),updated_at=NOW() WHERE id=$3",[customer,sub,a[0].id]);
     // Stripe event delivery order is not guaranteed. Apply paid invoice only if one arrived earlier.
