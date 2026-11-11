@@ -34,12 +34,12 @@ beforeAll(async()=>{
  await ready(WEB_PORT);
  growth=Bun.spawn(["bun","run","services/growth-assets/railway-function.ts"],{cwd:new URL("../",import.meta.url).pathname,env:{...env,PORT:String(GROWTH_PORT)},stdout:"ignore",stderr:"ignore"});
  await growthReady();
-},35000);
+});
 afterAll(async()=>{
  for(const id of userIds)await sql.unsafe("DELETE FROM users WHERE id=$1",[id]);
  if(eventIds.length)await sql.unsafe("DELETE FROM payment_events WHERE stripe_event_id=ANY($1::text[])",[eventIds]);
  if(growth)growth.kill();if(web)web.kill();await sql.end({timeout:1});
-},15000);
+});
 
 async function newTrial(){
  const id=crypto.randomUUID();
@@ -99,7 +99,7 @@ test("signed completed checkout never activates access; only exact paid SKU invo
  await signed("customer.subscription.deleted",{object:"subscription",customer:cus,id:sub});
  expect((await account(uid)).subscription_status).toBe("canceled");
  expect((await account(uid)).plan).toBe("explorer");
-},35000);
+});
 
 test("out-of-order paid invoice is reconciled only after exact account Checkout binding",async()=>{
  const uid=await newTrial(),cus="cus_Beta001",sub="sub_Beta001";
@@ -111,7 +111,7 @@ test("out-of-order paid invoice is reconciled only after exact account Checkout 
  const u=await account(uid);
  expect(u.subscription_status).toBe("active");
  expect(u.plan).toBe("pro");
-},35000);
+});
 
 test("unsigned or unrelated Checkout cannot capture accounts or entitlements",async()=>{
  const uid=await newTrial(),cus="cus_Gamma001",sub="sub_Gamma001";
@@ -122,4 +122,4 @@ test("unsigned or unrelated Checkout cannot capture accounts or entitlements",as
  const u=await account(uid);
  expect(u.stripe_subscription_id).toBe(null);
  expect(u.subscription_status).toBe("trialing");
-},35000);
+});
