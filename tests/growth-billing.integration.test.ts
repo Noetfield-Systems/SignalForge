@@ -55,7 +55,7 @@ async function account(id:string){
 async function signed(type:string,object:any,id?:string){
  const eid=id||"evt_"+crypto.randomUUID().replaceAll("-","");
  if(!eventIds.includes(eid))eventIds.push(eid);
- const raw=JSON.stringify({id:eid,object:"event",type,data:{object}});
+ const raw=JSON.stringify({id:eid,object:"event",livemode:true,type,data:{object}});
  const t=Math.floor(Date.now()/1000);
  const key=await crypto.subtle.importKey("raw",new TextEncoder().encode(SECRET),{name:"HMAC",hash:"SHA-256"},false,["sign"]);
  const bytes=new Uint8Array(await crypto.subtle.sign("HMAC",key,new TextEncoder().encode(t+"."+raw)));
@@ -65,7 +65,7 @@ async function signed(type:string,object:any,id?:string){
 }
 const session=(uid:string,cus:string,sub:string)=>({
  object:"checkout.session",mode:"subscription",status:"complete",payment_status:"paid",
- client_reference_id:uid,customer:cus,subscription:sub
+ client_reference_id:uid,customer:cus,subscription:sub,payment_link:"plink_1UYy8tL4BR0lqapBDHnvVO5k"
 });
 const invoice=(cus:string,sub:string,price:string)=>({
  object:"invoice",id:"in_"+crypto.randomUUID().replaceAll("-"),status:"paid",paid:true,currency:"cad",amount_paid:2900,
@@ -127,4 +127,24 @@ test("unsigned or unrelated Checkout cannot capture accounts or entitlements",as
  const u=await account(uid);
  expect(u.stripe_subscription_id).toBe(null);
  expect(u.subscription_status).toBe("trialing");
+});
+
+test("shared-account unrelated Payment Link, wrong selected plan and unscoped checkout never bind",async()=>{
+ const uid=await newTrial(),cus="cus_Isolation"+crypto.randomUUID().slice(0,8),sub="sub_Isolation"+crypto.randomUUID().slice(0,8);
+ for(const item of [
+  {...session(uid,cus,sub),payment_link:"plink_1UYi9PL4BR0lqapBY9PMDUvK"},
+  {...session(uid,cus,sub),payment_link:"plink_1UYy8yL4BR0lqapBcocRlAvy"},
+  {...session(uid,cus,sub),payment_link:null},
+  {...session(uid,cus,sub),payment_link:"plink_1UYy8vL4BR0lqapBJ8pENtc7"}
+ ]){
+  const res=await signed("checkout.session.completed",item);
+  expect(res.status).toBe(200);
+  const after=await account(uid);
+  expect(after.stripe_customer_id).toBe(null);
+  expect(after.stripe_subscription_id).toBe(null);
+  expect(after.subscription_status).toBe("trialing");
+ }
+ const correct=await signed("checkout.session.completed",session(uid,cus,sub));
+ expect(correct.status).toBe(200);
+ expect((await account(uid)).stripe_subscription_id).toBe(sub);
 });
