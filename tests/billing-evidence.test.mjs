@@ -3,22 +3,22 @@ import assert from "node:assert/strict";
 import {priceIdentity,paidInvoiceEvidence,invoiceSubscriptionId,validCheckoutBinding} from "../src/billing-evidence.mjs";
 
 const env={
- SF_PRICE_PRO_M:"price_sf_pro_month",
- SF_PRICE_PRO_Y:"price_sf_pro_year",
- SF_PRICE_QUANT_M:"price_sf_quant_month",
- SF_PRICE_QUANT_Y:"price_sf_quant_year"
+ SF_PRICE_PRO_M:"price_SFProMonth01",
+ SF_PRICE_PRO_Y:"price_SFProYear01",
+ SF_PRICE_QUANT_M:"price_SFQuantMonth01",
+ SF_PRICE_QUANT_Y:"price_SFQuantYear01"
 };
 const invoice=(overrides={})=>({
  object:"invoice",id:"in_abc123",status:"paid",paid:true,currency:"cad",amount_paid:2900,
  subscription:"sub_abc123",customer:"cus_abc123",
- lines:{data:[{price:{id:"price_sf_pro_month"}}]},...overrides
+ lines:{data:[{price:{id:"price_SFProMonth01"}}]},...overrides
 });
 test("recognized price must be explicitly configured and unambiguous",()=>{
  assert.deepEqual(priceIdentity(env.SF_PRICE_PRO_M,env),{priceId:env.SF_PRICE_PRO_M,plan:"pro",period:"month"});
  assert.deepEqual(priceIdentity(env.SF_PRICE_QUANT_Y,env),{priceId:env.SF_PRICE_QUANT_Y,plan:"quant",period:"year"});
  assert.equal(priceIdentity("price_unrelated",env),null);
  assert.equal(priceIdentity("",env),null);
- assert.equal(priceIdentity("price_sf_pro_month",{...env,SF_PRICE_QUANT_M:env.SF_PRICE_PRO_M}),null);
+ assert.equal(priceIdentity("price_SFProMonth01",{...env,SF_PRICE_QUANT_M:env.SF_PRICE_PRO_M}),null);
 });
 test("paid SignalForge invoice grants only price and payment evidence",()=>{
  const proof=paidInvoiceEvidence(invoice(),env);
