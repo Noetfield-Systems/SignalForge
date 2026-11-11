@@ -68,7 +68,7 @@ async function deliverTokenDigests(){
  if(hour<16){console.log("TOKEN_DIGEST_WAIT_WINDOW",hour);return}
  await db.unsafe("UPDATE token_digest_deliveries SET status='pending',scheduled_at=NOW(),updated_at=NOW(),last_error='Recovered stale claim' WHERE status='sending' AND updated_at<NOW()-INTERVAL '20 minutes'");
  const eligible="u.billing_risk_status='clear' AND (u.subscription_status='active' AND u.plan IN ('pro','quant') OR u.subscription_status='trialing' AND u.trial_ends_at>NOW())";
- const synthetic="u.role='user' AND u.email NOT LIKE '%@signalforge.test' AND u.email NOT LIKE '%@example.com' AND u.email NOT LIKE '%@signalforge.invalid'";
+ const synthetic=Bun.env.NODE_ENV==="test"&&Bun.env.TOKEN_DIGEST_TEST_ALLOW_FIXTURE==="true"?"u.role='user' AND u.email LIKE '%@signalforge.test'":"u.role='user' AND u.email NOT LIKE '%@signalforge.test' AND u.email NOT LIKE '%@example.com' AND u.email NOT LIKE '%@signalforge.invalid'";
  const pending=await db.unsafe("INSERT INTO token_digest_deliveries(user_id,digest_date) "+
    "SELECT p.user_id,(NOW() AT TIME ZONE 'UTC')::date FROM token_digest_preferences p "+
    "JOIN users u ON u.id=p.user_id WHERE p.enabled=TRUE AND p.opted_in_at IS NOT NULL AND "+
@@ -132,7 +132,7 @@ async function deliverTokenDigests(){
  console.log("TOKEN_DIGEST_RUN",JSON.stringify({queued:pending.length,claimed:claim.length,providerAccepted:accepted,skipped,failed,privacy:"NO_CUSTOMER_DATA_IN_LOGS",source:"STORED_DEX_CHANGE_EVENTS"}));
 }
 
-try{await refreshTokenWatchlist()}catch(error:any){console.error("RADAR_MONITOR_DEGRADED",String(error?.message||error).slice(0,160))}
+try{if(!(Bun.env.NODE_ENV==="test"&&Bun.env.TOKEN_DIGEST_TEST_NO_SOURCE_FETCH==="true"))await refreshTokenWatchlist()}catch(error:any){console.error("RADAR_MONITOR_DEGRADED",String(error?.message||error).slice(0,160))}
 if(!apiKey||!from){console.log("LIFECYCLE_WORKER_BLOCKED provider_not_configured; set RESEND_API_KEY and verified RESEND_FROM; queued messages preserved");await db.end({timeout:5});}
 else{
  try{await deliverTokenDigests()}catch(error:any){console.error("TOKEN_DIGEST_DEGRADED",String(error?.message||error).slice(0,150))}
