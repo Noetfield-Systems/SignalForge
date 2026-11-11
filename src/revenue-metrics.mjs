@@ -11,7 +11,7 @@ export const SIGNALFORGE_PRICE_IDS = Object.freeze({
 
 function objectOf(row){return row?.payload?.data?.object||null}
 function idOf(raw){return typeof raw==="string"?raw:raw?.id||null}
-function isGenuineUser(user){return user?.role==="user"&&!/@signalforge\.test$|@example\.com$/i.test(user.email||"")}
+function isGenuineUser(user){return user?.role==="user"&&!/@signalforge\.test$|@example\.com$|@signalforge\.invalid$/i.test(user.email||"")}
 
 // Pure evidence classification. Live cash settlement, fees, refunds and net profit
 // are deliberately unknown until reconciled against authoritative Stripe records.
@@ -63,9 +63,9 @@ export function summarizeBillingEvents(rows,users,prices=SIGNALFORGE_PRICE_IDS){
 export async function getRevenueSnapshot(db){
  const [users,events,paymentEvents,returning]=await Promise.all([
   db.unsafe("SELECT id,email,role,created_at,trial_ends_at,subscription_status,plan,billing_risk_status,stripe_customer_id,stripe_subscription_id FROM users"),
-  db.unsafe("SELECT event_name,COUNT(DISTINCT user_id)::int AS users,COUNT(*)::int AS events FROM product_events WHERE source='server_observed' AND created_at>NOW()-INTERVAL '30 days' AND user_id IN (SELECT id FROM users WHERE role='user' AND email NOT LIKE '%@signalforge.test' AND email NOT LIKE '%@example.com') GROUP BY event_name ORDER BY events DESC"),
+  db.unsafe("SELECT event_name,COUNT(DISTINCT user_id)::int AS users,COUNT(*)::int AS events FROM product_events WHERE source='server_observed' AND created_at>NOW()-INTERVAL '30 days' AND user_id IN (SELECT id FROM users WHERE role='user' AND email NOT LIKE '%@signalforge.test' AND email NOT LIKE '%@example.com' AND email NOT LIKE '%@signalforge.invalid') GROUP BY event_name ORDER BY events DESC"),
   db.unsafe("SELECT stripe_event_id,event_type,payload FROM payment_events WHERE event_type IN ('checkout.session.completed','checkout.session.async_payment_succeeded','invoice.paid','invoice.payment_failed','charge.refunded','charge.dispute.created') ORDER BY id DESC LIMIT 2001"),
-   db.unsafe("SELECT COUNT(*)::int AS users FROM (SELECT e.user_id FROM product_events e JOIN users u ON u.id=e.user_id WHERE e.source='server_observed' AND e.event_name IN ('token_researched','token_watchlist_added','research_note_created','research_backtest') AND e.created_at>NOW()-INTERVAL '30 days' AND u.role='user' AND u.email NOT LIKE '%@signalforge.test' AND u.email NOT LIKE '%@example.com' GROUP BY e.user_id HAVING COUNT(DISTINCT DATE(e.created_at AT TIME ZONE 'UTC'))>=2) t")
+   db.unsafe("SELECT COUNT(*)::int AS users FROM (SELECT e.user_id FROM product_events e JOIN users u ON u.id=e.user_id WHERE e.source='server_observed' AND e.event_name IN ('token_researched','token_watchlist_added','research_note_created','research_backtest') AND e.created_at>NOW()-INTERVAL '30 days' AND u.role='user' AND u.email NOT LIKE '%@signalforge.test' AND u.email NOT LIKE '%@example.com' AND u.email NOT LIKE '%@signalforge.invalid' GROUP BY e.user_id HAVING COUNT(DISTINCT DATE(e.created_at AT TIME ZONE 'UTC'))>=2) t")
  ]);
  const genuine=users.filter(isGenuineUser);
  const included=paymentEvents.slice(0,2000);

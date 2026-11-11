@@ -173,7 +173,13 @@ test("real database community lifecycle, security boundaries and Company OS cont
   expect(snap.data.schemaVersion).toBe("1.0.0");
   expect(snap.data.tenant).toBe("signalforge");
   expect(snap.data.readOnly).toBe(true);
-  expect(snap.data.users.total).toBeGreaterThanOrEqual(2);
+  expect(snap.data.users.total).toBe(0); // Only @signalforge.test fixtures exist; never report them as real users.
+  expect(snap.data.privacy.syntheticUsersExcluded).toBe(true);
+  expect(snap.data.commercialEvidence.source).toBe("SignalForge signed local webhook and authenticated source activity");
+  expect(snap.data.commercialEvidence.genuineAccounts).toBe(0);
+  expect(snap.data.commercialEvidence.settledCashCadMinor).toBeNull();
+  expect(snap.data.commercialEvidence.settlementStatus).toBe("NOT_INDEPENDENTLY_RECONCILED");
+  expect(snap.data.product.events7d).toBe(0);
   expect(snap.data.moderation.open).toBe(0);
   expect(snap.data.privacy.identifiersIncluded).toBe(false);
   expect(JSON.stringify(snap.data)).not.toContain(email);

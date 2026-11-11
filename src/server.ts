@@ -148,13 +148,13 @@ async function recordProductAction(userId:string,eventName:string,key:string){
 }
 async function operationalCohorts(){
  if(!dbReady||!db)throw new Error("operating metrics storage unavailable");
- const exclude=" AND role='user' AND email NOT LIKE '%@signalforge.test' AND email NOT LIKE '%@example.com'";
+ const exclude=" AND role='user' AND email NOT LIKE '%@signalforge.test' AND email NOT LIKE '%@example.com' AND email NOT LIKE '%@signalforge.invalid'";
  const [activation,retention,trial,moderation,failed]=await Promise.all([
- db.unsafe("SELECT COUNT(*)::int AS eligible,COUNT(*) FILTER(WHERE EXISTS(SELECT 1 FROM product_events e WHERE e.user_id=u.id AND e.source='server_observed' AND e.event_name IN ('watchlist_added','token_watchlist_added','research_note_created','research_backtest','community_post','community_reply') AND e.created_at>=u.created_at AND e.created_at<u.created_at+INTERVAL '24 hours'))::int AS converted FROM users u WHERE u.created_at>NOW()-INTERVAL '15 days' AND u.created_at<=NOW()-INTERVAL '1 day'"+exclude),
- db.unsafe("SELECT COUNT(*)::int AS eligible,COUNT(*) FILTER(WHERE EXISTS(SELECT 1 FROM product_events e WHERE e.user_id=u.id AND e.source='server_observed' AND e.event_name IN ('watchlist_added','token_watchlist_added','research_note_created','research_backtest','community_post','community_reply') AND e.created_at>=u.created_at+INTERVAL '6 days' AND e.created_at<u.created_at+INTERVAL '8 days'))::int AS converted FROM users u WHERE u.created_at>NOW()-INTERVAL '22 days' AND u.created_at<=NOW()-INTERVAL '8 days'"+exclude),
- db.unsafe("SELECT COUNT(*)::int AS eligible,COUNT(*) FILTER(WHERE subscription_status='active' AND billing_risk_status='clear' AND stripe_customer_id IS NOT NULL AND EXISTS(SELECT 1 FROM payment_events p WHERE p.event_type='invoice.paid' AND p.payload->'data'->'object'->>'customer'=u.stripe_customer_id))::int AS converted FROM users u WHERE u.trial_started_at IS NOT NULL AND u.trial_ends_at<=NOW() AND u.trial_started_at>NOW()-INTERVAL '120 days'"+exclude),
+ db.unsafe("SELECT COUNT(*)::int AS eligible,COUNT(*) FILTER(WHERE EXISTS(SELECT 1 FROM product_events e WHERE e.user_id=u.id AND e.source='server_observed' AND e.event_name IN ('token_researched','watchlist_added','token_watchlist_added','research_note_created','research_backtest','community_post','community_reply') AND e.created_at>=u.created_at AND e.created_at<u.created_at+INTERVAL '24 hours'))::int AS converted FROM users u WHERE u.created_at>NOW()-INTERVAL '15 days' AND u.created_at<=NOW()-INTERVAL '1 day'"+exclude),
+ db.unsafe("SELECT COUNT(*)::int AS eligible,COUNT(*) FILTER(WHERE EXISTS(SELECT 1 FROM product_events e WHERE e.user_id=u.id AND e.source='server_observed' AND e.event_name IN ('token_researched','watchlist_added','token_watchlist_added','research_note_created','research_backtest','community_post','community_reply') AND e.created_at>=u.created_at+INTERVAL '6 days' AND e.created_at<u.created_at+INTERVAL '8 days'))::int AS converted FROM users u WHERE u.created_at>NOW()-INTERVAL '22 days' AND u.created_at<=NOW()-INTERVAL '8 days'"+exclude),
+ db.unsafe("SELECT COUNT(*)::int AS eligible,COUNT(*) FILTER(WHERE subscription_status='active' AND billing_risk_status='clear' AND stripe_customer_id IS NOT NULL AND EXISTS(SELECT 1 FROM payment_events p WHERE p.event_type='invoice.paid' AND p.payload->'data'->'object'->>'customer'=u.stripe_customer_id AND COALESCE(p.payload #>> '{data,object,subscription}',p.payload #>> '{data,object,parent,subscription_details,subscription}')=u.stripe_subscription_id AND COALESCE(p.payload #>> '{data,object,lines,data,0,price,id}',p.payload #>> '{data,object,lines,data,0,pricing,price_details,price}')=u.billing_price_id AND p.payload #>> '{data,object,paid}'='true' AND p.payload #>> '{data,object,status}'='paid'))::int AS converted FROM users u WHERE u.trial_started_at IS NOT NULL AND u.trial_ends_at<=NOW() AND u.trial_started_at>NOW()-INTERVAL '120 days'"+exclude),
  db.unsafe("SELECT COUNT(*)::int AS n FROM community_reports WHERE status='open' AND created_at<NOW()-INTERVAL '24 hours'"),
- db.unsafe("SELECT COUNT(*)::int AS n FROM payment_events WHERE event_type='invoice.payment_failed' AND created_at>NOW()-INTERVAL '7 days'")
+ db.unsafe("SELECT COUNT(*)::int AS n FROM payment_events p JOIN users u ON u.stripe_customer_id=(p.payload #>> '{data,object,customer}') AND u.stripe_subscription_id=COALESCE(p.payload #>> '{data,object,subscription}',p.payload #>> '{data,object,parent,subscription_details,subscription}') WHERE p.event_type='invoice.payment_failed' AND p.created_at>NOW()-INTERVAL '7 days' AND u.role='user' AND u.email NOT LIKE '%@signalforge.test' AND u.email NOT LIKE '%@example.com' AND u.email NOT LIKE '%@signalforge.invalid'")
  ]);
  return {eligible24h:activation[0].eligible,activated24h:activation[0].converted,
    eligibleDay7:retention[0].eligible,returnedDay7:retention[0].converted,
@@ -162,14 +162,28 @@ async function operationalCohorts(){
    overdueReports:moderation[0].n,failedInvoices7d:failed[0].n};
 }
 async function companySnapshot(req:Request){if(!dbReady||!db)return json({error:"Metrics database not ready"},503);if(!Bun.env.SIGNALFORGE_COMPANY_OS_KEY)return json({error:"Company OS integration not configured"},503);if(!await safeToken(req))return json({error:"Unauthorized"},401);
-const [users,community,reports,activity,signals,operatingMetrics]=await Promise.all([
- db.unsafe("SELECT COUNT(*)::int AS total,COUNT(*) FILTER(WHERE created_at>NOW()-INTERVAL '7 days')::int AS signups7d,COUNT(*) FILTER(WHERE last_active_at>NOW()-INTERVAL '7 days')::int AS active7d,COUNT(*) FILTER(WHERE subscription_status='trialing' AND trial_ends_at>NOW())::int AS trials,COUNT(*) FILTER(WHERE subscription_status='active')::int AS paying FROM users"),
- db.unsafe("SELECT COUNT(*)::int AS posts,COUNT(*) FILTER(WHERE created_at>NOW()-INTERVAL '7 days')::int AS posts7d,COUNT(DISTINCT user_id)::int AS authors FROM community_posts WHERE status='published'"),
- db.unsafe("SELECT COUNT(*)::int AS open FROM community_reports WHERE status='open'"),
- db.unsafe("SELECT COUNT(*)::int AS events7d FROM product_events WHERE created_at>NOW()-INTERVAL '7 days'"),
+const [users,community,reports,activity,signals,operatingMetrics,commercial]=await Promise.all([
+ db.unsafe("SELECT COUNT(*)::int AS total,COUNT(*) FILTER(WHERE created_at>NOW()-INTERVAL '7 days')::int AS signups7d,COUNT(*) FILTER(WHERE last_active_at>NOW()-INTERVAL '7 days')::int AS active7d,COUNT(*) FILTER(WHERE subscription_status='trialing' AND trial_ends_at>NOW())::int AS trials,COUNT(*) FILTER(WHERE subscription_status='active' AND billing_risk_status='clear')::int AS paying FROM users u WHERE u.role='user' AND u.email NOT LIKE '%@signalforge.test' AND u.email NOT LIKE '%@example.com' AND u.email NOT LIKE '%@signalforge.invalid'"),
+ db.unsafe("SELECT COUNT(*)::int AS posts,COUNT(*) FILTER(WHERE p.created_at>NOW()-INTERVAL '7 days')::int AS posts7d,COUNT(DISTINCT p.user_id)::int AS authors FROM community_posts p JOIN users u ON u.id=p.user_id WHERE p.status='published' AND u.role='user' AND u.email NOT LIKE '%@signalforge.test' AND u.email NOT LIKE '%@example.com' AND u.email NOT LIKE '%@signalforge.invalid'"),
+ db.unsafe("SELECT COUNT(*)::int AS open FROM community_reports r JOIN community_posts p ON p.id=r.post_id JOIN users u ON u.id=p.user_id WHERE r.status='open' AND u.role='user' AND u.email NOT LIKE '%@signalforge.test' AND u.email NOT LIKE '%@example.com' AND u.email NOT LIKE '%@signalforge.invalid'"),
+ db.unsafe("SELECT COUNT(*)::int AS events7d FROM product_events e JOIN users u ON u.id=e.user_id WHERE e.created_at>NOW()-INTERVAL '7 days' AND e.source='server_observed' AND u.role='user' AND u.email NOT LIKE '%@signalforge.test' AND u.email NOT LIKE '%@example.com' AND u.email NOT LIKE '%@signalforge.invalid'"),
  db.unsafe("SELECT COUNT(*)::int AS recorded,COUNT(*) FILTER(WHERE status='CLOSED')::int AS resolved FROM signal_events"),
- operationalCohorts()
-]);return json({schemaVersion:"1.0.0",tenant:"signalforge",generatedAt:new Date().toISOString(),environment:"production",source:"SignalForge PostgreSQL aggregate observations",readOnly:true,privacy:{identifiersIncluded:false,freeTextIncluded:false,syntheticUsersExcluded:true},users:users[0],community:community[0],moderation:reports[0],product:activity[0],signals:signals[0],operatingMetrics,operatingPolicy:evaluateCompanyPolicy(operatingMetrics)})}
+ operationalCohorts(),
+ getRevenueSnapshot(db)
+]);return json({schemaVersion:"1.0.0",tenant:"signalforge",generatedAt:new Date().toISOString(),environment:"production",source:"SignalForge PostgreSQL aggregate observations",readOnly:true,privacy:{identifiersIncluded:false,freeTextIncluded:false,syntheticUsersExcluded:true},users:users[0],community:community[0],moderation:reports[0],product:activity[0],signals:signals[0],operatingMetrics,operatingPolicy:evaluateCompanyPolicy(operatingMetrics),
+ commercialEvidence:{
+  source:"SignalForge signed local webhook and authenticated source activity",
+  asOf:commercial.asOf,
+  genuineAccounts:commercial.accounts.genuineAccounts,
+  tokenResearchersLast30Days:commercial.funnel.authenticatedTokenResearchersLast30Days,
+  returnDayResearchersLast30Days:commercial.funnel.returnDayResearchersLast30Days,
+  pricingViewersLast30Days:commercial.funnel.pricingViewersLast30Days,
+  checkoutStartedUsersLast30Days:commercial.funnel.checkoutStartedUsersLast30Days,
+  linkedPaidSubscriberUsersInRetainedEvents:commercial.billing.linkedPaidSubscriberUsers,
+  sourceReportedGrossPaidCadMinor:commercial.billing.sourceReportedGrossPaidCadMinor,
+  settledCashCadMinor:null,
+  settlementStatus:"NOT_INDEPENDENTLY_RECONCILED"
+ }})}
 async function communityRoute(req:Request,path:string,method:string,url:URL){
 if(!dbReady||!db)return json({error:"Community storage unavailable"},503);
 if(method!=="GET"&&!communityOrigin(req))return json({error:"Invalid request origin"},403);

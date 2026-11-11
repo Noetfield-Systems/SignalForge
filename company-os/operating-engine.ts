@@ -19,6 +19,14 @@ export type Snapshot = {
  product:{events7d:number};
  signals:{recorded:number;resolved:number};
  operatingMetrics?:CompanyMetrics;
+ commercialEvidence?:{
+  source:"SignalForge signed local webhook and authenticated source activity";
+  asOf:string;
+  genuineAccounts:number;tokenResearchersLast30Days:number;returnDayResearchersLast30Days:number;
+  pricingViewersLast30Days:number;checkoutStartedUsersLast30Days:number;
+  linkedPaidSubscriberUsersInRetainedEvents:number;sourceReportedGrossPaidCadMinor:number;
+  settledCashCadMinor:null;settlementStatus:"NOT_INDEPENDENTLY_RECONCILED";
+ };
 };
 type Role = (typeof organization.agents)[number];
 export type ProposedWork = {
@@ -95,6 +103,20 @@ export function validateSnapshot(input:unknown, now:Date=new Date()):Snapshot{
   s.community.authors>s.users.total||s.signals.resolved>s.signals.recorded)
   throw Error("AGGREGATE_INVARIANT_FAILED");
  if(s.operatingMetrics)evaluateCompanyPolicy(s.operatingMetrics);
+ if(s.commercialEvidence){
+  const e=s.commercialEvidence;
+  if(e.source!=="SignalForge signed local webhook and authenticated source activity"||
+    e.settledCashCadMinor!==null||e.settlementStatus!=="NOT_INDEPENDENTLY_RECONCILED"||
+    !Number.isFinite(Date.parse(e.asOf))||
+    Math.abs(Date.parse(s.generatedAt)-Date.parse(e.asOf))>600000||
+    ["genuineAccounts","tokenResearchersLast30Days","returnDayResearchersLast30Days",
+     "pricingViewersLast30Days","checkoutStartedUsersLast30Days",
+     "linkedPaidSubscriberUsersInRetainedEvents","sourceReportedGrossPaidCadMinor"].some(k=>!finiteCount(e[k as keyof typeof e]))||
+    e.tokenResearchersLast30Days>e.genuineAccounts||
+    e.linkedPaidSubscriberUsersInRetainedEvents>e.genuineAccounts)
+    throw Error("UNTRUSTED_COMMERCIAL_EVIDENCE");
+ }
+
  return s;
 }
 const candidate=(id:string,owner:string,weight:number,business_value:string,title:string,objective:string,why:string,verify:string[],deps:string[]=[]):Candidate=>({
@@ -233,6 +255,7 @@ export function compileOperatingBoard(raw:unknown, at:Date=new Date()){
    paid_conversion_rate:s.operatingMetrics&&s.operatingMetrics.maturedTrials>=100
     ?Number((s.operatingMetrics.invoicePaidMatured/s.operatingMetrics.maturedTrials).toFixed(4)):null,
    source_reported_policy_issues:livePolicy?livePolicy.decisions.map(x=>x.code):[],
+   commercial_evidence:s.commercialEvidence||null,
    source_operating_metrics:s.operatingMetrics||null
   },
   constraints:{
