@@ -125,5 +125,9 @@ window.SignalForgeCommunity={load};document.querySelector('[data-view="community
   };
   new MutationObserver(measure).observe(pricing,{attributes:true,attributeFilter:["class","style"]});
   measure();
+  // Keep a direct, intentional route from a useful public Radar report to plans.
+  if(new URLSearchParams(location.search).get("view")==="pricing"){
+    window.addEventListener("load",()=>{document.querySelector('[data-view="pricing"]')?.click();},{once:true});
+  }
 })();
 </script><script src="https://signalforge-growth-assets-production.up.railway.app/launch.js" defer></script></body></html>
