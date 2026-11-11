@@ -130,4 +130,44 @@ window.SignalForgeCommunity={load};document.querySelector('[data-view="community
     window.addEventListener("load",()=>{document.querySelector('[data-view="pricing"]')?.click();},{once:true});
   }
 })();
+</script><script>
+(function(){
+  // A successful Stripe redirect is NOT evidence of a paid invoice. Only the
+  // authenticated app subscription record, updated by signed Stripe webhooks,
+  // can confirm paid entitlements. Never store or expose Checkout Session IDs.
+  const params=new URLSearchParams(location.search);
+  if(params.get("billing")!=="success")return;
+  params.delete("session_id");
+  const safeQuery=params.toString();
+  history.replaceState(null,"",location.pathname+(safeQuery?"?"+safeQuery:"")+location.hash);
+  const panel=document.createElement("aside");
+  panel.id="billingReturnStatus";
+  panel.setAttribute("role","status");
+  panel.setAttribute("aria-live","polite");
+  panel.style.cssText="position:fixed;z-index:9999;right:15px;bottom:18px;left:15px;max-width:500px;margin-left:auto;background:#112c36;border:1px solid #52b69e;color:#e5fcf8;border-radius:15px;box-shadow:0 18px 60px #0009;padding:21px;font:14px/1.6 system-ui";
+  panel.innerHTML='<strong style="display:block;font-size:17px;margin-bottom:7px">Stripe checkout return</strong><p id="billingReturnText" style="margin:0 0 13px">Checking your account. A redirect is not payment confirmation.</p><div style="display:flex;gap:9px;flex-wrap:wrap"><button id="billingRefresh" type="button" style="padding:9px 13px;border:1px solid #7ddcc4;background:#b9fceb;border-radius:8px;color:#082622;font-weight:700">Check payment status</button><button id="billingDismiss" type="button" style="padding:9px 13px;border:1px solid #416979;background:transparent;border-radius:8px;color:#dcf8f3">Dismiss</button></div>';
+  document.body.appendChild(panel);
+  const label=document.getElementById("billingReturnText");
+  const refresh=document.getElementById("billingRefresh");
+  document.getElementById("billingDismiss").onclick=()=>panel.remove();
+  async function check(){
+   refresh.disabled=true;
+   try{
+    const res=await fetch("/api/auth/me",{credentials:"same-origin",cache:"no-store"});
+    const data=await res.json();
+    if(!res.ok||!data.user){label.textContent="Sign in with the same account used for checkout to check payment status.";return}
+    const user=data.user;
+    if(user.subscription_status==="active"&&user.billing_risk_status==="clear"&&user.stripe_subscription_id){
+     label.textContent="Your paid subscription is confirmed by SignalForge's signed Stripe invoice record. Your plan: "+String(user.plan||"member").toUpperCase()+".";
+    }else if(user.subscription_status==="past_due"){
+     label.textContent="Stripe reports a payment problem. Manage your billing details before relying on paid access.";
+    }else{
+     label.textContent="Payment confirmation is not recorded yet. Stripe can deliver signed invoice events after you return. You can refresh this status.";
+    }
+   }catch{label.textContent="Billing status is temporarily unavailable. You have not been marked as paid."}
+   finally{refresh.disabled=false}
+  }
+  refresh.addEventListener("click",check);
+  check();
+})();
 </script><script src="https://signalforge-growth-assets-production.up.railway.app/launch.js" defer></script></body></html>
