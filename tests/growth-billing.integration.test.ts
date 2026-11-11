@@ -46,10 +46,13 @@ async function newTrial(){
  userIds.push(id);
  await sql.unsafe("INSERT INTO users(id,email,password_hash,plan,selected_plan,selected_period,subscription_status,trial_started_at,trial_ends_at) VALUES($1,$2,'test-not-a-real-login','quant','pro','month','trialing',NOW(),NOW()+INTERVAL '30 days')",
   [id,"sf-billing-"+id+"@signalforge.test"]);
+ // Signed Stripe sessions must correspond to a server-observed, authenticated
+ // checkout intent; a mutable selected plan is not sufficient evidence.
+ await sql.unsafe("INSERT INTO product_events(user_id,event_name,source,event_key) VALUES($1,'checkout_started','server_observed',$2)",[id,"checkout:"+id+":pro:month:"+Math.floor(Date.now()/300000)]);
  return id;
 }
 async function account(id:string){
- const rows=await sql.unsafe("SELECT subscription_status,plan,selected_plan,stripe_customer_id,stripe_subscription_id,billing_price_id FROM users WHERE id=$1",[id]);
+ const rows=await sql.unsafe("SELECT subscription_status,plan,selected_plan,selected_period,stripe_customer_id,stripe_subscription_id,billing_price_id,billing_current_period_end,cancel_at_period_end FROM users WHERE id=$1",[id]);
  return rows[0];
 }
 async function signed(type:string,object:any,id?:string){
@@ -81,6 +84,8 @@ test("signed completed checkout never activates access; only exact paid SKU invo
  expect(u.stripe_subscription_id).toBe(sub);
  expect(u.plan).toBe("quant"); // Existing no-card trial plan; NOT proof of payment.
  await signed("invoice.paid",invoice(cus,sub,"price_UnrelatedProduct01"));
+ expect((await account(uid)).subscription_status).toBe("trialing");
+ await signed("invoice.paid",{...invoice(cus,sub,"price_SFProMonth01"),paid_out_of_band:true});
  expect((await account(uid)).subscription_status).toBe("trialing");
  await signed("invoice.paid",{...invoice(cus,sub,"price_SFProMonth01"),amount_paid:0});
  expect((await account(uid)).subscription_status).toBe("trialing");
@@ -147,4 +152,33 @@ test("shared-account unrelated Payment Link, wrong selected plan and unscoped ch
  const correct=await signed("checkout.session.completed",session(uid,cus,sub));
  expect(correct.status).toBe(200);
  expect((await account(uid)).stripe_subscription_id).toBe(sub);
+});
+
+test("earlier genuine checkout intent survives later plan selection, then paid SKU controls actual plan",async()=>{
+ const uid=await newTrial(),cus="cus_Intent"+crypto.randomUUID().slice(0,8),sub="sub_Intent"+crypto.randomUUID().slice(0,8);
+ await sql.unsafe("UPDATE users SET selected_plan='quant',selected_period='year' WHERE id=$1",[uid]);
+ const link=await signed("checkout.session.completed",session(uid,cus,sub));
+ expect(link.status).toBe(200);
+ expect((await account(uid)).stripe_subscription_id).toBe(sub);
+ await signed("invoice.paid",invoice(cus,sub,"price_SFProMonth01"));
+ let u=await account(uid);
+ expect(u.subscription_status).toBe("active");
+ expect(u.plan).toBe("pro");
+ expect(u.selected_plan).toBe("pro");
+ expect(u.selected_period).toBe("month");
+ const expiry=Math.floor(Date.now()/1000)+86400*30;
+ const subChanged=await signed("customer.subscription.updated",{object:"subscription",id:sub,customer:cus,
+  current_period_end:expiry,cancel_at_period_end:true,items:{data:[{price:{id:"price_SFProMonth01"}}]}});
+ expect(subChanged.status).toBe(200);
+ u=await account(uid);
+ expect(u.billing_current_period_end).toBeTruthy();
+ expect(u.cancel_at_period_end).toBe(true);
+ await signed("invoice.paid",invoice(cus,sub,"price_SFQuantMonth01"));
+ u=await account(uid);
+ expect(u.subscription_status).toBe("active");
+ expect(u.plan).toBe("quant");
+ expect(u.billing_price_id).toBe("price_SFQuantMonth01");
+ await signed("customer.subscription.updated",{object:"subscription",id:sub,customer:cus,
+  current_period_end:expiry+86400*30,cancel_at_period_end:false,items:{data:[{price:{id:"price_SFQuantMonth01"}}]}});
+ expect((await account(uid)).cancel_at_period_end).toBe(false);
 });

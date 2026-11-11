@@ -29,7 +29,7 @@ function asStripeId(raw:any,prefix:string){
  return typeof id==="string"&&id.startsWith(prefix)?id:null;
 }
 function paidInvoice(o:any){
- if(o?.object!=="invoice"||o.paid!==true||o.status!=="paid"||o.currency!=="cad"||!Number.isSafeInteger(o.amount_paid)||o.amount_paid<=0)return null;
+ if(o?.object!=="invoice"||o.paid!==true||o.status!=="paid"||o.paid_out_of_band===true||o.currency!=="cad"||!Number.isSafeInteger(o.amount_paid)||o.amount_paid<=0)return null;
  const customer=asStripeId(o.customer,"cus_"),sub=asStripeId(o.subscription||o.parent?.subscription_details?.subscription,"sub_");
  const lines=o.lines?.data;
  if(!customer||!sub||!Array.isArray(lines))return null;
@@ -41,9 +41,12 @@ function paidInvoice(o:any){
 async function applyPaidInvoice(tx:any,invoice:any){
  const proof=paidInvoice(invoice);
  if(!proof)return false;
- const accounts=await tx.unsafe("SELECT id,selected_plan,selected_period FROM users WHERE stripe_customer_id=$1 AND stripe_subscription_id=$2 LIMIT 1",[proof.customer,proof.sub]);
- if(!accounts.length||accounts[0].selected_plan!==proof.plan||accounts[0].selected_period!==proof.period)return false;
- await tx.unsafe("UPDATE users SET subscription_status='active',plan=$1,billing_price_id=$2,updated_at=NOW() WHERE id=$3",[proof.plan,proof.priceId,accounts[0].id]);
+ // Only a subscription previously bound through a recognized Payment Link and an
+ // authenticated checkout intent can receive paid access. Mutable last-selected
+ // checkout plan must not block renewals, plan changes or older checkout tabs.
+ const accounts=await tx.unsafe("SELECT id FROM users WHERE stripe_customer_id=$1 AND stripe_subscription_id=$2 LIMIT 1",[proof.customer,proof.sub]);
+ if(!accounts.length)return false;
+ await tx.unsafe("UPDATE users SET subscription_status='active',plan=$1,selected_plan=$1,selected_period=$2,billing_price_id=$3,billing_risk_status=CASE WHEN billing_risk_status IN ('dispute_open','dispute_lost') THEN billing_risk_status ELSE 'clear' END,updated_at=NOW() WHERE id=$4",[proof.plan,proof.period,proof.priceId,accounts[0].id]);
  return true;
 }
 async function reconcilePreviouslyReceivedInvoices(tx:any,customer:string,sub:string){
@@ -70,7 +73,7 @@ async function webhook(req:Request){
     const sourceLink=asStripeId(o.payment_link,"plink_");
     const originSku=sourceLink?SIGNALFORGE_PAYMENT_LINKS[sourceLink]:null;
     if(o.mode!=="subscription"||o.status!=="complete"||!uid||!customer||!sub||!originSku||evt.livemode!==true)return false;
-    const a=await tx.unsafe("SELECT id FROM users WHERE id=$1 AND selected_plan=$2 AND selected_period=$3 AND (stripe_customer_id IS NULL OR stripe_customer_id=$4) AND (stripe_subscription_id IS NULL OR stripe_subscription_id=$5) LIMIT 1",[uid,originSku.plan,originSku.period,customer,sub]);
+    const a=await tx.unsafe("SELECT u.id FROM users u WHERE u.id=$1 AND (u.stripe_customer_id IS NULL OR u.stripe_customer_id=$4) AND (u.stripe_subscription_id IS NULL OR u.stripe_subscription_id=$5) AND EXISTS(SELECT 1 FROM product_events e WHERE e.user_id=u.id AND e.source='server_observed' AND e.event_name='checkout_started' AND e.event_key LIKE ('checkout:'||u.id::text||':'||$2::text||':'||$3::text||':%') AND e.created_at>NOW()-INTERVAL '30 days') LIMIT 1",[uid,originSku.plan,originSku.period,customer,sub]);
     if(!a.length)return false;
     await tx.unsafe("UPDATE users SET stripe_customer_id=COALESCE(stripe_customer_id,$1),stripe_subscription_id=COALESCE(stripe_subscription_id,$2),updated_at=NOW() WHERE id=$3",[customer,sub,a[0].id]);
     // Stripe event delivery order is not guaranteed. Apply paid invoice only if one arrived earlier.
@@ -86,8 +89,8 @@ async function webhook(req:Request){
    }else if(type.startsWith("customer.subscription.")){
     // Subscription events can update renewal metadata but never grant paid access.
     const sub=asStripeId(o.id,"sub_"),customer=asStripeId(o.customer,"cus_"),price=String(o.items?.data?.[0]?.price?.id||""),sku=sfPrice(price);
-    const period=Number(o.current_period_end||0);
-    if(sub&&customer&&sku)await tx.unsafe("UPDATE users SET billing_current_period_end=CASE WHEN $3>0 THEN to_timestamp($3) ELSE billing_current_period_end END,cancel_at_period_end=$4,updated_at=NOW() WHERE stripe_customer_id=$1 AND stripe_subscription_id=$2 AND billing_price_id=$5",[customer,sub,period,Boolean(o.cancel_at_period_end),price]);
+    const period=Number(o.current_period_end||o.items?.data?.[0]?.current_period_end||0);
+    if(sub&&customer&&sku)await tx.unsafe("UPDATE users SET billing_current_period_end=CASE WHEN $3>0 THEN to_timestamp($3) ELSE billing_current_period_end END,cancel_at_period_end=$4,updated_at=NOW() WHERE stripe_customer_id=$1 AND stripe_subscription_id=$2",[customer,sub,period,Boolean(o.cancel_at_period_end)]);
    }else if(type==="charge.refunded"||type==="charge.dispute.created"||type==="charge.dispute.closed"){
     // Shared Noetfield Stripe account: never downgrade SignalForge due to unrelated purchases.
     const invoiceId=asStripeId(o.invoice,"in_");
