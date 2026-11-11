@@ -80,6 +80,28 @@ test("real database community lifecycle, security boundaries and Company OS cont
   expect(signup.data.trial.cardRequired).toBe(false);
   const cookie=(signup.response.headers.get("set-cookie")||"").split(";")[0];
   expect(cookie.startsWith("sf_session=")).toBe(true);
+  // M20 public research surface and authenticated durable watchlist, without live-provider fixtures.
+  const radarPage=await fetch(BASE+"/radar");expect(radarPage.status).toBe(200);
+  expect(await radarPage.text()).toContain("Token Radar");
+  const radarMint="So11111111111111111111111111111111111111112";
+  expect((await request("/api/token-radar/watchlist")).response.status).toBe(401);
+  expect((await request("/api/token-radar/alerts")).response.status).toBe(401);
+  const cross=await request("/api/token-radar/watchlist",{method:"POST",headers:{...headers(cookie),origin:"https://untrusted.invalid"},body:JSON.stringify({mint:radarMint})});
+  expect(cross.response.status).toBe(403);
+  const watch=await request("/api/token-radar/watchlist",{method:"POST",headers:headers(cookie),body:JSON.stringify({mint:radarMint})});
+  expect(watch.response.status).toBe(201);
+  const duplicate=await request("/api/token-radar/watchlist",{method:"POST",headers:headers(cookie),body:JSON.stringify({mint:radarMint})});
+  expect(duplicate.response.status).toBe(200);
+  const watchRead=await request("/api/token-radar/watchlist",{headers:{cookie}});
+  expect(watchRead.data.items.some((x:any)=>x.mint===radarMint)).toBe(true);
+  const alertsRead=await request("/api/token-radar/alerts",{headers:{cookie}});
+  expect(alertsRead.response.status).toBe(200);
+  expect(Array.isArray(alertsRead.data.items)).toBe(true);
+  expect((await request("/api/token-radar/refresh",{method:"POST",headers:headers(cookie),body:"{}"})).response.status).toBe(401);
+  const history=await request("/api/token-radar/snapshots/"+radarMint);
+  expect(history.response.status).toBe(200);
+  expect(Array.isArray(history.data.items)).toBe(true);
+
   const me=await request("/api/auth/me",{headers:{cookie}});
   expect(me.data.user.email).toBe(email);
 
