@@ -202,4 +202,15 @@ test("Token Radar public route and invalid-source research boundary", async () =
   expect(unsupported.data.error).toBe("UNSUPPORTED_CHAIN");
   const wrongMethod = await request("/api/tokens/lookup", {method:"POST"});
   expect(wrongMethod.response.status).toBe(405);
+  const historyInvalid=await request("/api/tokens/history?address=bad");
+  expect(historyInvalid.response.status).toBe(400);
+  expect(historyInvalid.data.error).toBe("INVALID_SOLANA_ADDRESS");
+  const history=await request("/api/tokens/history?address=So11111111111111111111111111111111111111112");
+  expect(history.response.status).toBe(200);
+  expect(history.data.chainId).toBe("solana");
+  expect(Array.isArray(history.data.items)).toBe(true);
+  expect(["INSUFFICIENT_HISTORY","CHANGE_AVAILABLE"]).toContain(history.data.status);
+  expect(history.data.items.length).toBeLessThanOrEqual(48);
+  const wrongHistoryMethod=await request("/api/tokens/history",{method:"POST"});
+  expect(wrongHistoryMethod.response.status).toBe(405);
 });
