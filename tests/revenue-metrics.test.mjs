@@ -70,3 +70,20 @@ test("a completed unrelated Stripe Payment Link does not count as a SignalForge 
  assert.equal(o.checkoutCompletedUsers,0);
  assert.equal(o.linkedPaidSubscriberUsers,0);
 });
+
+test("legacy JSONB-string webhook events remain readable without retroactive revenue invention",()=>{
+ const paid=event("invoice.paid",invoice("in_legacy",SIGNALFORGE_PRICE_IDS.SF_PRICE_PRO_M,2900),"evt_legacy");
+ const legacyPaid={...paid,payload:JSON.stringify(paid.payload)};
+ const legacyCheckout={...checkout,payload:JSON.stringify(checkout.payload)};
+ const out=summarizeBillingEvents([legacyCheckout,legacyPaid],[user]);
+ assert.equal(out.checkoutCompletedUsers,1);
+ assert.equal(out.linkedPaidInvoices,1);
+ assert.equal(out.sourceReportedGrossPaidCadMinor,2900);
+});
+test("out-of-band invoices never count as collected paid invoice activity",()=>{
+ const manual=event("invoice.paid",invoice("in_marked_out_of_band",SIGNALFORGE_PRICE_IDS.SF_PRICE_PRO_M,2900,{paid_out_of_band:true}),"evt_marked_out");
+ const out=summarizeBillingEvents([checkout,manual],[user]);
+ assert.equal(out.recognizedPaidInvoices,0);
+ assert.equal(out.linkedPaidSubscriberUsers,0);
+ assert.equal(out.sourceReportedGrossPaidCadMinor,0);
+});
