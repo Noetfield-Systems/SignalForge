@@ -30,6 +30,7 @@ export function summarizeBillingEvents(rows,users,prices=SIGNALFORGE_PRICE_IDS){
   completed.add(binding.userId);
  }
  let recognizedInvoices=0,linkedInvoices=0,unmatchedInvoices=0,grossPaidMinor=0,failedInvoices=0,refundEvents=0,disputeEvents=0;
+ const uniquePaidUsers=new Set();
  const invoiceIds=new Set(),seenInvoices=new Set();
  for(const row of rows){
   const o=objectOf(row);
@@ -43,7 +44,7 @@ export function summarizeBillingEvents(rows,users,prices=SIGNALFORGE_PRICE_IDS){
    const key=proof.customerId+"|"+proof.subscriptionId;
    const linkedId=bindings.get(key);
    const user=linkedId?knownUsers.get(linkedId):users.find(x=>isGenuineUser(x)&&x.stripe_customer_id===proof.customerId&&x.stripe_subscription_id===proof.subscriptionId);
-   if(user)linkedInvoices++;
+   if(user){linkedInvoices++;uniquePaidUsers.add(String(user.id));}
    else unmatchedInvoices++;
   }
  }
@@ -56,14 +57,15 @@ export function summarizeBillingEvents(rows,users,prices=SIGNALFORGE_PRICE_IDS){
   if(row.event_type==="charge.refunded"&&invoiceIds.has(idOf(o?.invoice)))refundEvents++;
   if(row.event_type==="charge.dispute.created"&&invoiceIds.has(idOf(o?.invoice)))disputeEvents++;
  }
- return {checkoutCompletedUsers:completed.size,recognizedPaidInvoices:recognizedInvoices,linkedPaidInvoices:linkedInvoices,unmatchedPaidInvoices:unmatchedInvoices,sourceReportedGrossPaidCadMinor:grossPaidMinor,failedInvoiceEvents:failedInvoices,linkedRefundEvents:refundEvents,linkedDisputeEvents:disputeEvents,settledCashCadMinor:null,stripeFeesCadMinor:null,netRevenueCadMinor:null,contributionMarginCadMinor:null};
+ return {checkoutCompletedUsers:completed.size,recognizedPaidInvoices:recognizedInvoices,linkedPaidInvoices:linkedInvoices,linkedPaidSubscriberUsers:uniquePaidUsers.size,unmatchedPaidInvoices:unmatchedInvoices,sourceReportedGrossPaidCadMinor:grossPaidMinor,failedInvoiceEvents:failedInvoices,linkedRefundEvents:refundEvents,linkedDisputeEvents:disputeEvents,settledCashCadMinor:null,stripeFeesCadMinor:null,netRevenueCadMinor:null,contributionMarginCadMinor:null};
 }
 
 export async function getRevenueSnapshot(db){
- const [users,events,paymentEvents]=await Promise.all([
+ const [users,events,paymentEvents,returning]=await Promise.all([
   db.unsafe("SELECT id,email,role,created_at,trial_ends_at,subscription_status,plan,billing_risk_status,stripe_customer_id,stripe_subscription_id FROM users"),
   db.unsafe("SELECT event_name,COUNT(DISTINCT user_id)::int AS users,COUNT(*)::int AS events FROM product_events WHERE source='server_observed' AND created_at>NOW()-INTERVAL '30 days' AND user_id IN (SELECT id FROM users WHERE role='user' AND email NOT LIKE '%@signalforge.test' AND email NOT LIKE '%@example.com') GROUP BY event_name ORDER BY events DESC"),
-  db.unsafe("SELECT stripe_event_id,event_type,payload FROM payment_events WHERE event_type IN ('checkout.session.completed','checkout.session.async_payment_succeeded','invoice.paid','invoice.payment_failed','charge.refunded','charge.dispute.created') ORDER BY id DESC LIMIT 2001")
+  db.unsafe("SELECT stripe_event_id,event_type,payload FROM payment_events WHERE event_type IN ('checkout.session.completed','checkout.session.async_payment_succeeded','invoice.paid','invoice.payment_failed','charge.refunded','charge.dispute.created') ORDER BY id DESC LIMIT 2001"),
+   db.unsafe("SELECT COUNT(*)::int AS users FROM (SELECT e.user_id FROM product_events e JOIN users u ON u.id=e.user_id WHERE e.source='server_observed' AND e.event_name IN ('token_researched','token_watchlist_added','research_note_created','research_backtest') AND e.created_at>NOW()-INTERVAL '30 days' AND u.role='user' AND u.email NOT LIKE '%@signalforge.test' AND u.email NOT LIKE '%@example.com' GROUP BY e.user_id HAVING COUNT(DISTINCT DATE(e.created_at AT TIME ZONE 'UTC'))>=2) t")
  ]);
  const genuine=users.filter(isGenuineUser);
  const included=paymentEvents.slice(0,2000);
@@ -78,8 +80,20 @@ export async function getRevenueSnapshot(db){
   status:paymentEvents.length>2000?"PARTIAL_EVENT_WINDOW":"SOURCE_REPORTED_NOT_SETTLED",
   coverage:{maxRecentStripeEvents:2000,eventsProcessed:included.length,completeForAllHistory:paymentEvents.length<=2000},
   accounts:{genuineAccounts:genuine.length,signupsLast30Days:genuine.filter(u=>new Date(u.created_at).getTime()>Date.now()-30*86400000).length,activeFreeTrials:trials,activePaidEntitlementsReportedByApp:active,pastDueEntitlementsReportedByApp:pastDue},
-  funnel:{researchActionsLast30Days:{tokenWatchlistAdded:eventMap.token_watchlist_added?.users||0,backtest:eventMap.research_backtest?.users||0},checkoutStartedUsersLast30Days:started,checkoutCompletedUsersInRetainedWebhookWindow:billing.checkoutCompletedUsers,eventsLast30Days:eventMap},
+  funnel:{
+    qualifiedPublicVisitorsLast30Days:null,
+    qualifiedPublicVisitorsStatus:"NOT_MEASURED",
+    authenticatedTokenResearchersLast30Days:eventMap.token_researched?.users||0,
+    journalAdoptersLast30Days:eventMap.research_note_created?.users||0,
+    returnDayResearchersLast30Days:returning[0]?.users||0,
+    pricingViewersLast30Days:eventMap.pricing_view?.users||0,
+    shareButtonUsersLast30Days:eventMap.report_share_clicked?.users||0,
+    researchActionsLast30Days:{tokenWatchlistAdded:eventMap.token_watchlist_added?.users||0,backtest:eventMap.research_backtest?.users||0},
+    checkoutStartedUsersLast30Days:started,
+    checkoutCompletedUsersInRetainedWebhookWindow:billing.checkoutCompletedUsers,
+    sourceLinkedPaidSubscriberUsersInRetainedWebhookWindow:billing.linkedPaidSubscriberUsers,
+    eventsLast30Days:eventMap},
   billing:{...billing,sourceReportedGrossPaidCad:Number((billing.sourceReportedGrossPaidCadMinor/100).toFixed(2))},
-  cautions:["Gross paid invoice amounts are signed-webhook observations, not bank settlement.","Only exact SignalForge price IDs qualify; unrelated company Stripe invoices are excluded.","Refund-adjusted revenue, Stripe fees, cash settlement and margin are unavailable until direct reconciliation.","Customer cohorts exclude admins and test/example addresses."]
+  cautions:["Gross paid invoice amounts are signed-webhook observations, not bank settlement.","Only exact SignalForge price IDs qualify; unrelated company Stripe invoices are excluded.","Refund-adjusted revenue, Stripe fees, cash settlement and margin are unavailable until direct reconciliation.","Customer cohorts exclude admins and test/example addresses.","Anonymous visits are not measured as genuine human visitors; authenticated, source-backed research is measured instead.","Share interactions are button clicks, not independently verified external posts.","Return-day researchers have authenticated research actions on at least two distinct UTC calendar dates within 30 days."]
  };
 }
