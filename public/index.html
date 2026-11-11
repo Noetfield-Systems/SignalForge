@@ -19,7 +19,7 @@ const money=function(n){if(n===null||n===undefined)return "—";return "$"+fmt(n
 const pct=function(n){return n===null||n===undefined?"—":(n>=0?"+":"")+fmt(n,2)+"%"};
 const toast=function(s){$("toast").textContent=s;$("toast").classList.add("show");setTimeout(function(){$("toast").classList.remove("show")},2800)};
 const api=async function(path,options){const r=await fetch(path,Object.assign({credentials:"include",headers:{"Content-Type":"application/json"}},options||{}));const j=await r.json().catch(function(){return {error:"Invalid server response"}});if(!r.ok)throw new Error(j.error||("Request failed ("+r.status+")"));return j};
-function nav(view){state.view=view;document.querySelectorAll("[data-view]").forEach(function(b){b.classList.toggle("active",b.dataset.view===view)});["dashboard","scanner","strategies","backtest","trackrecord","community","models","api","pricing"].forEach(function(v){$("view-"+v).classList.toggle("hidden",v!==view)});const labels={dashboard:"Overview",scanner:"Opportunity Scanner",strategies:"Strategy Library",backtest:"Backtest Lab",trackrecord:"Track Record",community:"Signal Rooms",models:"Model Router",api:"Developer API",pricing:"Plans & Access"};$("crumb").textContent=labels[view];$("sidebar").classList.remove("open");if(view==="scanner")runScanner();if(view==="strategies")renderStrategies();if(view==="trackrecord")loadTrackRecord();if(view==="models")loadModels();if(view==="community")window.SignalForgeCommunity&&window.SignalForgeCommunity.load();if(view==="api")renderApi();if(view==="pricing"){}}
+function nav(view){state.view=view;document.querySelectorAll("[data-view]").forEach(function(b){b.classList.toggle("active",b.dataset.view===view)});["dashboard","scanner","strategies","backtest","trackrecord","community","models","api","pricing"].forEach(function(v){$("view-"+v).classList.toggle("hidden",v!==view)});const labels={dashboard:"Overview",scanner:"Opportunity Scanner",strategies:"Strategy Library",backtest:"Backtest Lab",trackrecord:"Track Record",community:"Signal Rooms",models:"Model Router",api:"Developer API",pricing:"Plans & Access"};$("crumb").textContent=labels[view];$("sidebar").classList.remove("open");if(view==="scanner")runScanner();if(view==="strategies")renderStrategies();if(view==="trackrecord")loadTrackRecord();if(view==="models")loadModels();if(view==="community")window.SignalForgeCommunity&&window.SignalForgeCommunity.load();if(view==="api")renderApi();if(view==="pricing")renderPricing()}
 document.querySelectorAll("[data-view]").forEach(function(b){b.addEventListener("click",function(){nav(b.dataset.view)})});
 document.querySelectorAll("[data-nav]").forEach(function(b){b.addEventListener("click",function(){nav(b.dataset.nav)})});
 $("mobileMenu").onclick=function(){$("sidebar").classList.toggle("open")};
@@ -34,6 +34,31 @@ $("refreshRecord").onclick=loadTrackRecord;
 $("loginBtn").onclick=function(){openAuth("login")};
 $("sideJoin").onclick=function(){openAuth("signup")};
 $("createApiKey").onclick=async function(){if(!state.user){openAuth("signup");return}try{const j=await api("/api/api-keys",{method:"POST",body:"{}"});$("apiKeyOutput").textContent=j.apiKey+" · Copy this key now; it is only shown once."}catch(e){toast(e.message)}};
+function renderPricing(){
+ const active=state.user&&["active","past_due"].includes(state.user.subscription_status);
+ const trial=state.user&&state.user.subscription_status==="trialing"&&state.user.trial_days_remaining>0;
+ const trialText=trial?"You have "+state.user.trial_days_remaining+" days of your existing no-card trial remaining. Paying now is entirely optional; your trial is not billed automatically.":"A no-card trial is available to eligible new members. Choose a paid plan voluntarily when ready.";
+ const root=$("view-pricing");
+ root.innerHTML='<div class="pagehead"><div><div class="eyebrow">Commercial research access</div><h1>Tools you return to.<br>Not signals you blindly follow.</h1><p>Free Solana token research, source-linked market context and personal research utilities. Paid access expands the existing research terminal and API capabilities.</p></div></div>'+
+ '<div class="callout">'+trialText+'</div>'+
+ '<div class="grid pricing">'+
+ '<div class="card pricecard"><h3>EXPLORER</h3><div class="price">Free</div><p>Start with source-linked Solana research, market context and public Signal Rooms.</p><ul><li>Token Radar research</li><li>Public research community</li><li>Transparent source links</li></ul><a class="primary" href="/radar" style="display:block;text-align:center;text-decoration:none;padding:13px">Open Token Radar</a></div>'+
+ '<div class="card pricecard featured"><h3>PRO</h3><div class="price">CAD $29 <small>/ month</small></div><p>Personal research workflows, advanced analysis tools and supported member capabilities.</p><ul><li>Research terminal and backtests</li><li>Persistent supported watchlists</li><li>Member research access</li></ul><button class="primary" data-subscribe="pro">Choose Pro · Pay now</button><div class="notice">CAD $290/year also available below.</div></div>'+
+ '<div class="card pricecard"><h3>QUANT</h3><div class="price">CAD $99 <small>/ month</small></div><p>Advanced historical strategies, model integrations where configured, and API research access.</p><ul><li>Pro research tools</li><li>Developer API access</li><li>Model endpoints only where connected</li></ul><button class="primary" data-subscribe="quant">Choose Quant · Pay now</button><div class="notice">CAD $990/year also available below.</div></div>'+
+ '</div><div class="callout" style="margin-top:18px">Subscriptions begin only after you complete the external Stripe payment. No trading, custody or guaranteed returns. Some future features, including continuous token monitoring, are not yet part of paid access. <label style="display:block;margin-top:12px"><input type="checkbox" id="annualBilling"> Use annual billing (CAD $290 Pro / CAD $990 Quant) instead of monthly</label></div>';
+ root.querySelectorAll("[data-subscribe]").forEach(function(b){b.onclick=async function(){
+  if(!state.user){toast("Create a free account or sign in before purchase.");openAuth("signup");return;}
+  if(active){toast("A paid subscription is already attached to this account.");return;}
+  b.disabled=true;b.textContent="Preparing secure checkout…";
+  try{
+   const plan=b.dataset.subscribe,period=$("annualBilling").checked?"year":"month";
+   const result=await api("/api/checkout",{method:"POST",body:JSON.stringify({plan,period,payNow:true})});
+   if(result.url&&/^https:\/\//.test(result.url)){window.location.assign(result.url);return;}
+   toast(result.saved?"Plan preference saved; no charge was made.":"Checkout unavailable.");
+  }catch(e){toast(e.message||"Checkout unavailable.");}
+  finally{b.disabled=false;b.textContent="Choose "+(b.dataset.subscribe==="pro"?"Pro":"Quant")+" · Pay now";}
+ }});
+}
 document.querySelectorAll("[data-join]").forEach(function(b){b.onclick=function(){openAuth("signup")}});
 $("authClose").onclick=function(){$("authModal").classList.remove("open")};
 $("authSwitch").onclick=function(){state.authMode=state.authMode==="signup"?"login":"signup";$("authTitle").textContent=state.authMode==="signup"?"Create your free account":"Welcome back";$("authSubmit").textContent=state.authMode==="signup"?"Create account":"Sign in";$("authSwitch").textContent=state.authMode==="signup"?"Already have an account? Sign in":"New here? Create an account"};
