@@ -31,7 +31,7 @@ export function priceIdsFromInvoice(invoice){
  }))];
 }
 export function paidInvoiceEvidence(invoice,env={}){
- if(!invoice||invoice.object!=="invoice"||invoice.status!=="paid"||invoice.paid!==true)return null;
+ if(!invoice||invoice.object!=="invoice"||invoice.status!=="paid"||invoice.paid!==true||invoice.paid_out_of_band===true)return null;
  if(invoice.currency!=="cad"||!Number.isSafeInteger(invoice.amount_paid)||invoice.amount_paid<=0)return null;
  const subscriptionId=invoiceSubscriptionId(invoice),customerId=invoiceCustomerId(invoice);
  if(!subscriptionId||!customerId)return null;
