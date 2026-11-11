@@ -43,6 +43,8 @@ export function numericOrNull(value, min = 0) {
 function validPair(pair, mint) {
   return pair && typeof pair === "object" &&
     pair.chainId === "solana" &&
+    pair.baseToken && typeof pair.baseToken.address === "string" &&
+    pair.quoteToken && typeof pair.quoteToken.address === "string" &&
     validSolanaAddress(pair.pairAddress) &&
     (pair.baseToken?.address === mint || pair.quoteToken?.address === mint);
 }
