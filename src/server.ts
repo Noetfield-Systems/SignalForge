@@ -5,9 +5,11 @@ import {assessCompanyOutcome} from "../company-os/shared-evidence-gate.mjs";
 import { compileOperatingBoard } from "../company-os/operating-engine.ts";
 import { evaluateCompanyPolicy } from "./company-os-policy";
 import { stripeCheckoutUrlKey } from "./billing-keys";
+import { getRevenueSnapshot } from "./revenue-metrics.mjs";
 const SIGNALFORGE_MARKETING_HTML = await Bun.file(new URL("../public/welcome.html", import.meta.url)).text();
 const HTML = await Bun.file(new URL("../public/index.html", import.meta.url)).text();
 const TOKEN_RADAR_HTML = await Bun.file(new URL("../public/token-radar.html", import.meta.url)).text();
+const REVENUE_CONTROL_HTML = await Bun.file(new URL("../public/revenue-control.html", import.meta.url)).text();
 const PORT = Number(Bun.env.PORT || 8080);
 const BASE_URL = Bun.env.BASE_URL || "https://signalforge-web-production.up.railway.app";
 const DB_URL = Bun.env.DATABASE_URL || "";
@@ -125,6 +127,7 @@ async function stripeCheckout(user:any,plan:string,period:string){
  dest.searchParams.set("utm_source","signalforge_app");
  dest.searchParams.set("utm_campaign","paid_"+p+"_"+i);
  await db.unsafe("UPDATE users SET selected_plan=$1,selected_period=$2,updated_at=NOW() WHERE id=$3",[p,i,user.id]);
+ await recordProductAction(user.id,"checkout_started","checkout:"+user.id+":"+p+":"+i+":"+Math.floor(Date.now()/300000));
  return json({url:dest.toString(),checkoutMode:"voluntary_paid",subscriptionStatus:user.subscription_status,entitlementChanged:false});
 }
 
@@ -345,6 +348,14 @@ if(path==="/api/scanner"){const interval=Number(u.searchParams.get("interval")||
 if(path==="/api/backtest"){const symbol=u.searchParams.get("symbol")||"BTCUSD",interval=Number(u.searchParams.get("interval")||60),strategy=u.searchParams.get("strategy")||"all";const result=await backtestResponse(symbol,interval,strategy);const viewer=await userFor(req);if(viewer)await recordProductAction(viewer.id,"research_backtest","backtest:"+viewer.id+":"+symbol+":"+interval+":"+strategy+":"+Math.floor(Date.now()/86400000));return json(result)}
 if(path==="/api/performance"){const live=await metricsLive();let recent:any[]=[];if(dbReady&&db){recent=await db.unsafe("SELECT symbol,strategy_name AS strategy,direction,entry,exit_price AS \"exitPrice\",outcome,pnl_pct AS \"pnlPct\",created_at AS \"createdAt\" FROM signal_events WHERE status='CLOSED' ORDER BY closed_at DESC LIMIT 50")}return json({live,recent,recordStatus:live.closedCount>=30?"LIVE_SAMPLE_30_PLUS":live.closedCount>=12?"LIVE_LOW_SAMPLE":"BUILDING_LIVE_RECORD",source:"Timestamped public-market signals; fees and slippage included."})}
 if(path==="/api/referral"&&method==="GET"){const u=await userFor(req);if(!u)return json({error:"Sign in first."},401);const n=await db.unsafe("SELECT COUNT(*)::int AS count FROM users WHERE referred_by=$1",[u.id]);return json({code:u.referral_code,referrals:n[0]?.count||0,url:BASE_URL+"/?ref="+encodeURIComponent(u.referral_code||"")})}
+if(path==="/admin/revenue"||path==="/api/admin/revenue"){
+ if(method!=="GET")return json({error:"Method not allowed"},405);
+ if(!dbReady||!db)return json({error:"Revenue evidence storage unavailable"},503);
+ const admin=await userFor(req);
+ if(!admin||admin.role!=="admin")return json({error:"Admin access required"},403);
+ if(path==="/admin/revenue")return new Response(REVENUE_CONTROL_HTML,{headers:{"content-type":"text/html; charset=utf-8","cache-control":"private,no-store","x-robots-tag":"noindex,nofollow","x-content-type-options":"nosniff"}});
+ return json(await getRevenueSnapshot(db));
+}
 if(path==="/api/admin/overview"&&method==="GET"){const u=await userFor(req);if(!u||u.role!=="admin")return json({error:"Admin access required."},403);const [a,l,e,r,c]=await Promise.all([db.unsafe("SELECT COUNT(*)::int AS total,COUNT(*) FILTER(WHERE subscription_status='trialing' AND trial_ends_at>NOW())::int AS active_trials,COUNT(*) FILTER(WHERE subscription_status IN ('active','past_due'))::int AS paid,COUNT(*) FILTER(WHERE created_at>NOW()-INTERVAL '7 days')::int AS signups_7d FROM users"),db.unsafe("SELECT COUNT(*)::int AS total,COUNT(*) FILTER(WHERE created_at>NOW()-INTERVAL '7 days')::int AS new_7d FROM growth_leads"),db.unsafe("SELECT event_name,COUNT(*)::int AS count FROM product_events WHERE created_at>NOW()-INTERVAL '7 days' GROUP BY event_name ORDER BY count DESC"),db.unsafe("SELECT COUNT(*)::int AS referred_signups FROM users WHERE referred_by IS NOT NULL"),db.unsafe("SELECT template,status,COUNT(*)::int AS count FROM lifecycle_emails GROUP BY template,status ORDER BY template,status")]);return json({users:a[0],leads:l[0],events:e,referrals:r[0],lifecycle:c})}
 if(path==="/api/watchlist"){const user=await userFor(req);if(!user)return json({error:"Sign in to use a persistent watchlist."},401);if(method==="GET"){const rows=await db.unsafe("SELECT symbol,created_at FROM watchlists WHERE user_id=$1 ORDER BY created_at DESC",[user.id]);return json({items:rows})}if(method==="POST"){const b=await req.json().catch(()=>({})),symbol=String(b.symbol||"");if(!MARKETS[symbol])return json({error:"Unsupported market."},400);const added=await db.unsafe("INSERT INTO watchlists(user_id,symbol) VALUES($1,$2) ON CONFLICT(user_id,symbol) DO NOTHING RETURNING symbol",[user.id,symbol]);if(added.length)await recordProductAction(user.id,"watchlist_added","watchlist:"+user.id+":"+symbol);return json({ok:true})}}
 if(path==="/api/alerts"){const user=await userFor(req);if(!user)return json({error:"Sign in to manage alerts."},401);if(method==="GET")return json({items:await db.unsafe("SELECT id,symbol,strategy_id AS \"strategyId\",min_score AS \"minScore\",active,created_at AS \"createdAt\" FROM user_alerts WHERE user_id=$1 ORDER BY id DESC",[user.id])});if(method==="POST"){const b=await req.json().catch(()=>({})),symbol=String(b.symbol||""),min=clamp(Number(b.minScore||75),50,100);if(!MARKETS[symbol])return json({error:"Unsupported market."},400);const row=await db.unsafe("INSERT INTO user_alerts(user_id,symbol,strategy_id,min_score) VALUES($1,$2,$3,$4) RETURNING id",[user.id,symbol,b.strategyId||null,min]);return json({ok:true,id:row[0].id},201)}}

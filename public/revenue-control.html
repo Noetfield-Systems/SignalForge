@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>Revenue Control · SignalForge</title>
+<style>
+:root{color-scheme:dark;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#080d15;color:#e9f2f7}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% 0%,#173e4040 0%,transparent 52%),#080d15}
+main{max-width:1200px;margin:auto;padding:30px 22px 90px}header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:65px}
+a{color:#8cf4df;text-decoration:none}.logo{font-weight:800;letter-spacing:.17em;color:#f7fcfd}nav{display:flex;gap:19px;flex-wrap:wrap}
+.kicker{font-size:12px;letter-spacing:.2em;color:#62e7cf;font-weight:750}h1{font-size:clamp(36px,5vw,68px);font-weight:750;line-height:1.07;letter-spacing:-.05em;margin:12px 0}
+.lede{color:#97aab9;max-width:700px;line-height:1.6;margin-bottom:22px}.status{display:inline-flex;align-items:center;border:1px solid #335662;color:#bce9e3;background:#122932;padding:9px 13px;border-radius:99px;font-size:12px}
+button{background:#b9fcec;border:0;color:#092322;border-radius:10px;padding:11px 17px;font-weight:750;cursor:pointer}.topline{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-bottom:24px}
+h2{font-size:18px;letter-spacing:-.03em;margin:45px 0 18px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.tile{border:1px solid #27343c;border-radius:16px;background:linear-gradient(155deg,#151f29,#0d141d);padding:23px;min-height:149px}
+.label{color:#92a6b3;font-size:13px}.number{font-size:clamp(28px,3.2vw,46px);font-weight:690;letter-spacing:-.04em;margin:18px 0 4px}.note{color:#6e8b95;font-size:12px;line-height:1.5}
+.panel{border:1px solid #24323d;background:#101923;border-radius:16px;padding:24px}table{width:100%;border-collapse:collapse;text-align:left;font-size:14px}td,th{padding:14px 8px;border-bottom:1px solid #25323b}th{color:#8399aa;font-weight:500}td:last-child,th:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.alert{margin-top:28px;padding:19px 21px;border-left:3px solid #4c7b8b;background:#14212c;border-radius:8px;color:#bad0dc;font-size:13px;line-height:1.7}
+footer{color:#6c8293;margin-top:55px;font-size:12px}#error{color:#ffb6aa}
+@media(max-width:800px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:500px){.grid{grid-template-columns:1fr}header{align-items:flex-start;flex-direction:column}main{padding-top:20px}}
+</style></head>
+<body><main><header><a class="logo" href="/welcome">◈ SIGNALFORGE</a><nav><a href="/radar">Token Radar</a><a href="/app">Research Terminal</a><a href="/api/admin/overview">Admin API</a></nav></header>
+<div class="kicker">OPERATIONS / COMMERCIAL INTELLIGENCE</div><h1>Revenue<br>Control.</h1>
+<p class="lede">An evidence-first view of paid conversion. Payment links, selected plans and trials are never counted as collected money. Account-only financial data.</p>
+<div class="topline"><span class="status" id="status">Loading verified-source observations...</span><button id="reload" type="button">Refresh data</button></div>
+<p id="error" role="alert"></p>
+<section class="grid" id="cards"></section>
+<h2>Acquisition → Paid Subscription</h2><div class="panel"><table><thead><tr><th>Signal</th><th>Observed count</th></tr></thead><tbody id="funnel"></tbody></table></div>
+<h2>Reconciliation and Data Integrity</h2><div class="panel"><table><thead><tr><th>Evidence</th><th>Count</th></tr></thead><tbody id="evidence"></tbody></table></div>
+<div class="alert" id="cautions">Financial figures will be displayed only after authenticated backend evidence is available.</div>
+<footer>SignalForge / Noetfield Systems Inc. · Source-reported figures are not a settlement or profit statement. Do not disclose this page externally.</footer>
+</main><script>
+const $=id=>document.getElementById(id);
+function textCell(tr,value){const td=document.createElement("td");td.textContent=String(value);tr.appendChild(td)}
+function addRow(body,name,value){const tr=document.createElement("tr");textCell(tr,name);textCell(tr,value);body.appendChild(tr)}
+function tile(label,value,note){const x=document.createElement("article");x.className="tile";for(const [className,t] of [["label",label],["number",value],["note",note]]){const p=document.createElement("div");p.className=className;p.textContent=t;x.appendChild(p)}$("cards").appendChild(x)}
+async function load(){
+ $("error").textContent="";$("status").textContent="Reading signed event ledger";$("reload").disabled=true;
+ try{
+  const r=await fetch("/api/admin/revenue",{credentials:"same-origin",cache:"no-store"});
+  if(!r.ok)throw Error(r.status===403?"Admin account required. Sign in through the research terminal.":"Financial source unavailable (HTTP "+r.status+").");
+  const d=await r.json(),b=d.billing||{},a=d.accounts||{},f=d.funnel||{};
+  $("status").textContent=d.status+" · "+new Date(d.asOf).toLocaleString();
+  $("cards").replaceChildren();$("funnel").replaceChildren();$("evidence").replaceChildren();
+  tile("Account entitlements",a.activePaidEntitlementsReportedByApp??"—","Source: application database; confirm against Stripe");
+  tile("Recognized paid invoices",b.recognizedPaidInvoices??"—","Exact SignalForge SKU · signed webhook");
+  tile("Gross invoice activity (CAD)","$"+Number(b.sourceReportedGrossPaidCad||0).toLocaleString("en-CA",{minimumFractionDigits:2,maximumFractionDigits:2}),"Not settled cash or net revenue");
+  tile("Active free trials",a.activeFreeTrials??"—","Not paid subscriptions");
+  tile("Checkout started · 30d",f.checkoutStartedUsersLast30Days??"—","Authenticated, server-observed");
+  tile("Settled net cash","Not reconciled","Requires Stripe balance/payout verification");
+  for(const [k,v] of [["Genuine user accounts",a.genuineAccounts],["Signups · last 30 days",a.signupsLast30Days],["Users saving tokens · last 30 days",f.researchActionsLast30Days?.tokenWatchlistAdded],["Checkout started users · last 30 days",f.checkoutStartedUsersLast30Days],["Completed checkout users · retained events",b.checkoutCompletedUsers],["Recognized paid invoices",b.recognizedPaidInvoices]])addRow($("funnel"),k,v??"Unknown");
+  for(const [k,v] of [["Linked paid invoices",b.linkedPaidInvoices],["Unmatched paid invoices",b.unmatchedPaidInvoices],["Failed invoice events",b.failedInvoiceEvents],["Related refund events",b.linkedRefundEvents],["Related dispute events",b.linkedDisputeEvents],["Stripe events inspected",d.coverage?.eventsProcessed],["Full history included",d.coverage?.completeForAllHistory?"Yes":"No"]])addRow($("evidence"),k,v??"Unknown");
+  $("cautions").textContent=(d.cautions||[]).join(" ")+" Direct Stripe payouts, fees and settlement have not been reconciled by this page.";
+ }catch(e){$("status").textContent="Not available";$("error").textContent=String(e.message||e)}
+ finally{$("reload").disabled=false}
+}
+$("reload").addEventListener("click",load);load();
+</script></body></html>
