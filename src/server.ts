@@ -103,7 +103,21 @@ const MODELS=[
 ]
 function modelList(){return MODELS.map(m=>({name:m[0],role:m[1],provider:m[2],status:Bun.env[m[3]]?"CONFIGURED_ENDPOINT":"NOT_CONNECTED",adapterEnv:m[3]}))}
 async function backtestResponse(symbol:string,interval:number,strategy:string){const pack=await marketData(symbol,interval),ids=strategy==="all"?STRATEGIES.map(x=>x.id):[strategy],results=ids.filter(id=>STRATEGIES.some(x=>x.id===id)).map(id=>backtestOne(id,pack.candles));const sum=results.reduce((a,x)=>({trades:a.trades+x.trades,wins:a.wins+(x.trades&&x.winRate!==null?x.trades*x.winRate/100:0),net:a.net+(x.netReturn||0),dd:Math.max(a.dd,x.maxDrawdown||0)}),{trades:0,wins:0,net:0,dd:0});const aggregate={trades:sum.trades,winRate:sum.trades?Number((sum.wins/sum.trades*100).toFixed(1)):null,netReturn:results.length?Number((results.reduce((a,x)=>a+(x.netReturn||0),0)/results.length).toFixed(2)):null,profitFactor:results.length?Number(avg(results.map(x=>x.profitFactor||0)).toFixed(2)):null,maxDrawdown:sum.dd,sampleStatus:sum.trades>=30?"SAMPLE_30_PLUS":sum.trades>=12?"LOW_SAMPLE":"INSUFFICIENT_SAMPLE"};return{mode:pack.mode,source:pack.source,results,aggregate,assumptions:"Historical simulation · completed candle signal · next-bar open entry · long and short · 0.10% taker fee + 0.03% slippage each side (0.26% round trip) · 1.35 ATR stop · 40% at target 1 / 60% stop if reversal before target 2 · target 2 / 3 full exit · 14-bar max hold · stop-first same-bar ordering."}}
-async function stripeCheckout(user:any,plan:string,period:string){const p=plan==="quant"?"quant":"pro",i=period==="year"?"year":"month",end=user.trial_ends_at?new Date(user.trial_ends_at).getTime():0;if(user.subscription_status==="trialing"&&end>Date.now()){const k="SIGNALFORGE_STRIPE_"+p.toUpperCase()+"_"+i.toUpperCase()+"_PRICE";await db.unsafe("UPDATE users SET selected_plan=$1,selected_period=$2,billing_price_id=$3,updated_at=NOW() WHERE id=$4",[p,i,Bun.env[k]||null,user.id]);return json({saved:true,trialEndsAt:user.trial_ends_at})}if(["active","past_due"].includes(user.subscription_status))return json({error:"You already have a paid subscription. Use Manage billing."},409);const k="SIGNALFORGE_STRIPE_"+p.toUpperCase()+"_"+i.toUpperCase()+"_URL",link=Bun.env[k];if(!link)return json({error:"Checkout is not configured."},503);const u=new URL(link);u.searchParams.set("client_reference_id",user.id);u.searchParams.set("prefilled_email",user.email);u.searchParams.set("utm_source","signalforge_app");u.searchParams.set("utm_campaign","trial_conversion_"+p+"_"+i);await db.unsafe("UPDATE users SET selected_plan=$1,selected_period=$2,updated_at=NOW() WHERE id=$3",[p,i,user.id]);return json({url:u.toString()})}
+async function stripeCheckout(user:any,plan:string,period:string){
+ const p=plan==="quant"?"quant":"pro",i=period==="year"?"year":"month";
+ if(user.subscription_status==="active"&&user.stripe_subscription_id)return json({error:"You already have an active subscription. Use Manage billing."},409);
+ const k="SIGNALFORGE_STRIPE_"+p.toUpperCase()+"_"+i.toUpperCase()+"_URL",link=Bun.env[k];
+ if(!link)return json({error:"Paid checkout is not configured for this plan."},503);
+ let dest:URL;
+ try{dest=new URL(link);if(dest.protocol!=="https:"||!["buy.stripe.com","checkout.stripe.com"].includes(dest.hostname))throw Error("Unexpected payment host")}
+ catch{return json({error:"Payment link configuration invalid"},503)}
+ dest.searchParams.set("client_reference_id",user.id);
+ dest.searchParams.set("prefilled_email",user.email);
+ dest.searchParams.set("utm_source","signalforge_app");
+ dest.searchParams.set("utm_campaign","paid_"+p+"_"+i);
+ await db.unsafe("UPDATE users SET selected_plan=$1,selected_period=$2,updated_at=NOW() WHERE id=$3",[p,i,user.id]);
+ return json({url:dest.toString(),checkoutMode:"voluntary_paid",subscriptionStatus:user.subscription_status,entitlementChanged:false});
+}
 
 const COMMUNITY_CATEGORIES=["analysis","strategy","research","questions","product"];
 function communityText(value:any,max:number){return String(value||"").trim().slice(0,max+1)}
