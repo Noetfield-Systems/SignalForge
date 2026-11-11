@@ -195,10 +195,36 @@ return json({error:"Not found"},404)
 }
 
 async function handler(req:Request){const u=new URL(req.url),path=u.pathname,method=req.method;if(method==="GET"&&(path==="/welcome"||path==="/start"))return new Response(SIGNALFORGE_MARKETING_HTML,{headers:{"content-type":"text/html; charset=utf-8","cache-control":"public,max-age=300","x-content-type-options":"nosniff"}});if(method==="OPTIONS")return new Response(null,{status:204,headers:{"Access-Control-Allow-Origin":u.origin,"Access-Control-Allow-Credentials":"true","Access-Control-Allow-Headers":"content-type,authorization","Access-Control-Allow-Methods":"GET,POST,OPTIONS"}});if(path==="/api/health"){let database=false;try{if(dbReady&&db){await db.unsafe("SELECT 1");database=true}}catch{}return json({ok:true,service:"SIGNALFORGE",version:"0.4.0",database:database?"connected":"not_ready",marketData:"Kraken public OHLC",mode:"read-only signals; no broker execution",now:new Date().toISOString()})}
+if(method==="GET"&&path==="/robots.txt"){
+ const origin=BASE_URL.replace(/\/$/,"");
+ return new Response("User-agent: *\nAllow: /radar\nAllow: /tokens/solana/\nDisallow: /api/\nDisallow: /app\nDisallow: /admin\nSitemap: "+origin+"/sitemap.xml\n",{headers:{"content-type":"text/plain; charset=utf-8","cache-control":"public,max-age=3600"}});
+}
+if(method==="GET"&&path==="/sitemap.xml"){
+ const origin=BASE_URL.replace(/\/$/,"");
+ let discovered:any[]=[];
+ if(dbReady&&db){
+  try{
+   discovered=await db.unsafe("SELECT address,MAX(last_seen_at) AS last_seen_at FROM token_observations WHERE chain_id='solana' GROUP BY address ORDER BY MAX(last_seen_at) DESC LIMIT 100");
+  }catch(error){console.error("Public token sitemap unavailable",String(error).slice(0,90))}
+ }
+ const pages=[{url:"/welcome",last:null},{url:"/radar",last:null},...discovered.filter(x=>validSolanaAddress(String(x.address))).map(x=>({url:"/tokens/solana/"+x.address,last:x.last_seen_at}))];
+ const xml='<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+pages.map(p=>'<url><loc>'+origin+p.url+'</loc>'+(p.last?'<lastmod>'+new Date(p.last).toISOString()+'</lastmod>':"")+'</url>').join("")+'</urlset>';
+ return new Response(xml,{headers:{"content-type":"application/xml; charset=utf-8","cache-control":"public,max-age=3600","x-content-type-options":"nosniff"}});
+}
 if(method==="GET" && (path==="/radar" || path.startsWith("/tokens/solana/"))){
  const address=path.startsWith("/tokens/solana/")?path.slice("/tokens/solana/".length):null;
  if(address && !validSolanaAddress(address))return new Response("Invalid Solana token address",{status:404,headers:{"content-type":"text/plain; charset=utf-8"}});
- const document=address?TOKEN_RADAR_HTML.replace("<title>Token Radar · SignalForge</title>","<title>Solana token "+address+" · Token Radar · SignalForge</title>"):TOKEN_RADAR_HTML;
+ const origin=BASE_URL.replace(/\/$/,"");
+ const pathForMeta=address?"/tokens/solana/"+address:"/radar";
+ const canonical=origin+pathForMeta;
+ const meta='<link rel="canonical" href="'+canonical+'">'+
+   '<meta property="og:url" content="'+canonical+'">'+
+   '<meta name="twitter:card" content="summary">'+
+   '<meta name="robots" content="index,follow">';
+ const document=TOKEN_RADAR_HTML
+   .replace("<title>Token Radar · SignalForge</title>",address?"<title>Solana token "+address+" · Token Radar · SignalForge</title>":"<title>Token Radar · SignalForge</title>")
+   .replace('content="SignalForge Token Radar — Source-linked Solana research"', 'content="'+(address?"Solana "+address+" market research — SignalForge Token Radar":"SignalForge Token Radar — Source-linked Solana research")+'"')
+   .replace("</head>",meta+"</head>");
  return new Response(document,{headers:{"content-type":"text/html; charset=utf-8","cache-control":"public,max-age=60","x-content-type-options":"nosniff"}});
 }
 if(path==="/api/tokens/history" || /^\/api\/tokens\/solana\/[^/]+\/history$/.test(path)){
