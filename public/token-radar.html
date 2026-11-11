@@ -161,6 +161,31 @@ try{
 }
 const validMintForUi = address => typeof address==="string"&&/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address);
 
+function renderSourceComparison(source){
+ if(!source)return "";
+ const messages={
+  NO_SOURCE_OBSERVATIONS:"No recorded provider observations available",
+  NO_BASELINE_AT_THESIS_CREATION:"No source observation existed at note creation; a before/after comparison is unavailable",
+  NO_SUBSEQUENT_OBSERVATION:"No newer source observation since this note was created",
+  PRIMARY_POOL_UNAVAILABLE:"Primary pool data is missing in one observation",
+  PRIMARY_POOL_CHANGED:"Primary liquidity pool changed; unlike pools cannot be compared reliably",
+  NO_COMPARABLE_METRICS:"No reliable comparable metrics in these snapshots",
+  NEW_SOURCE_OBSERVATION:"Source-observed changes since this note"
+ };
+ const state=messages[source.status]||"Source comparison unavailable";
+ const fmt=value=>typeof value==="number"&&Number.isFinite(value)?Intl.NumberFormat("en-US",{maximumSignificantDigits:5}).format(value):"Not reported";
+ const observed=source.latest?.observedAt?new Date(source.latest.observedAt).toLocaleString():"No provider observation";
+ const rows=Array.isArray(source.metrics)?source.metrics.filter(x=>x.deltaPct!==null).map(x=>
+  '<div class="detail"><span>'+e(x.label)+'</span><strong>'+e(fmt(x.before))+' → '+e(fmt(x.after))+' '+e(x.unit)+' · '+e((x.deltaPct>0?"+":"")+x.deltaPct+"%")+'</strong></div>'
+ ).join(""):"";
+ return '<section style="border-top:1px solid #30515d;margin-top:14px;padding-top:12px">'+
+  '<small style="color:#6cf2c5;font-weight:700">SOURCE EVIDENCE / NOT A THESIS VERDICT</small>'+
+  '<p style="margin:5px 0;font-size:12px;color:#bdd0db">'+e(state)+'</p>'+
+  (source.baseline?'<small>Baseline observed '+e(new Date(source.baseline.observedAt).toLocaleString())+'</small><br>':"")+
+  '<small>Latest provider observation: '+e(observed)+(source.staleLatest?' · stale (over 60 minutes old)':'')+'</small>'+
+  rows+'<small>No AI judgment or contract-safety assessment is implied.</small></section>';
+}
+
 async function loadResearchNotes(mint){
  const list=$("notesList"),notice=$("notesStatus");
  list.textContent="Retrieving private journal…";
@@ -171,7 +196,7 @@ async function loadResearchNotes(mint){
   const data=await res.json();if(!res.ok)throw Error(data.error||"Research notes unavailable.");
   const items=Array.isArray(data.items)?data.items:[];
   notice.textContent=items.length+" private entries · user-authored, not verified market claims";
-  list.innerHTML=items.length?items.map(x=>'<article class="pool" style="display:block;white-space:normal"><div style="display:flex;justify-content:space-between;gap:12px"><small>'+e(x.kind==="thesis"?"THESIS":"NOTE")+' · '+e(new Date(x.createdAt).toLocaleString())+'</small><button type="button" class="outline" style="padding:5px 10px" data-note-delete="'+e(String(x.id))+'">Delete</button></div><div style="white-space:pre-wrap;overflow-wrap:anywhere">'+e(x.body||"")+'</div>'+(x.invalidation?'<small>Invalidation: '+e(x.invalidation)+'</small>':"")+'</article>').join(""):'<div class="muted">No private research notes yet.</div>';
+  list.innerHTML=items.length?items.map(x=>'<article class="pool" style="display:block;white-space:normal"><div style="display:flex;justify-content:space-between;gap:12px"><small>'+e(x.kind==="thesis"?"THESIS":"NOTE")+' · '+e(new Date(x.createdAt).toLocaleString())+'</small><button type="button" class="outline" style="padding:5px 10px" data-note-delete="'+e(String(x.id))+'">Delete</button></div><div style="white-space:pre-wrap;overflow-wrap:anywhere">'+e(x.body||"")+'</div>'+(x.invalidation?'<small>Invalidation: '+e(x.invalidation)+'</small>':"")+renderSourceComparison(x.evidence)+'</article>').join(""):'<div class="muted">No private research notes yet.</div>';
  }catch(err){if(mint===currentAddress){notice.textContent=err?.message||"Journal unavailable";list.textContent="Research notes unavailable.";}}
 }
 $("noteKind").addEventListener("change",()=>{$("invalidationWrap").hidden=$("noteKind").value!=="thesis";$("noteInvalidation").required=$("noteKind").value==="thesis";});
