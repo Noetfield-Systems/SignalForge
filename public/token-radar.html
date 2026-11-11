@@ -23,7 +23,7 @@ nav{display:flex;align-items:center;justify-content:space-between;gap:15px;borde
 .btn:hover{filter:brightness(1.08)}.hint{display:flex;flex-wrap:wrap;gap:10px;align-items:center;color:#8297a6;font-size:12px;margin-top:13px}.linkbutton{background:none;border:0;padding:0;color:#8ee9ce;text-decoration:underline;text-underline-offset:3px}
 .panel{background:linear-gradient(155deg,#142331,#101925);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 10px 32px #0002}.panelhead{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:18px;align-items:center}.label{font-size:11px;letter-spacing:.13em;color:#92b5b9;text-transform:uppercase}.panelhead strong{font-size:15px}
 .status{padding:22px 0 17px;color:#9db3c1;font-size:13px;min-height:34px}.status.error{color:#ffb7b7}.status.success{color:var(--green)}
-#report[hidden]{display:none}.report-top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:15px;align-items:center;padding:27px}.asset{font-size:clamp(25px,4vw,39px);letter-spacing:-.045em;margin:3px 0}.sub{color:#9bb0bc;font-size:12px;overflow-wrap:anywhere}.pilltag{border:1px solid #406f68;border-radius:100px;padding:8px 13px;color:#b6ffdf;font-size:11px}
+#report[hidden]{display:none}#historyChanges[hidden]{display:none}.report-top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:15px;align-items:center;padding:27px}.asset{font-size:clamp(25px,4vw,39px);letter-spacing:-.045em;margin:3px 0}.sub{color:#9bb0bc;font-size:12px;overflow-wrap:anywhere}.pilltag{border:1px solid #406f68;border-radius:100px;padding:8px 13px;color:#b6ffdf;font-size:11px}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.metric{padding:23px;border-right:1px solid var(--line)}.metric:last-child{border-right:0}.metric b{display:block;font-size:clamp(22px,2.7vw,31px);letter-spacing:-.04em;font-variant-numeric:tabular-nums;margin:8px 0 3px;overflow-wrap:anywhere}.metric small{color:#8ca4b3;font-size:11px}
 .two{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(260px,.85fr);gap:15px;margin:16px 0}.section{padding:24px}.section h2{font-size:18px;letter-spacing:-.025em;margin:0 0 6px}.section p{color:#a9b8c4;font-size:12px;margin:2px 0 20px}.detail{display:flex;gap:15px;justify-content:space-between;border-bottom:1px solid #263b49;padding:11px 0;color:#aac1c9;font-size:13px}.detail strong{color:#edf7fb;text-align:right;font-weight:600}.muted{color:#96adbc}.pools{display:grid;gap:9px;margin-top:15px}.pool{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px;border:1px solid #2e4554;border-radius:11px;background:#0e1925}.pool b{font-size:13px}.pool small{display:block;color:#879fac;font-size:11px}.poolright{text-align:right}.source{color:#95b5bf;text-decoration:none}.source:hover{color:var(--green)}.actionbar{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 28px}.outline{border:1px solid #37615f;background:#14252d;color:#d9fff2;border-radius:9px;padding:12px 16px}.outline:hover{border-color:var(--green)}.info{border:1px solid #3c4e5e;border-radius:13px;padding:18px 20px;color:#aebfcc;background:#12202c;margin:18px 0 54px;font-size:12px;line-height:1.8}.info b{color:#e8f6f5}
 footer{border-top:1px solid #294151;padding:25px 0 42px;display:flex;justify-content:space-between;gap:15px;color:#879eac;font-size:12px}
@@ -72,9 +72,20 @@ footer{border-top:1px solid #294151;padding:25px 0 42px;display:flex;justify-con
 <div class="detail"><span>Contract / holders risk</span><strong>Not assessed</strong></div>
 </div>
 </div>
+<div class="panel section" id="historyPanel" aria-label="Observed token change history">
+<div class="label">03 / Research continuity</div><h2>What changed since previous research?</h2>
+<p>Timestamped, on-demand observations of the primary liquidity pool. Not continuous monitoring.</p>
+<div id="historyStatus" class="muted" role="status" aria-live="polite">Research this token to inspect available observations.</div>
+<div id="historyChanges" class="stats" hidden style="margin-top:14px;border:1px solid var(--line);border-radius:10px">
+<div class="metric"><span class="label">Price change</span><b id="priceDelta">—</b><small>Since previous observation</small></div>
+<div class="metric"><span class="label">Liquidity change</span><b id="liquidityDelta">—</b><small>Since previous observation</small></div>
+<div class="metric"><span class="label">24h volume change</span><b id="volumeDelta">—</b><small>Change in rolling 24h volume</small></div>
+<div class="metric"><span class="label">Observation count</span><b id="observationCount">—</b><small>Up to 48 recent snapshots</small></div>
+</div>
+</div>
 <div class="actionbar"><button class="btn" id="share" type="button">Copy report link</button><a class="outline" id="solscan" rel="noopener noreferrer" target="_blank">View in Solscan ↗</a><a class="outline" id="dex" rel="noopener noreferrer" target="_blank">Open primary pool ↗</a><a class="outline" href="/app">Open SignalForge terminal ↗</a></div>
 </section>
-<div class="info"><b>Research boundaries</b> — DEX pool observations are third-party market data and may be delayed, incomplete or inaccurate. The retrieved timestamp is not a verified onchain event timestamp. No rug-pull, ownership, contract-safety or holder-concentration assessment is supplied. Historical monitoring and alerts are separate upcoming capabilities; this report does not claim to track changes until observations have been persisted.</div>
+<div class="info"><b>Research boundaries</b> — DEX pool observations are third-party market data and may be delayed, incomplete or inaccurate. The retrieved timestamp is not a verified onchain event timestamp. No rug-pull, ownership, contract-safety or holder-concentration assessment is supplied. On-demand historical comparison is available only after separate source observations have been persisted. Automatic background monitoring and user alerts are not yet active.</div>
 </main>
 <footer><span>© 2026 SignalForge · Evidence before execution</span><span>Read-only research. No financial advice, custody or trade execution.</span></footer>
 </div>
@@ -112,6 +123,27 @@ if(p)$("dex").href=safeLink(p.explorerUrl);
 const pools=report.pools.slice(0,20).map((x,i)=>'<div class="pool"><div><b>'+e(x.base.symbol)+' / '+e(x.quote.symbol)+'</b><small>'+e(x.dex)+(i===0?' · PRIMARY POOL':'')+' · '+e(x.address.slice(0,8))+'…</small></div><div class="poolright"><b>'+e(short(x.liquidityUsd))+' liquidity</b><small><a class="source" href="'+e(safeLink(x.explorerUrl))+'" target="_blank" rel="noopener noreferrer">View source ↗</a></small></div></div>');
 $("pools").innerHTML=pools.length?pools.join(""):'<div class="muted">No DEX liquidity pools were returned by the provider. This does not prove a token is nonexistent or safe.</div>';
 }
+const percentage=n=>typeof n==="number"&&Number.isFinite(n)?(n>0?"+":"")+n.toFixed(2)+"%":"Unavailable";
+async function renderHistory(address,stored){
+ $("historyChanges").hidden=true;
+ $("historyStatus").textContent=stored==="PERSISTED"?"Checking earlier observations…":"No new observation saved; historical comparisons may be unavailable.";
+ try {
+  const r=await fetch("/api/tokens/history?address="+encodeURIComponent(address),{headers:{"accept":"application/json"}});
+  if(!r.ok)throw new Error("History service unavailable.");
+  const h=await r.json();
+  if(h.status==="STORAGE_UNAVAILABLE")throw new Error("Observation storage is temporarily unavailable.");
+  if(h.status!=="CHANGE_AVAILABLE"||!h.changes){
+   $("historyStatus").textContent=h.items?.length?"One observation is stored. Return later to compare a new source reading.":"No historical observations are available yet.";
+   return;
+  }
+  $("historyStatus").textContent="Comparing "+new Date(h.changes.from).toLocaleString()+" to "+new Date(h.changes.to).toLocaleString()+" for one matching pool.";
+  $("priceDelta").textContent=percentage(h.changes.pricePct);
+  $("liquidityDelta").textContent=percentage(h.changes.liquidityPct);
+  $("volumeDelta").textContent=percentage(h.changes.volume24hPct);
+  $("observationCount").textContent=String(h.items.length);
+  $("historyChanges").hidden=false;
+ }catch(err){$("historyStatus").textContent=err?.message||"History unavailable.";}
+}
 async function lookup(mint,push=true){
 mint=mint.trim();$("report").hidden=true;setLoading(true);status("Checking the Solana address and fetching reported pools…");
 try{
@@ -122,6 +154,7 @@ currentAddress=mint;
 if(push)history.pushState(null,"","/tokens/solana/"+encodeURIComponent(mint));
 document.title=(j.token?.symbol||"Solana token")+" · Token Radar · SignalForge";
 show(j);
+await renderHistory(mint,j.observationStorage);
 status(j.status==="OBSERVED"?"Live provider response received · "+j.poolCount+" observed pool(s) · "+(j.cacheStatus==="CACHED"?"cached observation":"new fetch"):"No pools returned by the provider for this address.","success");
 }catch(err){status(err?.message||"Unable to load this token.","error");}
 finally{setLoading(false);}
