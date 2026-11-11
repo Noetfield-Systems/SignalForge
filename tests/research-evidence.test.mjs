@@ -18,7 +18,7 @@ test("one immutable baseline cannot masquerade as a post-note market event",()=>
 });
 test("new observations expose percentage deltas without judging thesis validity",()=>{
  const e=compareThesisEvidence(note,point("1","2026-11-11T07:00:00.000Z","poolA",2,5000,1000),
-  point("2","2026-11-11T09:00:00.000Z","poolA",3,7500,2000),t);
+  point("2","2026-11-11T08:50:00.000Z","poolA",3,7500,2000),t);
  assert.equal(e.status,"NEW_SOURCE_OBSERVATION");
  assert.equal(e.metrics[0].deltaPct,50);
  assert.equal(e.metrics[1].deltaPct,50);
