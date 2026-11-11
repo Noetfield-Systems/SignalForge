@@ -52,6 +52,22 @@ test("real-source-shaped observations create ranked evidence-gated per-team work
   expect(packet.owner_role_id).not.toBe("independent_verifier");
  }
 });
+test("only bounded, anonymized commercial evidence can inform the single Company OS",()=>{
+ const commercialEvidence={
+  source:"SignalForge signed local webhook and authenticated source activity",
+  asOf:at.toISOString(),genuineAccounts:20,tokenResearchersLast30Days:4,returnDayResearchersLast30Days:2,
+  pricingViewersLast30Days:3,checkoutStartedUsersLast30Days:1,
+  linkedPaidSubscriberUsersInRetainedEvents:0,sourceReportedGrossPaidCadMinor:0,
+  settledCashCadMinor:null,settlementStatus:"NOT_INDEPENDENTLY_RECONCILED"
+ };
+ const board=compileOperatingBoard(make({commercialEvidence}),at);
+ expect(board.operating_state.commercial_evidence.tokenResearchersLast30Days).toBe(4);
+ expect(board.operating_state.commercial_evidence.settledCashCadMinor).toBeNull();
+ expect(board.operating_state.verified_collected_cash_cad).toBeNull();
+ expect(board.constraints.no_new_scheduler).toBe(true);
+ expect(()=>compileOperatingBoard(make({commercialEvidence:{...commercialEvidence,settledCashCadMinor:1000}}),at)).toThrow();
+ expect(()=>compileOperatingBoard(make({commercialEvidence:{...commercialEvidence,genuineAccounts:1}}),at)).toThrow();
+});
 test("stable same-day decision on same data, never invents activation rate or money",()=>{
  const x=compileOperatingBoard(make(),at),y=compileOperatingBoard(make(),at);
  expect(x).toEqual(y);
