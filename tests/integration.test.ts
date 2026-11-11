@@ -22,7 +22,7 @@ beforeAll(async ()=>{
   service = Bun.spawn(["bun", "run", "src/server.ts"],{
     cwd: new URL("../", import.meta.url).pathname,
     env: {...Bun.env, NODE_ENV:"test",DATABASE_SSL:"disable",PORT:String(PORT),
-      SIGNALFORGE_COMPANY_OS_KEY:SECRET,SIGNALFORGE_ADMIN_EMAIL:"admin@signalforge.test",SIGNALFORGE_STRIPE_PRO_MONTH_URL:"https://buy.stripe.com/test_signalforge_checkout"},
+      SIGNALFORGE_COMPANY_OS_KEY:SECRET,SIGNALFORGE_ADMIN_EMAIL:"admin@signalforge.test",SIGNALFORGE_STRIPE_PRO_MONTHLY_URL:"https://buy.stripe.com/test_signalforge_checkout"},
     stdout:"pipe",stderr:"pipe",
   });
   for(let i=0;i<80;i++){
