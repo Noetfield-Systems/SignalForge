@@ -338,6 +338,12 @@ if(path==="/api/tokens/lookup" || path.startsWith("/api/tokens/solana/")){
    report.historyStatus="PERSISTENCE_UNAVAILABLE";
    report.observationState="PERSISTENCE_UNAVAILABLE";
   }
+  // Record only authenticated, real source-backed research; anonymous requests and
+  // invalid/provider-unavailable lookups are never treated as human conversion.
+  if(dbReady&&db&&report.status==="OBSERVED"&&report.source?.name==="DEX Screener"){
+   const researcher=await userFor(req);
+   if(researcher)await recordProductAction(researcher.id,"token_researched","token-researched:"+researcher.id+":"+mint+":"+new Date().toISOString().slice(0,10));
+  }
   return json(report,200,{"x-content-type-options":"nosniff"});
  }catch(error){
   const code=error instanceof TokenRadarError?error.code:"RESEARCH_UNAVAILABLE";
@@ -396,7 +402,25 @@ if(path==="/api/admin/overview"&&method==="GET"){const u=await userFor(req);if(!
 if(path==="/api/watchlist"){const user=await userFor(req);if(!user)return json({error:"Sign in to use a persistent watchlist."},401);if(method==="GET"){const rows=await db.unsafe("SELECT symbol,created_at FROM watchlists WHERE user_id=$1 ORDER BY created_at DESC",[user.id]);return json({items:rows})}if(method==="POST"){const b=await req.json().catch(()=>({})),symbol=String(b.symbol||"");if(!MARKETS[symbol])return json({error:"Unsupported market."},400);const added=await db.unsafe("INSERT INTO watchlists(user_id,symbol) VALUES($1,$2) ON CONFLICT(user_id,symbol) DO NOTHING RETURNING symbol",[user.id,symbol]);if(added.length)await recordProductAction(user.id,"watchlist_added","watchlist:"+user.id+":"+symbol);return json({ok:true})}}
 if(path==="/api/alerts"){const user=await userFor(req);if(!user)return json({error:"Sign in to manage alerts."},401);if(method==="GET")return json({items:await db.unsafe("SELECT id,symbol,strategy_id AS \"strategyId\",min_score AS \"minScore\",active,created_at AS \"createdAt\" FROM user_alerts WHERE user_id=$1 ORDER BY id DESC",[user.id])});if(method==="POST"){const b=await req.json().catch(()=>({})),symbol=String(b.symbol||""),min=clamp(Number(b.minScore||75),50,100);if(!MARKETS[symbol])return json({error:"Unsupported market."},400);const row=await db.unsafe("INSERT INTO user_alerts(user_id,symbol,strategy_id,min_score) VALUES($1,$2,$3,$4) RETURNING id",[user.id,symbol,b.strategyId||null,min]);return json({ok:true,id:row[0].id},201)}}
 if(path==="/api/api-keys"&&method==="POST"){const user=await userFor(req);if(!user)return json({error:"Sign in to request an API key."},401);if(user.plan==="explorer")return json({error:"Developer API access is part of paid plans. Request Quant Desk access."},403);const raw="sf_live_"+crypto.randomUUID().replace(/-/g,"")+crypto.randomUUID().replace(/-/g,"").slice(0,12);await db.unsafe("INSERT INTO api_keys(user_id,key_hash,key_prefix,label) VALUES($1,$2,$3,'Default')",[user.id,await digest(raw),raw.slice(0,15)]);return json({apiKey:raw,warning:"Copy this key now. It will not be shown again."},201)}
-if(path==="/api/checkout"&&method==="POST"){const user=await userFor(req);if(!user)return json({error:"Create an account before checkout."},401);const b=await req.json().catch(()=>({}));return stripeCheckout(user,String(b.plan||"pro"),String(b.period||"month"))}
+if(path==="/api/engagement"){
+ if(method!=="POST")return json({error:"METHOD_NOT_ALLOWED"},405);
+ if(!dbReady||!db)return json({error:"ACCOUNT_STORAGE_UNAVAILABLE"},503);
+ if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
+ if(rateLimit(req,24,"engagement"))return json({error:"RATE_LIMITED"},429);
+ if(Number(req.headers.get("content-length")||0)>2048)return json({error:"BODY_TOO_LARGE"},413);
+ const viewer=await userFor(req);
+ if(!viewer)return json({error:"SIGN_IN_REQUIRED"},401);
+ const body=await req.json().catch(()=>({}));
+ const action=String(body?.action||"");
+ if(!["pricing_view","report_share_clicked"].includes(action))return json({error:"INVALID_ACTION"},400);
+ const mint=String(body?.address||"");
+ if(action==="report_share_clicked"&&!validSolanaAddress(mint))return json({error:"INVALID_SOLANA_ADDRESS"},400);
+ const today=new Date().toISOString().slice(0,10);
+ const key="engagement:"+viewer.id+":"+action+":"+(action==="report_share_clicked"?mint:"pricing")+":"+today;
+ await recordProductAction(viewer.id,action,key);
+ return json({ok:true,action,source:"AUTHENTICATED_SERVER_OBSERVED_INTERACTION",note:action==="report_share_clicked"?"Share button clicked; external posting cannot be verified.":undefined});
+}
+if(path==="/api/checkout"&&method==="POST"){if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);const user=await userFor(req);if(!user)return json({error:"Create an account before checkout."},401);const b=await req.json().catch(()=>({}));return stripeCheckout(user,String(b.plan||"pro"),String(b.period||"month"))}
 if(path==="/api/model-forecast"&&method==="POST"){const b=await req.json().catch(()=>({})),model=MODELS.find(x=>x[0].toLowerCase()===String(b.model||"").toLowerCase());if(!model)return json({error:"Unknown model."},400);const endpoint=Bun.env[model[3]];if(!endpoint)return json({error:model[0]+" endpoint is not configured.",status:"NOT_CONNECTED"},503);const symbol=String(b.symbol||"BTCUSD"),interval=Number(b.interval||60),pack=await marketData(symbol,interval);const r=await fetch(endpoint,{method:"POST",headers:{"content-type":"application/json","authorization":Bun.env[model[3].replace("_URL","_TOKEN")]?"Bearer "+Bun.env[model[3].replace("_URL","_TOKEN")]:""},body:JSON.stringify({symbol,interval,candles:pack.candles.slice(-256)}),signal:AbortSignal.timeout(15000)});if(!r.ok)return json({error:"Model endpoint returned HTTP "+r.status},502);return json({model:model[0],result:await r.json(),source:"Configured external inference endpoint"})}
 return json({error:"Not found"},404)}
 async function start(){try{await initDb();console.log("Database schema ready")}catch(e:any){console.error("Database initialization failed",e?.message||e);dbReady=false}Bun.serve({port:PORT,fetch:async(req)=>{try{if(req.method==="POST"&&rateLimit(req,90))return json({error:"Rate limit exceeded."},429);return await handler(req)}catch(e:any){console.error("Request error",e?.stack||e);return json({error:"Request failed",detail:Bun.env.NODE_ENV==="development"?e?.message:undefined},500)}}});console.log("SIGNALFORGE v0.4.0 listening on "+PORT);try{const email="sf-selftest-"+Date.now()+"@signalforge.invalid",signup=await handler(new Request("http://local/api/auth/signup",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({email,password:"SignalForge#LaunchTest2026",marketingSource:"production_selftest",emailConsent:true})})),j:any=await signup.json(),raw=signup.headers.get("set-cookie")||"",ck=raw.split(";")[0],ref=await handler(new Request("http://local/api/referral",{headers:{cookie:ck}})),trial=await handler(new Request("http://local/api/auth/me",{headers:{cookie:ck}})),checkout=await handler(new Request("http://local/api/checkout",{method:"POST",headers:{cookie:ck,"content-type":"application/json"},body:JSON.stringify({plan:"pro",period:"month"})})),bj:any=await checkout.json(),me:any=await trial.json();const lifecycle=j.user?.id?await db.unsafe("SELECT template FROM lifecycle_emails WHERE user_id=$1 ORDER BY template",[j.user.id]):[];console.log("SELFTEST lifecycle-queue",lifecycle.length,lifecycle.map((x:any)=>x.template).join(","),j.user?.id?"consent accepted":"no user");if(j.user?.id)await db.unsafe("DELETE FROM users WHERE id=$1",[j.user.id]);console.log("SELFTEST launch-trial",signup.status,me.user?.subscription_status,me.user?.trial_days_remaining,ref.status,checkout.status,bj.saved===true,"no charge; temporary user purged")}catch(e:any){console.error("SELFTEST launch-trial failed",e?.message||e)}}
