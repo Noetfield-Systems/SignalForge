@@ -72,7 +72,7 @@ await db.unsafe("CREATE INDEX IF NOT EXISTS community_reports_open_idx ON commun
 await db.unsafe("CREATE TABLE IF NOT EXISTS token_radar_observations (id BIGSERIAL PRIMARY KEY, chain_id TEXT NOT NULL DEFAULT 'solana', token_address TEXT NOT NULL, pool_address TEXT NOT NULL, bucket BIGINT NOT NULL, observed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), price_usd DOUBLE PRECISION, liquidity_usd DOUBLE PRECISION, volume_24h_usd DOUBLE PRECISION, buys_24h DOUBLE PRECISION, sells_24h DOUBLE PRECISION, source TEXT NOT NULL DEFAULT 'DEX Screener', UNIQUE(chain_id,token_address,pool_address,bucket))");
 await db.unsafe("CREATE INDEX IF NOT EXISTS token_radar_observations_recent_idx ON token_radar_observations(chain_id,token_address,observed_at DESC)");
 dbReady=true;return true}
-function rateLimit(req:Request,limit=30){const ip=req.headers.get("x-forwarded-for")?.split(",")[0]||"unknown",now=Date.now(),v=rate.get(ip);if(!v||now-v.at>60000){rate.set(ip,{n:1,at:now});return false}v.n++;return v.n>limit}
+function rateLimit(req:Request,limit=30){const ip=(req.headers.get("x-forwarded-for")?.split(",")[0]||"unknown")+":"+limit,now=Date.now(),v=rate.get(ip);if(!v||now-v.at>60000){rate.set(ip,{n:1,at:now});return false}v.n++;return v.n>limit}
 // On-demand, source-reported research history. This is NOT background monitoring.
 async function persistRadarObservation(report:any){
  if(!dbReady||!db||report?.status!=="OBSERVED"||!report.primaryPool)return false;
