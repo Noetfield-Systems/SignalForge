@@ -37,7 +37,7 @@ footer{border-top:1px solid #294151;padding:25px 0 42px;display:flex;justify-con
 <div class="wrap">
 <nav aria-label="Main navigation">
 <a class="brand" href="/welcome"><span class="mark" aria-hidden="true">S</span>SIGNALFORGE</a>
-<div class="navlinks"><a href="/radar" aria-current="page">Token Radar</a><a href="/app">Research terminal</a><span class="pill">SOLANA · PUBLIC RESEARCH</span></div>
+<div class="navlinks"><a href="/radar" aria-current="page">Token Radar</a><a href="#myRadar">My Radar</a><a href="/app">Research terminal</a><span class="pill">SOLANA · PUBLIC RESEARCH</span></div>
 </nav>
 <main>
 <section class="hero">
@@ -79,7 +79,20 @@ footer{border-top:1px solid #294151;padding:25px 0 42px;display:flex;justify-con
 </section>
 <div class="actionbar"><button class="outline" id="saveToken" type="button">☆ Save and enable in-app alerts</button><button class="btn" id="share" type="button">Copy report link</button><button class="outline" id="shareTelegram" type="button">Share to Telegram</button><button class="outline" id="shareX" type="button">Share to X</button><a class="outline" id="solscan" rel="noopener noreferrer" target="_blank">View in Solscan ↗</a><a class="outline" id="dex" rel="noopener noreferrer" target="_blank">Open primary pool ↗</a><a class="outline" href="/app">Open SignalForge terminal ↗</a></div>
 </section>
-<div class="info"><b>Research boundaries</b> — DEX pool observations are third-party market data and may be delayed, incomplete or inaccurate. The retrieved timestamp is not a verified onchain event timestamp. No rug-pull, ownership, contract-safety or holder-concentration assessment is supplied. Historical monitoring and alerts are separate upcoming capabilities; this report does not claim to track changes until observations have been persisted.</div>
+<section class="panel section" id="myRadar" aria-label="Personal token watchlist and in-app alerts" style="margin:22px 0 26px">
+<div class="label">04 / Your workspace</div>
+<div style="display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap">
+  <div><h2>My Radar</h2><p>Saved token mints and source-backed change notifications. This is a private, signed-in workspace.</p></div>
+  <button class="outline" id="refreshMyRadar" type="button">Refresh my activity</button>
+</div>
+<div id="myRadarStatus" role="status" aria-live="polite" class="muted">Checking account access…</div>
+<div class="two">
+  <div><h2 style="font-size:14px;margin:15px 0 8px">Saved tokens</h2><div id="savedTokens" class="pools"><div class="muted">Sign in to view your list.</div></div></div>
+  <div><h2 style="font-size:14px;margin:15px 0 8px">Change notifications</h2><div id="alertFeed" class="pools"><div class="muted">Source-backed notifications appear here after a monitored change.</div></div></div>
+</div>
+<small class="muted">Background refresh examines eligible opted-in tokens on the existing scheduled worker. Events are created only when material source-observed changes occur; delivery is in-app, not email or SMS.</small>
+</section>
+<div class="info"><b>Research boundaries</b> — DEX pool observations are third-party data that may be delayed, incomplete or inaccurate. A recorded observation timestamp is not a verified onchain transaction time. Change events compare stored source observations; an absent event is not proof of safety, and a pool omitted by the provider is not proof of removal. Contract and holder risk have not been assessed. In-app notifications are not guaranteed immediate or comprehensive.</div>
 </main>
 <footer><span>© 2026 SignalForge · Evidence before execution</span><span>Read-only research. No financial advice, custody or trade execution.</span></footer>
 </div>
@@ -135,6 +148,68 @@ try{
  list.innerHTML=html;
 }catch{list.textContent="Source-linked history temporarily unavailable.";}
 }
+const validMintForUi = address => typeof address==="string"&&/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address);
+let centerLoading=false;
+async function loadCustomerCenter(){
+ if(centerLoading)return;
+ centerLoading=true;
+ $("refreshMyRadar").disabled=true;
+ $("myRadarStatus").textContent="Checking your account and refreshing private activity…";
+ try{
+  const [savedResponse,alertResponse]=await Promise.all([
+   fetch("/api/tokens/watchlist",{credentials:"same-origin",headers:{accept:"application/json"}}),
+   fetch("/api/tokens/notifications",{credentials:"same-origin",headers:{accept:"application/json"}})
+  ]);
+  if(savedResponse.status===401||alertResponse.status===401){
+   $("myRadarStatus").innerHTML='Sign in to save tokens and view change events. <a href="/app" class="source">Open account / Sign in ↗</a>';
+   $("savedTokens").innerHTML='<div class="muted">Sign in through the research terminal to access your saved tokens.</div>';
+   $("alertFeed").innerHTML='<div class="muted">Private source-backed change notifications are visible after sign-in.</div>';
+   return;
+  }
+  if(!savedResponse.ok||!alertResponse.ok)throw Error("Unable to retrieve private activity right now.");
+  const [saved,notifications]=await Promise.all([savedResponse.json(),alertResponse.json()]);
+  const items=Array.isArray(saved.items)?saved.items.filter(x=>validMintForUi(x.address)).slice(0,100):[];
+  const events=Array.isArray(notifications.items)?notifications.items.filter(x=>validMintForUi(x.address)).slice(0,50):[];
+  $("myRadarStatus").textContent=items.length+" saved token(s) · "+events.length+" recent source-backed notification(s) · in-app delivery";
+  $("savedTokens").innerHTML=items.length?items.map(x=>
+   '<article class="pool"><div style="min-width:0"><a class="source" href="/tokens/solana/'+e(encodeURIComponent(x.address))+'"><b>'+e(x.address.slice(0,7))+'…'+e(x.address.slice(-6))+'</b></a><small>Solana · '+(x.inAppAlerts?'Monitoring enabled':'Monitoring paused')+'</small></div>'+
+   '<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:end"><button type="button" class="outline" style="padding:6px 9px;font-size:11px" data-token-action="toggle" data-mint="'+e(x.address)+'" data-enabled="'+(x.inAppAlerts?'true':'false')+'">'+(x.inAppAlerts?'Pause':'Monitor')+'</button>'+
+   '<button type="button" class="outline" style="padding:6px 9px;font-size:11px" data-token-action="remove" data-mint="'+e(x.address)+'">Remove</button></div></article>'
+  ).join(""):'<div class="muted">No tokens saved. Research a Solana mint and choose “Save and enable in-app alerts.”</div>';
+  $("alertFeed").innerHTML=events.length?events.map(x=>
+   '<article class="pool"><div><b>'+e(String(x.type||"OBSERVATION").replaceAll("_"," "))+'</b><small>'+e(x.address.slice(0,8))+'… · '+e(new Date(x.createdAt).toLocaleString())+'</small>'+
+   '<small>Reported change: '+e(typeof x.deltaPct==="number"?x.deltaPct.toFixed(2)+"%":"pool observation")+' · not a safety verdict</small></div>'+
+   '<a class="source" href="/tokens/solana/'+e(encodeURIComponent(x.address))+'">Research ↗</a></article>'
+  ).join(""):'<div class="muted">No material changes recorded for your monitored tokens yet. A notification appears only after a source-observed threshold is crossed.</div>';
+ }catch(error){
+  $("myRadarStatus").textContent=error?.message||"Private activity temporarily unavailable.";
+ }finally{
+  centerLoading=false;$("refreshMyRadar").disabled=false;
+ }
+}
+$("refreshMyRadar").addEventListener("click",loadCustomerCenter);
+$("savedTokens").addEventListener("click",async ev=>{
+ const target=ev.target.closest("[data-token-action]");
+ if(!target)return;
+ const mint=target.dataset.mint||"";
+ if(!validMintForUi(mint))return;
+ const action=target.dataset.tokenAction;
+ if(action!=="toggle"&&action!=="remove")return;
+ target.disabled=true;
+ try{
+  const options=action==="remove"
+   ?{method:"DELETE",credentials:"same-origin"}
+   :{method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},body:JSON.stringify({address:mint,inAppAlerts:target.dataset.enabled!=="true"})};
+  const path=action==="remove"?"/api/tokens/watchlist?address="+encodeURIComponent(mint):"/api/tokens/watchlist";
+  const response=await fetch(path,options),payload=await response.json();
+  if(!response.ok)throw Error(payload.error||"Unable to update token.");
+  $("myRadarStatus").textContent=action==="remove"?"Token removed from your watchlist.":"Monitoring preference updated.";
+  await loadCustomerCenter();
+ }catch(err){$("myRadarStatus").textContent=err?.message||"Unable to update token.";}
+ finally{target.disabled=false;}
+});
+loadCustomerCenter();
+
 async function lookup(mint,push=true){
 mint=mint.trim();$("report").hidden=true;setLoading(true);status("Checking the Solana address and fetching reported pools…");
 try{
@@ -163,6 +238,7 @@ $("saveToken").addEventListener("click",async()=>{
   if(!response.ok)throw new Error(data.error||"Unable to save token");
   button.textContent="✓ Saved · in-app alerts enabled";
   status("Token saved to your personal watchlist. Source-backed change events appear in your in-app alert history.","success");
+   await loadCustomerCenter();
  }catch(err){status(err?.message||"Unable to save token.","error");}finally{button.disabled=false;}
 });
 $("shareTelegram").addEventListener("click",()=>{
