@@ -41,12 +41,27 @@ export function paidInvoiceEvidence(invoice,env={}){
  if(!product)return null;
  return {...product,customerId,subscriptionId,invoiceId:typeof invoice.id==="string"?invoice.id:null,amountPaidMinor:invoice.amount_paid};
 }
+// Public Payment Link identifiers independently read from SignalForge's live Stripe catalog.
+export const SIGNALFORGE_PAYMENT_LINK_IDS=Object.freeze({
+ pro_month:"plink_1UYy8tL4BR0lqapBDHnvVO5k",
+ pro_year:"plink_1UYy8vL4BR0lqapBJ8pENtc7",
+ quant_month:"plink_1UYy8xL4BR0lqapBpvPPv26u",
+ quant_year:"plink_1UYy8yL4BR0lqapBcocRlAvy"
+});
+export function ownedPaymentLink(session,linkIds=SIGNALFORGE_PAYMENT_LINK_IDS){
+ const link=typeof session?.payment_link==="string"?session.payment_link:session?.payment_link?.id;
+ for(const [tier,id] of Object.entries(linkIds)){
+  if(link===id){const [plan,period]=tier.split("_");return {plan,period,paymentLinkId:id};}
+ }
+ return null;
+}
 export function validCheckoutBinding(session){
  const userId=session?.client_reference_id;
  const customerId=typeof session?.customer==="string"?session.customer:session?.customer?.id;
  const subscriptionId=typeof session?.subscription==="string"?session.subscription:session?.subscription?.id;
  if(session?.mode!=="subscription"||session?.status!=="complete")return null;
+ const product=ownedPaymentLink(session);if(!product)return null;
  if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(userId||"")))return null;
  if(!/^cus_[a-zA-Z0-9]+$/.test(String(customerId||""))||!/^sub_[a-zA-Z0-9]+$/.test(String(subscriptionId||"")))return null;
- return {userId,customerId,subscriptionId};
+ return {userId,customerId,subscriptionId,...product};
 }
