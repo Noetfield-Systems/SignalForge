@@ -1,5 +1,6 @@
 import postgres from "postgres";
 import { researchSolanaToken, TokenRadarError, validSolanaAddress } from "./token-radar.mjs";
+import { persistTokenObservation, getTokenHistory, getSavedTokenList, saveToken, removeSavedToken, getTokenNotifications } from "./token-radar-storage.mjs";
 import {assessCompanyOutcome} from "../company-os/shared-evidence-gate.mjs";
 import { compileOperatingBoard } from "../company-os/operating-engine.ts";
 import { evaluateCompanyPolicy } from "./company-os-policy";
@@ -70,6 +71,13 @@ await db.unsafe("CREATE INDEX IF NOT EXISTS community_comments_post_idx ON commu
 await db.unsafe("CREATE TABLE IF NOT EXISTS community_likes(post_id BIGINT NOT NULL REFERENCES community_posts(id) ON DELETE CASCADE,user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),PRIMARY KEY(post_id,user_id))");
 await db.unsafe("CREATE TABLE IF NOT EXISTS community_reports(id BIGSERIAL PRIMARY KEY,post_id BIGINT NOT NULL REFERENCES community_posts(id) ON DELETE CASCADE,reporter_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,reason VARCHAR(36) NOT NULL,status VARCHAR(20) NOT NULL DEFAULT 'open',created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),UNIQUE(post_id,reporter_id))");
 await db.unsafe("CREATE INDEX IF NOT EXISTS community_reports_open_idx ON community_reports(status,created_at DESC)");
+await db.unsafe("CREATE TABLE IF NOT EXISTS token_observations (id BIGSERIAL PRIMARY KEY,chain_id TEXT NOT NULL,address TEXT NOT NULL,source TEXT NOT NULL,observation_hash TEXT NOT NULL,payload JSONB NOT NULL,observed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),last_seen_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),UNIQUE(chain_id,address,source,observation_hash))");
+await db.unsafe("CREATE INDEX IF NOT EXISTS token_observations_lookup_idx ON token_observations(chain_id,address,id DESC)");
+await db.unsafe("CREATE TABLE IF NOT EXISTS token_change_events (id BIGSERIAL PRIMARY KEY,chain_id TEXT NOT NULL,address TEXT NOT NULL,previous_observation_id BIGINT REFERENCES token_observations(id) ON DELETE SET NULL,observation_id BIGINT NOT NULL REFERENCES token_observations(id) ON DELETE CASCADE,event_type TEXT NOT NULL,before_value NUMERIC,after_value NUMERIC,delta_pct NUMERIC,evidence JSONB NOT NULL DEFAULT '{}'::jsonb,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),UNIQUE(observation_id,event_type))");
+await db.unsafe("CREATE INDEX IF NOT EXISTS token_change_events_lookup_idx ON token_change_events(chain_id,address,id DESC)");
+await db.unsafe("CREATE TABLE IF NOT EXISTS token_watchlist_items (user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,chain_id TEXT NOT NULL DEFAULT 'solana',address TEXT NOT NULL,in_app_alerts BOOLEAN NOT NULL DEFAULT FALSE,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),PRIMARY KEY(user_id,chain_id,address))");
+await db.unsafe("CREATE TABLE IF NOT EXISTS token_alert_events (id BIGSERIAL PRIMARY KEY,user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,change_event_id BIGINT NOT NULL REFERENCES token_change_events(id) ON DELETE CASCADE,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),read_at TIMESTAMPTZ,UNIQUE(user_id,change_event_id))");
+await db.unsafe("CREATE INDEX IF NOT EXISTS token_alert_events_user_idx ON token_alert_events(user_id,id DESC)");
 dbReady=true;return true}
 function rateLimit(req:Request,limit=30,scope="general"){const ip=req.headers.get("x-forwarded-for")?.split(",")[0]||"unknown",now=Date.now(),v=rate.get(scope+":"+ip);if(!v||now-v.at>60000){rate.set(scope+":"+ip,{n:1,at:now});return false}v.n++;return v.n>limit}
 async function persistSignals(symbol:string,interval:number,c:any[],signals:any[],mode:string){if(!dbReady||!db||mode!=="LIVE_PUBLIC_DATA")return;const last=c[c.length-1];for(const s of signals){if(s.state!=="ACTIVE"||!["LONG","SHORT"].includes(s.direction))continue;const key=[symbol,interval,s.id,s.direction,last.time].join(":");await db.unsafe("INSERT INTO signal_events (signal_key,symbol,interval,strategy_id,strategy_name,direction,score,entry,stop,target1,target2,target3,entry_time,candle_time,reasoning,source) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15::jsonb,$16) ON CONFLICT(signal_key) DO NOTHING",[key,symbol,interval,s.id,s.name,s.direction,s.score,s.entry,s.stop,s.targets[0],s.targets[1],s.targets[2],Date.now(),last.time,JSON.stringify(s.reasons),"KRAKEN_PUBLIC_OHLC"])}await evaluateSignals(symbol,interval,c)}
@@ -193,6 +201,43 @@ if(method==="GET" && (path==="/radar" || path.startsWith("/tokens/solana/"))){
  const document=address?TOKEN_RADAR_HTML.replace("<title>Token Radar · SignalForge</title>","<title>Solana token "+address+" · Token Radar · SignalForge</title>"):TOKEN_RADAR_HTML;
  return new Response(document,{headers:{"content-type":"text/html; charset=utf-8","cache-control":"public,max-age=60","x-content-type-options":"nosniff"}});
 }
+if(path==="/api/tokens/history" || /^\/api\/tokens\/solana\/[^/]+\/history$/.test(path)){
+ if(method!=="GET")return json({error:"METHOD_NOT_ALLOWED"},405);
+ const mint=path.includes("/solana/")?path.split("/")[4]:u.searchParams.get("address")||"";
+ if(!validSolanaAddress(mint))return json({error:"INVALID_SOLANA_ADDRESS"},400);
+ if(!dbReady||!db)return json({error:"HISTORY_DATABASE_UNAVAILABLE"},503);
+ if(rateLimit(req,45))return json({error:"RATE_LIMITED"},429);
+ try{return json(await getTokenHistory(db,mint))}
+ catch(e){console.error("Token history unavailable",String(e).slice(0,100));return json({error:"HISTORY_UNAVAILABLE"},503)}
+}
+if(path==="/api/tokens/watchlist"){
+ if(!dbReady||!db)return json({error:"ACCOUNT_STORAGE_UNAVAILABLE"},503);
+ const user=await userFor(req);
+ if(!user)return json({error:"SIGN_IN_REQUIRED"},401);
+ if(method==="GET")return json({items:await getSavedTokenList(db,user.id)});
+ if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
+ if(method==="POST"){
+  const b=await req.json().catch(()=>({})),mint=String(b.address||"");
+  if(!validSolanaAddress(mint))return json({error:"INVALID_SOLANA_ADDRESS"},400);
+  const count=await db.unsafe("SELECT COUNT(*)::int AS count FROM token_watchlist_items WHERE user_id=$1",[user.id]);
+  if(count[0]?.count>=50)return json({error:"WATCHLIST_LIMIT_REACHED"},409);
+  const result=await saveToken(db,user.id,mint,b.inAppAlerts===true);
+  await recordProductAction(user.id,"token_watchlist_added","token-watch:"+user.id+":"+mint);
+  return json(result,201);
+ }
+ if(method==="DELETE"){
+  const mint=u.searchParams.get("address")||"";
+  if(!validSolanaAddress(mint))return json({error:"INVALID_SOLANA_ADDRESS"},400);
+  return json(await removeSavedToken(db,user.id,mint));
+ }
+ return json({error:"METHOD_NOT_ALLOWED"},405);
+}
+if(path==="/api/tokens/notifications"){
+ if(method!=="GET")return json({error:"METHOD_NOT_ALLOWED"},405);
+ if(!dbReady||!db)return json({error:"ACCOUNT_STORAGE_UNAVAILABLE"},503);
+ const user=await userFor(req);if(!user)return json({error:"SIGN_IN_REQUIRED"},401);
+ return json({items:await getTokenNotifications(db,user.id),channel:"IN_APP_ONLY",polling:"ON_DEMAND_ONLY"});
+}
 if(path==="/api/tokens/lookup" || path.startsWith("/api/tokens/solana/")){
  if(method!=="GET")return json({error:"METHOD_NOT_ALLOWED"},405);
  if(rateLimit(req,24))return json({error:"RATE_LIMITED"},429,{"retry-after":"60"});
@@ -202,6 +247,22 @@ if(path==="/api/tokens/lookup" || path.startsWith("/api/tokens/solana/")){
  if(!validSolanaAddress(mint))return json({error:"INVALID_SOLANA_ADDRESS"},400);
  try{
   const report=await researchSolanaToken(mint);
+  if(dbReady&&db){
+   try{
+    const persistence=await persistTokenObservation(db,report);
+    const history=await getTokenHistory(db,mint);
+    report.historyStatus=history.historyStatus;
+    report.observationState=persistence.status;
+    report.newChangeEvents=persistence.newEvents;
+   }catch(error){
+    console.error("Token research persistence failed:",String(error).slice(0,90));
+    report.historyStatus="PERSISTENCE_UNAVAILABLE";
+    report.observationState="PERSISTENCE_UNAVAILABLE";
+   }
+  }else{
+   report.historyStatus="PERSISTENCE_UNAVAILABLE";
+   report.observationState="PERSISTENCE_UNAVAILABLE";
+  }
   return json(report,200,{"x-content-type-options":"nosniff"});
  }catch(error){
   const code=error instanceof TokenRadarError?error.code:"RESEARCH_UNAVAILABLE";
