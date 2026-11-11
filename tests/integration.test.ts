@@ -283,7 +283,18 @@ test("Token Radar watchlists enforce user isolation, provenance-backed history a
   expect(notice.response.status).toBe(200);
   expect(notice.data.channel).toBe("IN_APP_ONLY");
   expect(notice.data.items.some((x:any)=>x.address===SOL&&x.type==="LIQUIDITY_CHANGE")).toBe(true);
-  const otherNotices=await request("/api/tokens/notifications",{headers:headers(second.cookie)});
+  const markUnauth=await request("/api/tokens/notifications/read",{method:"POST",headers:headers(),body:JSON.stringify({all:true})});
+ expect(markUnauth.response.status).toBe(401);
+ const wrongOrigin=await request("/api/tokens/notifications/read",{method:"POST",headers:{...headers(first.cookie),origin:"https://evil.example"},body:JSON.stringify({all:true})});
+ expect(wrongOrigin.response.status).toBe(403);
+ const wrongBody=await request("/api/tokens/notifications/read",{method:"POST",headers:headers(first.cookie),body:JSON.stringify({all:false})});
+ expect(wrongBody.response.status).toBe(400);
+ const marked=await request("/api/tokens/notifications/read",{method:"POST",headers:headers(first.cookie),body:JSON.stringify({all:true})});
+ expect(marked.response.status).toBe(200);
+ expect(marked.data.updated).toBeGreaterThan(0);
+ const readBack=await request("/api/tokens/notifications",{headers:headers(first.cookie)});
+ expect(readBack.data.items.every((x:any)=>x.readAt!==null)).toBe(true);
+ const otherNotices=await request("/api/tokens/notifications",{headers:headers(second.cookie)});
   expect(otherNotices.data.items).toHaveLength(0);
  }finally{await db.end();}
  const removed=await request("/api/tokens/watchlist?address="+SOL,{method:"DELETE",headers:headers(first.cookie)});
@@ -302,13 +313,15 @@ test("Token Radar self-service watchlist UI exposes live authenticated managemen
  expect(html).toContain('id="savedTokens"');
  expect(html).toContain('id="alertFeed"');
  expect(html).toContain('id="refreshMyRadar"');
+ expect(html).toContain('id="markAlertsRead"');
+ expect(html).toContain('/api/tokens/notifications/read');
  expect(html).toContain('data-token-action="toggle"');
  expect(html).toContain('data-token-action="remove"');
  expect(html).toContain('fetch("/api/tokens/notifications"');
  expect(html).toContain('fetch("/api/tokens/watchlist"');
  expect(html).toContain('Monitoring paused');
  expect(html).toContain("No material changes recorded");
- expect(html).not.toContain("guaranteed immediate");
+ expect(html).toContain("not guaranteed immediate");
 });
 
 test("Token Radar organic distribution has canonical public reports, truthful sitemaps, and excludes private pages",async()=>{
