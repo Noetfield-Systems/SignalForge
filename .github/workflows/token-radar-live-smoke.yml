@@ -97,3 +97,25 @@ jobs:
           print("PRIVATE_ENDPOINT_AUTH_VERIFIED "+sys.argv[1])
           PY
           done
+
+      - name: Verify live organic sharing and truthful sitemap
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsS --max-time 20 "$BASE/robots.txt" -o /tmp/robots.txt
+          grep -q 'Disallow: /api/' /tmp/robots.txt
+          grep -q 'Sitemap: https://signalforge-web-production.up.railway.app/sitemap.xml' /tmp/robots.txt
+          curl -fsS --max-time 20 "$BASE/sitemap.xml" -o /tmp/sitemap.xml
+          python3 - <<'PY'
+          from xml.etree import ElementTree as ET
+          x=ET.parse("/tmp/sitemap.xml").getroot()
+          urls=[n.text for n in x.iter() if n.tag.endswith("loc")]
+          assert any(u.endswith("/radar") for u in urls),urls
+          assert all("/api/" not in u and "/app/" not in u for u in urls),urls
+          print("LIVE_SITEMAP_VERIFIED indexable_urls="+str(len(urls)))
+          PY
+          curl -fsS --max-time 20 "$BASE/tokens/solana/$MINT" -o /tmp/radar-shared.html
+          grep -q 'id="shareTelegram"' /tmp/radar-shared.html
+          grep -q 'id="shareX"' /tmp/radar-shared.html
+          grep -q '<link rel="canonical" href="https://signalforge-web-production.up.railway.app/tokens/solana/' /tmp/radar-shared.html
+          echo "LIVE_SOCIAL_SHARING_VERIFIED"
