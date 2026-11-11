@@ -109,6 +109,11 @@ test("out-of-order paid invoice is reconciled only after exact account Checkout 
  const ch=await signed("checkout.session.completed",session(uid,cus,sub));
  expect(ch.status).toBe(200);
  const u=await account(uid);
+ expect(u.stripe_subscription_id).toBe(sub);
+ if(u.subscription_status!=="active"){
+  const rows=await sql.unsafe("SELECT event_type,payload FROM payment_events WHERE event_type='invoice.paid' ORDER BY id DESC LIMIT 10");
+  throw Error("Out-of-order invoice was not reconciled: "+JSON.stringify({account:u,priorInvoicePayloads:rows.map(r=>({type:r.event_type,data:r.payload?.data?.object??r.payload}))}).slice(0,3500));
+ }
  expect(u.subscription_status).toBe("active");
  expect(u.plan).toBe("pro");
 });
