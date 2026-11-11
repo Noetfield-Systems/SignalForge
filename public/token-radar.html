@@ -88,7 +88,7 @@ footer{border-top:1px solid #294151;padding:25px 0 42px;display:flex;justify-con
 <div id="myRadarStatus" role="status" aria-live="polite" class="muted">Checking account access…</div>
 <div class="two">
   <div><h2 style="font-size:14px;margin:15px 0 8px">Saved tokens</h2><div id="savedTokens" class="pools"><div class="muted">Sign in to view your list.</div></div></div>
-  <div><h2 style="font-size:14px;margin:15px 0 8px">Change notifications</h2><div id="alertFeed" class="pools"><div class="muted">Source-backed notifications appear here after a monitored change.</div></div></div>
+  <div><div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap"><h2 style="font-size:14px;margin:15px 0 8px">Change notifications</h2><button class="outline" id="markAlertsRead" type="button" style="padding:6px 9px;font-size:11px">Mark all read</button></div><div id="alertFeed" class="pools"><div class="muted">Source-backed notifications appear here after a monitored change.</div></div></div>
 </div>
 <small class="muted">Background refresh examines eligible opted-in tokens on the existing scheduled worker. Events are created only when material source-observed changes occur; delivery is in-app, not email or SMS.</small>
 </section>
@@ -170,7 +170,7 @@ async function loadCustomerCenter(){
   const [saved,notifications]=await Promise.all([savedResponse.json(),alertResponse.json()]);
   const items=Array.isArray(saved.items)?saved.items.filter(x=>validMintForUi(x.address)).slice(0,100):[];
   const events=Array.isArray(notifications.items)?notifications.items.filter(x=>validMintForUi(x.address)).slice(0,50):[];
-  $("myRadarStatus").textContent=items.length+" saved token(s) · "+events.length+" recent source-backed notification(s) · in-app delivery";
+  $("myRadarStatus").textContent=items.length+" saved token(s) · "+events.filter(x=>!x.readAt).length+" unread / "+events.length+" recent notification(s) · in-app delivery";
   $("savedTokens").innerHTML=items.length?items.map(x=>
    '<article class="pool"><div style="min-width:0"><a class="source" href="/tokens/solana/'+e(encodeURIComponent(x.address))+'"><b>'+e(x.address.slice(0,7))+'…'+e(x.address.slice(-6))+'</b></a><small>Solana · '+(x.inAppAlerts?'Monitoring enabled':'Monitoring paused')+'</small></div>'+
    '<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:end"><button type="button" class="outline" style="padding:6px 9px;font-size:11px" data-token-action="toggle" data-mint="'+e(x.address)+'" data-enabled="'+(x.inAppAlerts?'true':'false')+'">'+(x.inAppAlerts?'Pause':'Monitor')+'</button>'+
@@ -178,7 +178,7 @@ async function loadCustomerCenter(){
   ).join(""):'<div class="muted">No tokens saved. Research a Solana mint and choose “Save and enable in-app alerts.”</div>';
   $("alertFeed").innerHTML=events.length?events.map(x=>
    '<article class="pool"><div><b>'+e(String(x.type||"OBSERVATION").replaceAll("_"," "))+'</b><small>'+e(x.address.slice(0,8))+'… · '+e(new Date(x.createdAt).toLocaleString())+'</small>'+
-   '<small>Reported change: '+e(typeof x.deltaPct==="number"?x.deltaPct.toFixed(2)+"%":"pool observation")+' · not a safety verdict</small></div>'+
+   '<small>Reported change: '+e(typeof x.deltaPct==="number"?x.deltaPct.toFixed(2)+"%":"pool observation")+' · not a safety verdict · '+(x.readAt?'Read':'Unread')+'</small></div>'+
    '<a class="source" href="/tokens/solana/'+e(encodeURIComponent(x.address))+'">Research ↗</a></article>'
   ).join(""):'<div class="muted">No material changes recorded for your monitored tokens yet. A notification appears only after a source-observed threshold is crossed.</div>';
  }catch(error){
@@ -188,6 +188,20 @@ async function loadCustomerCenter(){
  }
 }
 $("refreshMyRadar").addEventListener("click",loadCustomerCenter);
+$("markAlertsRead").addEventListener("click",async()=>{
+ const button=$("markAlertsRead");button.disabled=true;
+ try{
+  const response=await fetch("/api/tokens/notifications/read",{
+   method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
+   body:JSON.stringify({all:true})
+  });
+  const payload=await response.json();
+  if(!response.ok)throw Error(payload.error||"Unable to update notifications.");
+  await loadCustomerCenter();
+ }catch(err){$("myRadarStatus").textContent=err?.message||"Unable to mark notifications as read.";}
+ finally{button.disabled=false;}
+});
+
 $("savedTokens").addEventListener("click",async ev=>{
  const target=ev.target.closest("[data-token-action]");
  if(!target)return;
