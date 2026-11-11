@@ -39,7 +39,7 @@ async function applyPaidInvoice(tx:any,invoice:any){
 }
 async function reconcilePreviouslyReceivedInvoices(tx:any,customer:string,sub:string){
  const events=await tx.unsafe("SELECT payload FROM payment_events WHERE event_type='invoice.paid' AND created_at>NOW()-INTERVAL '7 days' ORDER BY id DESC LIMIT 300");
- for(const event of events){const invoice=event.payload?.data?.object,proof=paidInvoice(invoice);if(proof&&proof.customer===customer&&proof.sub===sub&&await applyPaidInvoice(tx,invoice))return true}
+ for(const event of events){const stored=typeof event.payload==="string"?JSON.parse(event.payload):event.payload,invoice=stored?.data?.object,proof=paidInvoice(invoice);if(proof&&proof.customer===customer&&proof.sub===sub&&await applyPaidInvoice(tx,invoice))return true}
  return false;
 }
 async function webhook(req:Request){
