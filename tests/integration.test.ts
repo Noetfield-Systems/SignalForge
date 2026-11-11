@@ -51,6 +51,11 @@ test("real database community lifecycle, security boundaries and Company OS cont
   expect(homepage.status).toBe(200);
   const html=await homepage.text();
   expect(html).toContain("Signal Rooms");
+  expect(html).toContain("function renderPricing()");
+  expect(html).toContain("CAD $29");
+  expect(html).toContain("CAD $99");
+  expect(html).toContain('data-subscribe');
+  expect(html).toContain('payNow:true');
   expect(html).toContain('id="view-community"');
 
   let welcome=await fetch(BASE+"/welcome");
