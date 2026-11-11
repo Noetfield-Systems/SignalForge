@@ -4,7 +4,7 @@ import {SIGNALFORGE_PRICE_IDS,summarizeBillingEvents} from "../src/revenue-metri
 const id="123e4567-e89b-12d3-a456-426614174000";
 const user={id,role:"user",email:"real-researcher@ordinarydomain.ca",stripe_customer_id:"cus_Sf001",stripe_subscription_id:"sub_Sf001",plan:"pro"};
 const event=(type,obj,eventId)=>({stripe_event_id:eventId,event_type:type,payload:{data:{object:obj}}});
-const checkout=event("checkout.session.completed",{object:"checkout.session",client_reference_id:id,mode:"subscription",status:"complete",customer:"cus_Sf001",subscription:"sub_Sf001"},"evt_checkout");
+const checkout=event("checkout.session.completed",{object:"checkout.session",client_reference_id:id,mode:"subscription",status:"complete",customer:"cus_Sf001",subscription:"sub_Sf001",payment_link:"plink_1UYy8tL4BR0lqapBDHnvVO5k"},"evt_checkout");
 const invoice=(invoiceId,price,amount,extras={})=>({object:"invoice",id:invoiceId,status:"paid",paid:true,currency:"cad",amount_paid:amount,customer:"cus_Sf001",subscription:"sub_Sf001",lines:{data:[{price:{id:price}}]},...extras});
 test("only recognized, paid and nonzero SignalForge invoices count; Checkout alone is not money",()=>{
  const rows=[
