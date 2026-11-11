@@ -16,7 +16,7 @@ async function call(path:string,options:RequestInit={}){
 }
 beforeAll(async()=>{
  server=Bun.spawn(["bun","run","src/server.ts"],{cwd:new URL("../",import.meta.url).pathname,
-  env:{...Bun.env,PORT:String(PORT),DATABASE_SSL:"disable",NODE_ENV:"test",SIGNALFORGE_ADMIN_EMAIL:ADMIN_EMAIL},
+  env:{...Bun.env,PORT:String(PORT),DATABASE_SSL:"disable",NODE_ENV:"test",SIGNALFORGE_ADMIN_EMAIL:ADMIN_EMAIL,SIGNALFORGE_STRIPE_PORTAL_URL:"https://billing.stripe.com/p/login/SignalForgeDisposableFixture"},
   stdout:"ignore",stderr:"ignore"});
  for(let n=0;n<120;n++){
   try{const h=await call("/api/health");if(h.status===200&&h.data.database==="connected")return}catch{}
@@ -58,6 +58,20 @@ test("authenticated first-use pricing and share engagement is origin-checked, de
  expect(rows.report_share_clicked).toEqual({count:1,source:"server_observed"});
  expect(rows.token_researched).toBeUndefined();
  expect(rows.checkout_started).toBeUndefined();
+ expect((await call("/api/billing/portal")).status).toBe(401);
+ expect((await call("/api/billing/portal",{headers:{cookie}})).status).toBe(409);
+ await sql.unsafe("UPDATE users SET stripe_customer_id=$1 WHERE id=$2",["cus_TestBillingPortal01",uid]);
+ const billing=await call("/api/billing/portal",{headers:{cookie}});
+ expect(billing.status).toBe(200);
+ expect(billing.data.url).toBe("https://billing.stripe.com/p/login/SignalForgeDisposableFixture");
+ expect(billing.data.customerStatus).toBe("trialing");
+ expect(billing.data).not.toHaveProperty("customerEmail");
+ expect(billing.data).not.toHaveProperty("secret");
+ const app=await fetch(BASE+"/app?billing=success&session_id=cs_test_not_proof");
+ const appHtml=await app.text();
+ expect(appHtml).toContain("billingReturnStatus");
+ expect(appHtml).toContain("A redirect is not payment confirmation");
+
  const admin=await call("/api/auth/signup",{method:"POST",headers:{"content-type":"application/json"},
   body:JSON.stringify({email:ADMIN_EMAIL,password:"DisposableAdmin#2026"})});
  expect(admin.status).toBe(201);
