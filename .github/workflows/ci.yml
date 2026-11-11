@@ -42,6 +42,8 @@ jobs:
         run: bun run check
       - name: Compile live Railway Growth Function source
         run: bun build services/growth-assets/railway-function.ts --target=bun --external=postgres --outfile=/tmp/signalforge-growth-function-check.js
+      - name: Compile existing Railway Lifecycle Function with paid digest
+        run: bun build services/lifecycle-worker/railway-function.ts --target=bun --external=postgres --outfile=/tmp/signalforge-lifecycle-function-check.js
       - name: Verify signed billing entitlement policy tests
         run: bun test tests/billing-evidence.test.mjs
       - name: Build deployable production Docker image
