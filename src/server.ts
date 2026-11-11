@@ -6,6 +6,7 @@ import { compileOperatingBoard } from "../company-os/operating-engine.ts";
 import { evaluateCompanyPolicy } from "./company-os-policy";
 import { stripeCheckoutUrlKey } from "./billing-keys";
 import { getRevenueSnapshot } from "./revenue-metrics.mjs";
+import { validateResearchNote, validResearchNoteId } from "./research-notes.mjs";
 const SIGNALFORGE_MARKETING_HTML = await Bun.file(new URL("../public/welcome.html", import.meta.url)).text();
 const HTML = await Bun.file(new URL("../public/index.html", import.meta.url)).text();
 const TOKEN_RADAR_HTML = await Bun.file(new URL("../public/token-radar.html", import.meta.url)).text();
@@ -80,6 +81,8 @@ await db.unsafe("CREATE INDEX IF NOT EXISTS token_change_events_lookup_idx ON to
 await db.unsafe("CREATE TABLE IF NOT EXISTS token_watchlist_items (user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,chain_id TEXT NOT NULL DEFAULT 'solana',address TEXT NOT NULL,in_app_alerts BOOLEAN NOT NULL DEFAULT FALSE,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),PRIMARY KEY(user_id,chain_id,address))");
 await db.unsafe("CREATE TABLE IF NOT EXISTS token_alert_events (id BIGSERIAL PRIMARY KEY,user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,change_event_id BIGINT NOT NULL REFERENCES token_change_events(id) ON DELETE CASCADE,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),read_at TIMESTAMPTZ,UNIQUE(user_id,change_event_id))");
 await db.unsafe("CREATE INDEX IF NOT EXISTS token_alert_events_user_idx ON token_alert_events(user_id,id DESC)");
+await db.unsafe("CREATE TABLE IF NOT EXISTS token_research_notes (id BIGSERIAL PRIMARY KEY,user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,chain_id TEXT NOT NULL DEFAULT 'solana',address TEXT NOT NULL,kind TEXT NOT NULL CHECK (kind IN ('note','thesis')),body TEXT NOT NULL,invalidation TEXT,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())");
+await db.unsafe("CREATE INDEX IF NOT EXISTS token_research_notes_owner_idx ON token_research_notes(user_id,chain_id,address,id DESC)");
 dbReady=true;return true}
 function rateLimit(req:Request,limit=30,scope="general"){const ip=req.headers.get("x-forwarded-for")?.split(",")[0]||"unknown",now=Date.now(),v=rate.get(scope+":"+ip);if(!v||now-v.at>60000){rate.set(scope+":"+ip,{n:1,at:now});return false}v.n++;return v.n>limit}
 async function persistSignals(symbol:string,interval:number,c:any[],signals:any[],mode:string){if(!dbReady||!db||mode!=="LIVE_PUBLIC_DATA")return;const last=c[c.length-1];for(const s of signals){if(s.state!=="ACTIVE"||!["LONG","SHORT"].includes(s.direction))continue;const key=[symbol,interval,s.id,s.direction,last.time].join(":");await db.unsafe("INSERT INTO signal_events (signal_key,symbol,interval,strategy_id,strategy_name,direction,score,entry,stop,target1,target2,target3,entry_time,candle_time,reasoning,source) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15::jsonb,$16) ON CONFLICT(signal_key) DO NOTHING",[key,symbol,interval,s.id,s.name,s.direction,s.score,s.entry,s.stop,s.targets[0],s.targets[1],s.targets[2],Date.now(),last.time,JSON.stringify(s.reasons),"KRAKEN_PUBLIC_OHLC"])}await evaluateSignals(symbol,interval,c)}
@@ -146,8 +149,8 @@ async function operationalCohorts(){
  if(!dbReady||!db)throw new Error("operating metrics storage unavailable");
  const exclude=" AND role='user' AND email NOT LIKE '%@signalforge.test' AND email NOT LIKE '%@example.com'";
  const [activation,retention,trial,moderation,failed]=await Promise.all([
- db.unsafe("SELECT COUNT(*)::int AS eligible,COUNT(*) FILTER(WHERE EXISTS(SELECT 1 FROM product_events e WHERE e.user_id=u.id AND e.source='server_observed' AND e.event_name IN ('watchlist_added','research_backtest','community_post','community_reply') AND e.created_at>=u.created_at AND e.created_at<u.created_at+INTERVAL '24 hours'))::int AS converted FROM users u WHERE u.created_at>NOW()-INTERVAL '15 days' AND u.created_at<=NOW()-INTERVAL '1 day'"+exclude),
- db.unsafe("SELECT COUNT(*)::int AS eligible,COUNT(*) FILTER(WHERE EXISTS(SELECT 1 FROM product_events e WHERE e.user_id=u.id AND e.source='server_observed' AND e.event_name IN ('watchlist_added','research_backtest','community_post','community_reply') AND e.created_at>=u.created_at+INTERVAL '6 days' AND e.created_at<u.created_at+INTERVAL '8 days'))::int AS converted FROM users u WHERE u.created_at>NOW()-INTERVAL '22 days' AND u.created_at<=NOW()-INTERVAL '8 days'"+exclude),
+ db.unsafe("SELECT COUNT(*)::int AS eligible,COUNT(*) FILTER(WHERE EXISTS(SELECT 1 FROM product_events e WHERE e.user_id=u.id AND e.source='server_observed' AND e.event_name IN ('watchlist_added','token_watchlist_added','research_note_created','research_backtest','community_post','community_reply') AND e.created_at>=u.created_at AND e.created_at<u.created_at+INTERVAL '24 hours'))::int AS converted FROM users u WHERE u.created_at>NOW()-INTERVAL '15 days' AND u.created_at<=NOW()-INTERVAL '1 day'"+exclude),
+ db.unsafe("SELECT COUNT(*)::int AS eligible,COUNT(*) FILTER(WHERE EXISTS(SELECT 1 FROM product_events e WHERE e.user_id=u.id AND e.source='server_observed' AND e.event_name IN ('watchlist_added','token_watchlist_added','research_note_created','research_backtest','community_post','community_reply') AND e.created_at>=u.created_at+INTERVAL '6 days' AND e.created_at<u.created_at+INTERVAL '8 days'))::int AS converted FROM users u WHERE u.created_at>NOW()-INTERVAL '22 days' AND u.created_at<=NOW()-INTERVAL '8 days'"+exclude),
  db.unsafe("SELECT COUNT(*)::int AS eligible,COUNT(*) FILTER(WHERE subscription_status='active' AND billing_risk_status='clear' AND stripe_customer_id IS NOT NULL AND EXISTS(SELECT 1 FROM payment_events p WHERE p.event_type='invoice.paid' AND p.payload->'data'->'object'->>'customer'=u.stripe_customer_id))::int AS converted FROM users u WHERE u.trial_started_at IS NOT NULL AND u.trial_ends_at<=NOW() AND u.trial_started_at>NOW()-INTERVAL '120 days'"+exclude),
  db.unsafe("SELECT COUNT(*)::int AS n FROM community_reports WHERE status='open' AND created_at<NOW()-INTERVAL '24 hours'"),
  db.unsafe("SELECT COUNT(*)::int AS n FROM payment_events WHERE event_type='invoice.payment_failed' AND created_at>NOW()-INTERVAL '7 days'")
@@ -238,6 +241,39 @@ if(path==="/api/tokens/history" || /^\/api\/tokens\/solana\/[^/]+\/history$/.tes
  if(rateLimit(req,45))return json({error:"RATE_LIMITED"},429);
  try{return json(await getTokenHistory(db,mint))}
  catch(e){console.error("Token history unavailable",String(e).slice(0,100));return json({error:"HISTORY_UNAVAILABLE"},503)}
+}
+
+if(path==="/api/tokens/notes"){
+ if(!["GET","POST","DELETE"].includes(method))return json({error:"METHOD_NOT_ALLOWED"},405);
+ if(!dbReady||!db)return json({error:"RESEARCH_STORAGE_UNAVAILABLE"},503);
+ const owner=await userFor(req);
+ if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+ if(method==="GET"){
+  const address=u.searchParams.get("address")||"";
+  if(!validSolanaAddress(address))return json({error:"INVALID_SOLANA_ADDRESS"},400);
+  const items=await db.unsafe("SELECT id,kind,body,invalidation,created_at AS \"createdAt\",updated_at AS \"updatedAt\" FROM token_research_notes WHERE user_id=$1 AND chain_id='solana' AND address=$2 ORDER BY id DESC LIMIT 100",[owner.id,address]);
+  return json({address,items,source:"USER_AUTHORED_PRIVATE_NOTES",verifiedMarketFacts:false});
+ }
+ if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
+ if(method==="DELETE"){
+  const id=u.searchParams.get("id")||"";
+  if(!validResearchNoteId(id))return json({error:"INVALID_NOTE_ID"},400);
+  const deleted=await db.unsafe("DELETE FROM token_research_notes WHERE id=$1 AND user_id=$2 RETURNING id",[id,owner.id]);
+  return deleted.length?json({ok:true,deletedId:String(id)}):json({error:"NOTE_NOT_FOUND"},404);
+ }
+ if(Number(req.headers.get("content-length")||0)>4000)return json({error:"NOTE_PAYLOAD_TOO_LARGE"},413);
+ const raw=await req.text();
+ if(raw.length>4000)return json({error:"NOTE_PAYLOAD_TOO_LARGE"},413);
+ let input:any;
+ try{input=JSON.parse(raw)}catch{return json({error:"INVALID_JSON"},400)}
+ const validation=validateResearchNote(input,validSolanaAddress);
+ if(validation.error)return json({error:validation.error},400);
+ const note=validation.value;
+ const count=await db.unsafe("SELECT COUNT(*)::int AS n FROM token_research_notes WHERE user_id=$1",[owner.id]);
+ if(count[0]?.n>=100)return json({error:"NOTE_LIMIT_REACHED"},409);
+ const rows=await db.unsafe("INSERT INTO token_research_notes(user_id,chain_id,address,kind,body,invalidation) VALUES($1,'solana',$2,$3,$4,$5) RETURNING id,kind,body,invalidation,created_at AS \"createdAt\"",[owner.id,note.address,note.kind,note.body,note.invalidation]);
+ await recordProductAction(owner.id,"research_note_created","research-note:"+owner.id+":"+rows[0].id);
+ return json({note:rows[0],address:note.address},201);
 }
 if(path==="/api/tokens/watchlist"){
  if(!dbReady||!db)return json({error:"ACCOUNT_STORAGE_UNAVAILABLE"},503);
