@@ -64,7 +64,7 @@ export async function persistTokenObservation(db, report) {
   const previous = existing[0] || null;
   const inserted = await db.unsafe(
     "INSERT INTO token_observations(chain_id,address,source,observation_hash,payload,observed_at,last_seen_at) VALUES($1,$2,$3,$4,$5::jsonb,$6::timestamptz,$6::timestamptz) ON CONFLICT(chain_id,address,source,observation_hash) DO NOTHING RETURNING id",
-    [snapshot.chainId, snapshot.address, snapshot.source, fingerprint, JSON.stringify(snapshot), report.source.observedAt]
+    [snapshot.chainId, snapshot.address, snapshot.source, fingerprint, db.json(snapshot), report.source.observedAt]
   );
   if (!inserted.length) {
     await db.unsafe(
@@ -74,12 +74,13 @@ export async function persistTokenObservation(db, report) {
     return { status: "NO_MATERIAL_CHANGE", newEvents: 0, sourceSnapshotId: previous?.id || null };
   }
   const id = inserted[0].id;
-  const comparison = detectTokenChanges(previous?.payload || null, snapshot);
+  const priorSnapshot = previous?.payload == null ? null : (typeof previous.payload === "string" ? JSON.parse(previous.payload) : previous.payload);
+  const comparison = detectTokenChanges(priorSnapshot, snapshot);
   let newEvents = 0;
   for (const event of comparison.events) {
     const rows = await db.unsafe(
       "INSERT INTO token_change_events(chain_id,address,previous_observation_id,observation_id,event_type,before_value,after_value,delta_pct,evidence) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9::jsonb) ON CONFLICT(observation_id,event_type) DO NOTHING RETURNING id",
-      [snapshot.chainId,snapshot.address,previous?.id||null,id,event.type,event.before,event.after,event.deltaPct,JSON.stringify(event.evidence)]
+      [snapshot.chainId,snapshot.address,previous?.id||null,id,event.type,event.before,event.after,event.deltaPct,db.json(event.evidence)]
     );
     if (!rows.length) continue;
     newEvents++;
@@ -99,8 +100,8 @@ export async function getTokenHistory(db, mint) {
     chainId:"solana",address:mint,source:"DEX Screener",
     observations: observations.map(o => ({
       id:String(o.id),observedAt:o.observed_at,lastSeenAt:o.last_seen_at,
-      priceUsd:o.payload?.primary?.priceUsd??null,liquidityUsd:o.payload?.primary?.liquidityUsd??null,
-      volume24hUsd:o.payload?.primary?.volume24hUsd??null,poolCount:o.payload?.pools?.length??0
+      priceUsd:(typeof o.payload==="string"?JSON.parse(o.payload):o.payload)?.primary?.priceUsd??null,liquidityUsd:(typeof o.payload==="string"?JSON.parse(o.payload):o.payload)?.primary?.liquidityUsd??null,
+      volume24hUsd:(typeof o.payload==="string"?JSON.parse(o.payload):o.payload)?.primary?.volume24hUsd??null,poolCount:(typeof o.payload==="string"?JSON.parse(o.payload):o.payload)?.pools?.length??0
     })),
     events:events.map(e=>({
       id:String(e.id),type:e.event_type,before:e.before_value===null?null:Number(e.before_value),
