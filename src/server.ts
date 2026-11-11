@@ -435,6 +435,20 @@ if(path==="/api/engagement"){
  await recordProductAction(viewer.id,action,key);
  return json({ok:true,action,source:"AUTHENTICATED_SERVER_OBSERVED_INTERACTION",note:action==="report_share_clicked"?"Share button clicked; external posting cannot be verified.":undefined});
 }
+if(path==="/api/billing/portal"){
+ if(method!=="GET")return json({error:"METHOD_NOT_ALLOWED"},405);
+ if(!dbReady||!db)return json({error:"BILLING_UNAVAILABLE"},503);
+ const user=await userFor(req);if(!user)return json({error:"SIGN_IN_REQUIRED"},401);
+ if(!user.stripe_customer_id)return json({error:"NO_STRIPE_CUSTOMER_YET",detail:"Only completed, linked Stripe checkouts can access billing management."},409);
+ const configured=String(Bun.env.SIGNALFORGE_STRIPE_PORTAL_URL||"");
+ let portal:URL;
+ try{portal=new URL(configured)}catch{return json({error:"BILLING_PORTAL_NOT_CONFIGURED"},503)}
+ if(portal.protocol!=="https:"||portal.hostname!=="billing.stripe.com"||
+   !portal.pathname.startsWith("/p/login/")||portal.username||portal.password||portal.hash)
+  return json({error:"BILLING_PORTAL_CONFIGURATION_INVALID"},503);
+ return json({url:portal.toString(),source:"STRIPE_HOSTED_CUSTOMER_BILLING",customerStatus:user.subscription_status,
+  caveat:"Stripe may require email verification. Returning from checkout is not payment proof."});
+}
 if(path==="/api/checkout"&&method==="POST"){if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);const user=await userFor(req);if(!user)return json({error:"Create an account before checkout."},401);const b=await req.json().catch(()=>({}));return stripeCheckout(user,String(b.plan||"pro"),String(b.period||"month"))}
 if(path==="/api/model-forecast"&&method==="POST"){const b=await req.json().catch(()=>({})),model=MODELS.find(x=>x[0].toLowerCase()===String(b.model||"").toLowerCase());if(!model)return json({error:"Unknown model."},400);const endpoint=Bun.env[model[3]];if(!endpoint)return json({error:model[0]+" endpoint is not configured.",status:"NOT_CONNECTED"},503);const symbol=String(b.symbol||"BTCUSD"),interval=Number(b.interval||60),pack=await marketData(symbol,interval);const r=await fetch(endpoint,{method:"POST",headers:{"content-type":"application/json","authorization":Bun.env[model[3].replace("_URL","_TOKEN")]?"Bearer "+Bun.env[model[3].replace("_URL","_TOKEN")]:""},body:JSON.stringify({symbol,interval,candles:pack.candles.slice(-256)}),signal:AbortSignal.timeout(15000)});if(!r.ok)return json({error:"Model endpoint returned HTTP "+r.status},502);return json({model:model[0],result:await r.json(),source:"Configured external inference endpoint"})}
 return json({error:"Not found"},404)}
