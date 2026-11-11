@@ -69,8 +69,34 @@ await db.unsafe("CREATE INDEX IF NOT EXISTS community_comments_post_idx ON commu
 await db.unsafe("CREATE TABLE IF NOT EXISTS community_likes(post_id BIGINT NOT NULL REFERENCES community_posts(id) ON DELETE CASCADE,user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),PRIMARY KEY(post_id,user_id))");
 await db.unsafe("CREATE TABLE IF NOT EXISTS community_reports(id BIGSERIAL PRIMARY KEY,post_id BIGINT NOT NULL REFERENCES community_posts(id) ON DELETE CASCADE,reporter_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,reason VARCHAR(36) NOT NULL,status VARCHAR(20) NOT NULL DEFAULT 'open',created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),UNIQUE(post_id,reporter_id))");
 await db.unsafe("CREATE INDEX IF NOT EXISTS community_reports_open_idx ON community_reports(status,created_at DESC)");
+await db.unsafe("CREATE TABLE IF NOT EXISTS token_radar_observations (id BIGSERIAL PRIMARY KEY, chain_id TEXT NOT NULL DEFAULT 'solana', token_address TEXT NOT NULL, pool_address TEXT NOT NULL, bucket BIGINT NOT NULL, observed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), price_usd DOUBLE PRECISION, liquidity_usd DOUBLE PRECISION, volume_24h_usd DOUBLE PRECISION, buys_24h DOUBLE PRECISION, sells_24h DOUBLE PRECISION, source TEXT NOT NULL DEFAULT 'DEX Screener', UNIQUE(chain_id,token_address,pool_address,bucket))");
+await db.unsafe("CREATE INDEX IF NOT EXISTS token_radar_observations_recent_idx ON token_radar_observations(chain_id,token_address,observed_at DESC)");
 dbReady=true;return true}
 function rateLimit(req:Request,limit=30,scope="general"){const ip=req.headers.get("x-forwarded-for")?.split(",")[0]||"unknown",now=Date.now(),v=rate.get(scope+":"+ip);if(!v||now-v.at>60000){rate.set(scope+":"+ip,{n:1,at:now});return false}v.n++;return v.n>limit}
+// On-demand, source-reported research history. This is NOT background monitoring.
+async function persistRadarObservation(report:any){
+ if(!dbReady||!db||report?.status!=="OBSERVED"||!report.primaryPool)return false;
+ const p=report.primaryPool;
+ const bucket=Math.floor(Date.now()/300000); // five-minute deduplicated source observations
+ try {
+  await db.unsafe("INSERT INTO token_radar_observations(chain_id,token_address,pool_address,bucket,price_usd,liquidity_usd,volume_24h_usd,buys_24h,sells_24h) VALUES('solana',$1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT(chain_id,token_address,pool_address,bucket) DO NOTHING",[
+    report.address,p.address,bucket,p.priceUsd,p.liquidityUsd,p.volume24hUsd,p.buys24h,p.sells24h
+  ]);
+  return true;
+ }catch(e:any){console.error("Token Radar history persistence unavailable:",String(e?.message||e).slice(0,160));return false}
+}
+async function radarHistory(mint:string){
+ if(!dbReady||!db)return {status:"STORAGE_UNAVAILABLE",items:[],changes:null};
+ try{
+  const rows=await db.unsafe("SELECT pool_address AS \"poolAddress\",observed_at AS \"observedAt\",price_usd AS \"priceUsd\",liquidity_usd AS \"liquidityUsd\",volume_24h_usd AS \"volume24hUsd\",buys_24h AS \"buys24h\",sells_24h AS \"sells24h\",source FROM token_radar_observations WHERE chain_id='solana' AND token_address=$1 ORDER BY observed_at DESC LIMIT 48",[mint]);
+  const items=rows.map((r:any)=>({...r,priceUsd:r.priceUsd===null?null:Number(r.priceUsd),liquidityUsd:r.liquidityUsd===null?null:Number(r.liquidityUsd),volume24hUsd:r.volume24hUsd===null?null:Number(r.volume24hUsd)}));
+  const recent=items[0], previous=recent&&items.find((r:any)=>r.poolAddress===recent.poolAddress&&r.observedAt!==recent.observedAt);
+  const delta=(a:any,b:any)=>typeof a==="number"&&typeof b==="number"&&Number.isFinite(a)&&Number.isFinite(b)&&b!==0?Number(((a-b)/Math.abs(b)*100).toFixed(2)):null;
+  return {status:previous?"CHANGE_AVAILABLE":"INSUFFICIENT_HISTORY",items,
+    changes:previous?{poolAddress:recent.poolAddress,from:previous.observedAt,to:recent.observedAt,pricePct:delta(recent.priceUsd,previous.priceUsd),liquidityPct:delta(recent.liquidityUsd,previous.liquidityUsd),volume24hPct:delta(recent.volume24hUsd,previous.volume24hUsd)}:null,
+    caveat:"Observed on-demand snapshots only. No continuous background monitoring, trading advice or verified onchain event timing."};
+ }catch(e:any){console.error("Token Radar history read unavailable:",String(e?.message||e).slice(0,160));return {status:"STORAGE_UNAVAILABLE",items:[],changes:null}}
+}
 async function persistSignals(symbol:string,interval:number,c:any[],signals:any[],mode:string){if(!dbReady||!db||mode!=="LIVE_PUBLIC_DATA")return;const last=c[c.length-1];for(const s of signals){if(s.state!=="ACTIVE"||!["LONG","SHORT"].includes(s.direction))continue;const key=[symbol,interval,s.id,s.direction,last.time].join(":");await db.unsafe("INSERT INTO signal_events (signal_key,symbol,interval,strategy_id,strategy_name,direction,score,entry,stop,target1,target2,target3,entry_time,candle_time,reasoning,source) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15::jsonb,$16) ON CONFLICT(signal_key) DO NOTHING",[key,symbol,interval,s.id,s.name,s.direction,s.score,s.entry,s.stop,s.targets[0],s.targets[1],s.targets[2],Date.now(),last.time,JSON.stringify(s.reasons),"KRAKEN_PUBLIC_OHLC"])}await evaluateSignals(symbol,interval,c)}
 async function evaluateSignals(symbol:string,interval:number,c:any[]){if(!dbReady||!db)return;const rows=await db.unsafe("SELECT * FROM signal_events WHERE symbol=$1 AND interval=$2 AND status IN ('OPEN','TP1') ORDER BY id DESC LIMIT 300",[symbol,interval]);for(const t of rows){const after=c.filter(z=>z.time>Number(t.candle_time));if(!after.length)continue;let first=Boolean(t.first_target),closed=false,exit=0,outcome="",pnl=0;const dir=t.direction==="LONG"?1:-1,entry=Number(t.entry),stop=Number(t.stop),t1=Number(t.target1),t2=Number(t.target2),t3=Number(t.target3);for(const bar of after){const stopHit=dir===1?bar.low<=stop:bar.high>=stop,t1Hit=dir===1?bar.high>=t1:bar.low<=t1,t2Hit=dir===1?bar.high>=t2:bar.low<=t2,t3Hit=dir===1?bar.high>=t3:bar.low<=t3;if(stopHit){exit=first?(t1*.4+stop*.6):stop;outcome=first?"TP1+STOP":"STOP";closed=true;break}if(t3Hit){exit=t3;outcome="TARGET_3";closed=true;break}if(t2Hit){exit=t2;outcome="TARGET_2";closed=true;break}if(t1Hit&&!first){first=true;await db.unsafe("UPDATE signal_events SET first_target=TRUE,status='TP1' WHERE id=$1",[t.id])}}if(!closed&&Date.now()-new Date(t.created_at).getTime()>interval*60*1000*14){const last=after[after.length-1];exit=last.close;outcome="TIME_EXIT";closed=true}if(closed){pnl=(dir*(exit/entry-1)-.0026)*100;await db.unsafe("UPDATE signal_events SET status='CLOSED',outcome=$1,exit_price=$2,pnl_pct=$3,closed_at=NOW() WHERE id=$4",[outcome,exit,pnl,t.id])}}}
 async function metricsLive(){if(!dbReady||!db)return{closedCount:0,winRate:null,netReturn:null,maxDrawdown:null};const rows=await db.unsafe("SELECT pnl_pct,closed_at FROM signal_events WHERE status='CLOSED' ORDER BY closed_at ASC");if(!rows.length)return{closedCount:0,winRate:null,netReturn:null,maxDrawdown:null};const rets=rows.map(x=>Number(x.pnl_pct)),wins=rets.filter(x=>x>0);let cap=1,peak=1,dd=0;for(const v of rets){cap*=1+v/100;peak=Math.max(peak,cap);dd=Math.max(dd,(peak-cap)/peak)}return{closedCount:rets.length,winRate:Number((wins.length/rets.length*100).toFixed(1)),netReturn:Number(((rets.reduce((s,v)=>s+v,0)/rets.length)).toFixed(3)),maxDrawdown:Number((dd*100).toFixed(2))}}
@@ -106,7 +132,7 @@ async function backtestResponse(symbol:string,interval:number,strategy:string){c
 async function stripeCheckout(user:any,plan:string,period:string){
  const p=plan==="quant"?"quant":"pro",i=period==="year"?"year":"month";
  if(user.subscription_status==="active"&&user.stripe_subscription_id)return json({error:"You already have an active subscription. Use Manage billing."},409);
- const k="SIGNALFORGE_STRIPE_"+p.toUpperCase()+"_"+i.toUpperCase()+"_URL",link=Bun.env[k];
+ const k="SIGNALFORGE_STRIPE_"+p.toUpperCase()+"_"+(i==="year"?"ANNUAL":"MONTHLY")+"_URL",link=Bun.env[k];
  if(!link)return json({error:"Paid checkout is not configured for this plan."},503);
  let dest:URL;
  try{dest=new URL(link);if(dest.protocol!=="https:"||!["buy.stripe.com","checkout.stripe.com"].includes(dest.hostname))throw Error("Unexpected payment host")}
@@ -192,6 +218,13 @@ if(method==="GET" && (path==="/radar" || path.startsWith("/tokens/solana/"))){
  const document=address?TOKEN_RADAR_HTML.replace("<title>Token Radar · SignalForge</title>","<title>Solana token "+address+" · Token Radar · SignalForge</title>"):TOKEN_RADAR_HTML;
  return new Response(document,{headers:{"content-type":"text/html; charset=utf-8","cache-control":"public,max-age=60","x-content-type-options":"nosniff"}});
 }
+if(path==="/api/tokens/history"){
+ if(method!=="GET")return json({error:"METHOD_NOT_ALLOWED"},405);
+ if(rateLimit(req,30))return json({error:"RATE_LIMITED"},429);
+ const mint=u.searchParams.get("address")||"";
+ if(!validSolanaAddress(mint))return json({error:"INVALID_SOLANA_ADDRESS"},400);
+ return json({chainId:"solana",address:mint,...await radarHistory(mint)});
+}
 if(path==="/api/tokens/lookup" || path.startsWith("/api/tokens/solana/")){
  if(method!=="GET")return json({error:"METHOD_NOT_ALLOWED"},405);
  if(rateLimit(req,24))return json({error:"RATE_LIMITED"},429,{"retry-after":"60"});
@@ -201,7 +234,8 @@ if(path==="/api/tokens/lookup" || path.startsWith("/api/tokens/solana/")){
  if(!validSolanaAddress(mint))return json({error:"INVALID_SOLANA_ADDRESS"},400);
  try{
   const report=await researchSolanaToken(mint);
-  return json(report,200,{"x-content-type-options":"nosniff"});
+  const persisted=await persistRadarObservation(report);
+  return json({...report,observationStorage:persisted?"PERSISTED":"NOT_STORED"},200,{"x-content-type-options":"nosniff"});
  }catch(error){
   const code=error instanceof TokenRadarError?error.code:"RESEARCH_UNAVAILABLE";
   const status=error instanceof TokenRadarError?error.status:503;
