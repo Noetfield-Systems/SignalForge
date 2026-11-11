@@ -108,4 +108,22 @@ by("roomFeed").onclick=async e=>{const btn=e.target.closest("[data-room-action]"
 }catch(err){if(String(err.message).includes("Sign in"))join();else alert(err.message)}};
 window.SignalForgeCommunity={load};document.querySelector('[data-view="community"]').addEventListener("click",()=>{if(!loaded)load()});
 })();
+</script><script>
+(function(){
+  // Pricing impressions are counted only after the authenticated backend verifies
+  // a real session. This script cannot fabricate a paid action or visitor count.
+  const pricing=document.getElementById("view-pricing");
+  if(!pricing)return;
+  let wasVisible=false;
+  const measure=()=>{
+    const shown=!pricing.classList.contains("hidden")&&getComputedStyle(pricing).display!=="none";
+    if(shown&&!wasVisible){
+      fetch("/api/engagement",{method:"POST",credentials:"same-origin",
+        headers:{"content-type":"application/json"},body:JSON.stringify({action:"pricing_view"})}).catch(()=>{});
+    }
+    wasVisible=shown;
+  };
+  new MutationObserver(measure).observe(pricing,{attributes:true,attributeFilter:["class","style"]});
+  measure();
+})();
 </script><script src="https://signalforge-growth-assets-production.up.railway.app/launch.js" defer></script></body></html>
