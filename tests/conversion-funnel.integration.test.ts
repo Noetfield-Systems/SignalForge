@@ -83,4 +83,17 @@ test("authenticated first-use pricing and share engagement is origin-checked, de
  expect(Number.isInteger(adminRevenue.data.funnel.returnDayResearchersLast30Days)).toBe(true);
  expect(Number.isInteger(adminRevenue.data.billing.linkedPaidSubscriberUsers)).toBe(true);
  expect(adminRevenue.data.accounts.genuineAccounts).toBeGreaterThanOrEqual(0);
+ // Unpaid renewal is never premium forever; existing subscription cannot be
+ // purchased a second time from a new Payment Link.
+ await sql.unsafe("UPDATE users SET subscription_status='past_due',plan='quant',billing_risk_status='clear',billing_current_period_end=NOW()-INTERVAL '1 day',stripe_subscription_id='sub_TestPastDue001' WHERE id=$1",[uid]);
+ const lapsed=await call("/api/auth/me",{headers:{cookie}});
+ expect(lapsed.status).toBe(200);
+ expect(lapsed.data.user.plan).toBe("explorer");
+ const duplicate=await call("/api/checkout",{method:"POST",headers:{"content-type":"application/json",cookie},body:JSON.stringify({plan:"pro",period:"month"})});
+ expect(duplicate.status).toBe(409);
+ expect(duplicate.data.error).toBe("SUBSCRIPTION_ALREADY_LINKED");
+ await sql.unsafe("UPDATE users SET billing_current_period_end=NOW()+INTERVAL '1 day' WHERE id=$1",[uid]);
+ const withinPaidPeriod=await call("/api/auth/me",{headers:{cookie}});
+ expect(withinPaidPeriod.data.user.plan).toBe("quant");
+
 },40000);
