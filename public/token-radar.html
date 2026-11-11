@@ -77,7 +77,7 @@ footer{border-top:1px solid #294151;padding:25px 0 42px;display:flex;justify-con
 <p>Source-linked snapshots show only changes actually seen by SignalForge. Monitoring is observation-based, not blockchain risk certification.</p>
 <div id="historyList" class="pools"><div class="muted">Research a token to review its history.</div></div>
 </section>
-<div class="actionbar"><button class="outline" id="saveToken" type="button">☆ Save and enable in-app alerts</button><button class="btn" id="share" type="button">Copy report link</button><a class="outline" id="solscan" rel="noopener noreferrer" target="_blank">View in Solscan ↗</a><a class="outline" id="dex" rel="noopener noreferrer" target="_blank">Open primary pool ↗</a><a class="outline" href="/app">Open SignalForge terminal ↗</a></div>
+<div class="actionbar"><button class="outline" id="saveToken" type="button">☆ Save and enable in-app alerts</button><button class="btn" id="share" type="button">Copy report link</button><button class="outline" id="shareTelegram" type="button">Share to Telegram</button><button class="outline" id="shareX" type="button">Share to X</button><a class="outline" id="solscan" rel="noopener noreferrer" target="_blank">View in Solscan ↗</a><a class="outline" id="dex" rel="noopener noreferrer" target="_blank">Open primary pool ↗</a><a class="outline" href="/app">Open SignalForge terminal ↗</a></div>
 </section>
 <div class="info"><b>Research boundaries</b> — DEX pool observations are third-party market data and may be delayed, incomplete or inaccurate. The retrieved timestamp is not a verified onchain event timestamp. No rug-pull, ownership, contract-safety or holder-concentration assessment is supplied. Historical monitoring and alerts are separate upcoming capabilities; this report does not claim to track changes until observations have been persisted.</div>
 </main>
@@ -164,6 +164,18 @@ $("saveToken").addEventListener("click",async()=>{
   button.textContent="✓ Saved · in-app alerts enabled";
   status("Token saved to your personal watchlist. Source-backed change events appear in your in-app alert history.","success");
  }catch(err){status(err?.message||"Unable to save token.","error");}finally{button.disabled=false;}
+});
+$("shareTelegram").addEventListener("click",()=>{
+ if(!currentAddress)return;
+ const report=location.origin+"/tokens/solana/"+encodeURIComponent(currentAddress);
+ const url="https://t.me/share/url?url="+encodeURIComponent(report)+"&text="+encodeURIComponent("Source-linked Solana token research from SignalForge. Verify the observations, not market hype.");
+ window.open(url,"_blank","noopener,noreferrer");
+});
+$("shareX").addEventListener("click",()=>{
+ if(!currentAddress)return;
+ const report=location.origin+"/tokens/solana/"+encodeURIComponent(currentAddress);
+ const url="https://twitter.com/intent/tweet?url="+encodeURIComponent(report)+"&text="+encodeURIComponent("What does the observable onchain DEX market show? Source-linked Solana token research.");
+ window.open(url,"_blank","noopener,noreferrer");
 });
 $("share").addEventListener("click",async()=>{if(!currentAddress)return;const link=location.origin+"/tokens/solana/"+currentAddress;try{await navigator.clipboard.writeText(link);$("share").textContent="Copied report link";}catch{$("share").textContent=link;}});
 window.addEventListener("popstate",()=>{const p=location.pathname.match(/^\/tokens\/solana\/([^/]+)$/);if(p){$("mint").value=decodeURIComponent(p[1]);lookup($("mint").value,false);}else{$("report").hidden=true;status("Enter a token mint to begin your research.");}});
