@@ -22,7 +22,7 @@ beforeAll(async ()=>{
   service = Bun.spawn(["bun", "run", "src/server.ts"],{
     cwd: new URL("../", import.meta.url).pathname,
     env: {...Bun.env, NODE_ENV:"test",DATABASE_SSL:"disable",PORT:String(PORT),
-      SIGNALFORGE_COMPANY_OS_KEY:SECRET,SIGNALFORGE_ADMIN_EMAIL:"admin@signalforge.test"},
+      SIGNALFORGE_COMPANY_OS_KEY:SECRET,SIGNALFORGE_ADMIN_EMAIL:"admin@signalforge.test",SIGNALFORGE_STRIPE_PRO_MONTH_URL:"https://buy.stripe.com/test_signalforge_checkout"},
     stdout:"pipe",stderr:"pipe",
   });
   for(let i=0;i<80;i++){
@@ -82,6 +82,22 @@ test("real database community lifecycle, security boundaries and Company OS cont
   expect(cookie.startsWith("sf_session=")).toBe(true);
   const me=await request("/api/auth/me",{headers:{cookie}});
   expect(me.data.user.email).toBe(email);
+  // No-card trial remains the default; payment is never made without explicit opt-in.
+  const preference=await request("/api/checkout",{method:"POST",headers:headers(cookie),
+    body:JSON.stringify({plan:"pro",period:"month"})});
+  expect(preference.response.status).toBe(200);
+  expect(preference.data.saved).toBe(true);
+  expect(preference.data.url).toBeUndefined();
+  // An explicit paid upgrade must yield a secure external checkout URL, not a charge.
+  const paidOptIn=await request("/api/checkout",{method:"POST",headers:headers(cookie),
+    body:JSON.stringify({plan:"pro",period:"month",payNow:true})});
+  expect(paidOptIn.response.status).toBe(200);
+  expect(paidOptIn.data.url.startsWith("https://buy.stripe.com/")).toBe(true);
+  expect(paidOptIn.data.url).toContain("client_reference_id=");
+  expect(paidOptIn.data.saved).toBeUndefined();
+  const afterOffer=await request("/api/auth/me",{headers:{cookie}});
+  expect(afterOffer.data.user.subscription_status).toBe("trialing");
+
 
   const invalid=await request("/api/community/posts",{
     method:"POST",headers:headers(cookie),body:JSON.stringify({title:"Short",body:"Tiny",category:"questions"})
