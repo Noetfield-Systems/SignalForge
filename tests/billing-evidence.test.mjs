@@ -1,6 +1,6 @@
 import {test} from "node:test";
 import assert from "node:assert/strict";
-import {priceIdentity,paidInvoiceEvidence,invoiceSubscriptionId,validCheckoutBinding} from "../src/billing-evidence.mjs";
+import {priceIdentity,paidInvoiceEvidence,invoiceSubscriptionId,validCheckoutBinding,ownedPaymentLink,SIGNALFORGE_PAYMENT_LINK_IDS} from "../src/billing-evidence.mjs";
 
 const env={
  SF_PRICE_PRO_M:"price_SFProMonth01",
@@ -53,10 +53,17 @@ test("new invoice line pricing field supported, without email-based identity",()
  assert.equal(proof.customerId,"cus_abc123");
 });
 test("Checkout binds Stripe identifiers but never constitutes paid evidence",()=>{
- assert.deepEqual(validCheckoutBinding({mode:"subscription",status:"complete",client_reference_id:"123e4567-e89b-12d3-a456-426614174000",customer:"cus_123",subscription:"sub_123"}),{
-  userId:"123e4567-e89b-12d3-a456-426614174000",customerId:"cus_123",subscriptionId:"sub_123"
+ assert.deepEqual(validCheckoutBinding({mode:"subscription",status:"complete",client_reference_id:"123e4567-e89b-12d3-a456-426614174000",customer:"cus_123",subscription:"sub_123",payment_link:SIGNALFORGE_PAYMENT_LINK_IDS.pro_month}),{
+  userId:"123e4567-e89b-12d3-a456-426614174000",customerId:"cus_123",subscriptionId:"sub_123",plan:"pro",period:"month",paymentLinkId:SIGNALFORGE_PAYMENT_LINK_IDS.pro_month
  });
- assert.equal(validCheckoutBinding({mode:"payment",status:"complete",client_reference_id:"123e4567-e89b-12d3-a456-426614174000",customer:"cus_123",subscription:"sub_123"}),null);
- assert.equal(validCheckoutBinding({mode:"subscription",status:"open",client_reference_id:"123e4567-e89b-12d3-a456-426614174000",customer:"cus_123",subscription:"sub_123"}),null);
+ assert.equal(validCheckoutBinding({mode:"payment",status:"complete",client_reference_id:"123e4567-e89b-12d3-a456-426614174000",customer:"cus_123",subscription:"sub_123",payment_link:SIGNALFORGE_PAYMENT_LINK_IDS.pro_month}),null);
+ assert.equal(validCheckoutBinding({mode:"subscription",status:"open",client_reference_id:"123e4567-e89b-12d3-a456-426614174000",customer:"cus_123",subscription:"sub_123",payment_link:SIGNALFORGE_PAYMENT_LINK_IDS.pro_month}),null);
  assert.equal(validCheckoutBinding({mode:"subscription",status:"complete",client_reference_id:"fake",customer:"cus_123",subscription:"sub_123"}),null);
+});
+
+test("shared Stripe account unrelated link cannot claim SignalForge checkout",()=>{
+ const session={mode:"subscription",status:"complete",client_reference_id:"123e4567-e89b-12d3-a456-426614174000",customer:"cus_123",subscription:"sub_123"};
+ assert.equal(validCheckoutBinding(session),null);
+ assert.equal(validCheckoutBinding({...session,payment_link:"plink_1UYi9PL4BR0lqapBY9PMDUvK"}),null);
+ assert.equal(ownedPaymentLink({...session,payment_link:SIGNALFORGE_PAYMENT_LINK_IDS.quant_year}).plan,"quant");
 });
