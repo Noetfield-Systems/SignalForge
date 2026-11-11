@@ -7,6 +7,7 @@ import { evaluateCompanyPolicy } from "./company-os-policy";
 import { stripeCheckoutUrlKey } from "./billing-keys";
 import { getRevenueSnapshot } from "./revenue-metrics.mjs";
 import { validateResearchNote, validResearchNoteId } from "./research-notes.mjs";
+import { loadResearchJournalWithEvidence } from "./research-evidence.mjs";
 const SIGNALFORGE_MARKETING_HTML = await Bun.file(new URL("../public/welcome.html", import.meta.url)).text();
 const HTML = await Bun.file(new URL("../public/index.html", import.meta.url)).text();
 const TOKEN_RADAR_HTML = await Bun.file(new URL("../public/token-radar.html", import.meta.url)).text();
@@ -251,7 +252,7 @@ if(path==="/api/tokens/notes"){
  if(method==="GET"){
   const address=u.searchParams.get("address")||"";
   if(!validSolanaAddress(address))return json({error:"INVALID_SOLANA_ADDRESS"},400);
-  const items=await db.unsafe("SELECT id,kind,body,invalidation,created_at AS \"createdAt\",updated_at AS \"updatedAt\" FROM token_research_notes WHERE user_id=$1 AND chain_id='solana' AND address=$2 ORDER BY id DESC LIMIT 100",[owner.id,address]);
+  const items=await loadResearchJournalWithEvidence(db,owner.id,address);
   return json({address,items,source:"USER_AUTHORED_PRIVATE_NOTES",verifiedMarketFacts:false});
  }
  if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
