@@ -89,6 +89,7 @@ footer{border-top:1px solid #294151;padding:25px 0 42px;display:flex;justify-con
 <button class="btn" id="noteSubmit" type="submit" style="justify-self:start">Save private note</button></form>
 </section>
 <div class="actionbar"><button class="outline" id="saveToken" type="button">☆ Save and enable in-app alerts</button><button class="btn" id="share" type="button">Copy report link</button><button class="outline" id="shareTelegram" type="button">Share to Telegram</button><button class="outline" id="shareX" type="button">Share to X</button><a class="outline" id="solscan" rel="noopener noreferrer" target="_blank">View in Solscan ↗</a><a class="outline" id="dex" rel="noopener noreferrer" target="_blank">Open primary pool ↗</a><a class="outline" href="/app">Open SignalForge terminal ↗</a></div>
+<div class="panel section" id="researchMembership" style="margin:18px 0;border-color:#367566"><div class="label">RESEARCH DESK / OPTIONAL SUBSCRIPTION</div><h2>Keep the research going.</h2><p>Save source observations and research notes here for free. Pro (C$29/month) and Quant (C$99/month) are optional subscriptions for the broader research terminal. New accounts receive 30 days of full trial access without a card; the subscription begins only if you choose to pay.</p><a class="btn" href="/app" style="display:inline-flex;text-decoration:none;align-items:center">Explore the research terminal and plans →</a><small class="muted" style="display:block;margin-top:10px">Market data can be delayed. Available models and advanced features vary by connection; no trading or custody.</small></div>
 </section>
 <section class="panel section" id="myRadar" aria-label="Personal token watchlist and in-app alerts" style="margin:22px 0 26px">
 <div class="label">04 / Your workspace</div>
@@ -301,19 +302,24 @@ $("saveToken").addEventListener("click",async()=>{
    await loadCustomerCenter();
  }catch(err){status(err?.message||"Unable to save token.","error");}finally{button.disabled=false;}
 });
-$("shareTelegram").addEventListener("click",()=>{
+function markShareIntent(){
  if(!currentAddress)return;
+ fetch("/api/engagement",{method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
+  body:JSON.stringify({action:"report_share_clicked",address:currentAddress})}).catch(()=>{});
+}
+$("shareTelegram").addEventListener("click",()=>{
+ if(!currentAddress)return;markShareIntent();
  const report=location.origin+"/tokens/solana/"+encodeURIComponent(currentAddress);
  const url="https://t.me/share/url?url="+encodeURIComponent(report)+"&text="+encodeURIComponent("Source-linked Solana token research from SignalForge. Verify the observations, not market hype.");
  window.open(url,"_blank","noopener,noreferrer");
 });
 $("shareX").addEventListener("click",()=>{
- if(!currentAddress)return;
+ if(!currentAddress)return;markShareIntent();
  const report=location.origin+"/tokens/solana/"+encodeURIComponent(currentAddress);
  const url="https://twitter.com/intent/tweet?url="+encodeURIComponent(report)+"&text="+encodeURIComponent("What does the observable onchain DEX market show? Source-linked Solana token research.");
  window.open(url,"_blank","noopener,noreferrer");
 });
-$("share").addEventListener("click",async()=>{if(!currentAddress)return;const link=location.origin+"/tokens/solana/"+currentAddress;try{await navigator.clipboard.writeText(link);$("share").textContent="Copied report link";}catch{$("share").textContent=link;}});
+$("share").addEventListener("click",async()=>{if(!currentAddress)return;markShareIntent();const link=location.origin+"/tokens/solana/"+currentAddress;try{await navigator.clipboard.writeText(link);$("share").textContent="Copied report link";}catch{$("share").textContent=link;}});
 window.addEventListener("popstate",()=>{const p=location.pathname.match(/^\/tokens\/solana\/([^/]+)$/);if(p){$("mint").value=decodeURIComponent(p[1]);lookup($("mint").value,false);}else{$("report").hidden=true;status("Enter a token mint to begin your research.");}});
 const initial=location.pathname.match(/^\/tokens\/solana\/([^/]+)$/);
 if(initial){try{$("mint").value=decodeURIComponent(initial[1]);lookup($("mint").value,false);}catch{status("Invalid token URL.","error");}}
