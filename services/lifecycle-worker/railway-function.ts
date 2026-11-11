@@ -31,6 +31,34 @@ function emailFor(row:any,activity:any,token:string){
  const html="<div style='background:#090d15;padding:32px 14px;font-family:Arial,sans-serif;color:#eef4fa'><div style='max-width:620px;margin:auto;background:#101722;border:1px solid #263647;border-radius:14px;padding:28px'><div style='font-size:12px;letter-spacing:3px;color:#53e0c2;font-weight:700'>SIGNALFORGE · MARKET INTELLIGENCE</div><h1 style='font-size:25px;line-height:1.25'>"+heading+"</h1><div style='font-size:15px;line-height:1.7;color:#c2cfdb'>"+body+"</div><hr style='border:0;border-top:1px solid #263647;margin:26px 0'><p style='font-size:12px;color:#8495a8'>Research only. Signals are not win probabilities, backtests are historical simulations, and SIGNALFORGE does not execute trades.</p>"+footer+"</div></div>";
  return {subject,html,text:heading+"\n\n"+body.replace(/<[^>]*>/g," ").replace(/\s+/g," ").trim()+"\n\n"+(row.template==="welcome"?"Essential account message.":"Unsubscribe: "+unsub)};
 }
+// Monitor only opted-in Solana mints using the EXISTING 5-minute Railway lifecycle cron.
+// No additional worker, database, service key, market simulation or outbound notification.
+async function refreshTokenWatchlist(){
+ let due:any[]=[];
+ try{
+  due=await db.unsafe("SELECT w.address,MAX(o.last_seen_at) AS last_seen FROM token_watchlist_items w LEFT JOIN token_observations o ON o.chain_id=w.chain_id AND o.address=w.address WHERE w.chain_id='solana' AND w.in_app_alerts=TRUE GROUP BY w.address HAVING MAX(o.last_seen_at) IS NULL OR MAX(o.last_seen_at)<NOW()-INTERVAL '4 minutes' ORDER BY MAX(o.last_seen_at) NULLS FIRST LIMIT 10");
+ }catch(error:any){
+  console.error("RADAR_MONITOR_QUERY_UNAVAILABLE",String(error?.message||error).slice(0,160));
+  return;
+ }
+ let scanned=0,observed=0,failed=0;
+ for(const row of due){
+  const mint=String(row.address||"");
+  if(!/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(mint)){failed++;continue}
+  scanned++;
+  try{
+   const endpoint=app+"/api/tokens/lookup?chain=solana&address="+encodeURIComponent(mint);
+   const response=await fetch(endpoint,{headers:{"accept":"application/json"},signal:AbortSignal.timeout(9000)});
+   if(!response.ok){failed++;console.error("RADAR_MONITOR_FETCH_FAILED",response.status);continue}
+   const report:any=await response.json();
+   if(report.chainId==="solana"&&report.address===mint&&report.source?.name==="DEX Screener"&&report.observationState!=="PERSISTENCE_UNAVAILABLE")observed++;
+   else failed++;
+  }catch(error:any){failed++;console.error("RADAR_MONITOR_SOURCE_UNAVAILABLE",String(error?.message||error).slice(0,100))}
+ }
+ console.log("RADAR_MONITOR_DONE",JSON.stringify({queued:due.length,scanned,sourceBackedObservations:observed,failed,mode:"IN_APP_ONLY",noSyntheticEvents:true}));
+}
+
+try{await refreshTokenWatchlist()}catch(error:any){console.error("RADAR_MONITOR_DEGRADED",String(error?.message||error).slice(0,160))}
 if(!apiKey||!from){console.log("LIFECYCLE_WORKER_BLOCKED provider_not_configured; set RESEND_API_KEY and verified RESEND_FROM; queued messages preserved");await db.end({timeout:5});}
 else{
  await db.unsafe("UPDATE lifecycle_emails SET status='pending',scheduled_at=NOW(),updated_at=NOW(),last_error='Recovered stale worker claim' WHERE status='sending' AND updated_at<NOW()-INTERVAL '20 minutes'");
