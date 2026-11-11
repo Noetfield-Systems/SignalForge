@@ -77,3 +77,36 @@ test("private research notes are persisted per owner, have falsifiable thesis va
  const after=await req("/api/tokens/notes?address="+SOL,{headers:{cookie:alice}});
  expect(after.json.items).toHaveLength(0);
 },45000);
+
+test("journal evidence anchors baseline at thesis creation and preserves owner privacy",async()=>{
+ const mint="11111111111111111111111111111111";
+ const alice=await newUser(),bob=await newUser();
+ const baselineHash="research-baseline-"+crypto.randomUUID();
+ const nextHash="research-next-"+crypto.randomUUID();
+ const sourcePayload=(price:number)=>JSON.stringify({
+  chainId:"solana",address:mint,source:"DEX Screener",primary:{
+   address:"pool-baseline",priceUsd:price,liquidityUsd:10000,volume24hUsd:2000},pools:[]
+ });
+ try{
+  await sql.unsafe("INSERT INTO token_observations(chain_id,address,source,observation_hash,payload,observed_at,last_seen_at) VALUES('solana',$1,'DEX Screener',$2,$3::jsonb,NOW()-INTERVAL '3 hours',NOW()-INTERVAL '3 hours')",[mint,baselineHash,sourcePayload(1)]);
+  const post=await req("/api/tokens/notes",{method:"POST",headers:{"content-type":"application/json",cookie:alice},
+   body:JSON.stringify({address:mint,kind:"thesis",body:"Reported pool liquidity could remain stable",invalidation:"Reported liquidity falls below half of baseline"})});
+  expect(post.response.status).toBe(201);
+  await sql.unsafe("UPDATE token_research_notes SET created_at=NOW()-INTERVAL '2 hours' WHERE id=$1",[post.json.note.id]);
+  const before=await req("/api/tokens/notes?address="+mint,{headers:{cookie:alice}});
+  expect(before.response.status).toBe(200);
+  expect(before.json.items[0].evidence.status).toBe("NO_SUBSEQUENT_OBSERVATION");
+  await sql.unsafe("INSERT INTO token_observations(chain_id,address,source,observation_hash,payload,observed_at,last_seen_at) VALUES('solana',$1,'DEX Screener',$2,$3::jsonb,NOW()-INTERVAL '1 hour',NOW()-INTERVAL '1 hour')",[mint,nextHash,sourcePayload(1.5)]);
+  const after=await req("/api/tokens/notes?address="+mint,{headers:{cookie:alice}});
+  expect(after.response.status).toBe(200);
+  expect(after.json.items[0].evidence.status).toBe("NEW_SOURCE_OBSERVATION");
+  expect(after.json.items[0].evidence.metrics[0].deltaPct).toBe(50);
+  expect(after.json.items[0].evidence.thesisVerdict).toBeNull();
+  expect(after.json.items[0].evidence.marketFactsVerifiedIndependently).toBe(false);
+  const other=await req("/api/tokens/notes?address="+mint,{headers:{cookie:bob}});
+  expect(other.json.items).toHaveLength(0);
+ }finally{
+  await sql.unsafe("DELETE FROM token_research_notes WHERE chain_id='solana' AND address=$1",[mint]);
+  await sql.unsafe("DELETE FROM token_observations WHERE observation_hash IN ($1,$2)",[baselineHash,nextHash]);
+ }
+},45000);
