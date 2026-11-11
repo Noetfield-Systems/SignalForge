@@ -147,3 +147,29 @@ jobs:
           code=$(curl -sS --max-time 20 -o /tmp/notes-private-write.json -w "%{http_code}" -X POST -H 'content-type: application/json' --data '{"address":"So11111111111111111111111111111111111111112","kind":"note","body":"Unauthorized write must fail"}' "$BASE/api/tokens/notes")
           test "$code" = "401"
           echo "LIVE_RESEARCH_NOTES_UI_VERIFIED; PRIVATE_NOTES_GET_POST_DENIED; PRIVATE_REVENUE_GET_DENIED"
+
+      - name: Verify commercial research and billing boundaries against deployed production
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsS --max-time 20 "$BASE/radar" -o /tmp/commercial-radar.html
+          grep -q 'id="researchMembership"' /tmp/commercial-radar.html
+          grep -q 'renderSourceComparison' /tmp/commercial-radar.html
+          grep -q '/app?view=pricing' /tmp/commercial-radar.html
+          curl -fsS --max-time 20 "$BASE/app?billing=success&session_id=cs_untrusted_smoke" -o /tmp/commercial-app.html
+          grep -q 'billingReturnStatus' /tmp/commercial-app.html
+          grep -q 'A redirect is not payment confirmation' /tmp/commercial-app.html
+          for endpoint in /api/billing/portal /api/engagement; do
+            if test "$endpoint" = "/api/engagement"; then
+              code=$(curl -sS --max-time 20 -o /tmp/commercial-private.json -w "%{http_code}" -X POST -H 'content-type: application/json' --data '{"action":"pricing_view"}' "$BASE$endpoint")
+            else
+              code=$(curl -sS --max-time 20 -o /tmp/commercial-private.json -w "%{http_code}" "$BASE$endpoint")
+            fi
+            test "$code" = "401"
+            python3 - <<'PY'
+          import json
+          obj=json.load(open("/tmp/commercial-private.json"))
+          assert obj.get("error")=="SIGN_IN_REQUIRED",obj
+          PY
+          done
+          echo "LIVE_PREMIUM_RESEARCH_UI_OK; UNTRUSTED_CHECKOUT_REDIRECT_NOT_PAYMENT; PRIVATE_BILLING_AND_ENGAGEMENT_DENIED"
