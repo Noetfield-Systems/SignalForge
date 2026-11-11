@@ -31,6 +31,18 @@ function emailFor(row:any,activity:any,token:string){
  const html="<div style='background:#090d15;padding:32px 14px;font-family:Arial,sans-serif;color:#eef4fa'><div style='max-width:620px;margin:auto;background:#101722;border:1px solid #263647;border-radius:14px;padding:28px'><div style='font-size:12px;letter-spacing:3px;color:#53e0c2;font-weight:700'>SIGNALFORGE · MARKET INTELLIGENCE</div><h1 style='font-size:25px;line-height:1.25'>"+heading+"</h1><div style='font-size:15px;line-height:1.7;color:#c2cfdb'>"+body+"</div><hr style='border:0;border-top:1px solid #263647;margin:26px 0'><p style='font-size:12px;color:#8495a8'>Research only. Signals are not win probabilities, backtests are historical simulations, and SIGNALFORGE does not execute trades.</p>"+footer+"</div></div>";
  return {subject,html,text:heading+"\n\n"+body.replace(/<[^>]*>/g," ").replace(/\s+/g," ").trim()+"\n\n"+(row.template==="welcome"?"Essential account message.":"Unsubscribe: "+unsub)};
 }
+// Reuse this existing five-minute worker: no new cron, agent registry, or second Company OS.
+async function refreshRadarMonitoring(){
+ const key=Bun.env.SIGNALFORGE_COMPANY_OS_KEY||"";
+ if(key.length<40){console.log("M20_RADAR_REFRESH_SKIPPED workload_key_unavailable");return}
+ try{
+   const result=await fetch(app+"/api/token-radar/refresh",{method:"POST",headers:{"authorization":"Bearer "+key},signal:AbortSignal.timeout(60000)});
+   if(!result.ok){console.error("M20_RADAR_REFRESH_FAILED HTTP",result.status);return}
+   const data:any=await result.json();
+   console.log("M20_RADAR_REFRESH_DONE",JSON.stringify({checked:data.checked,failed:data.failed,eligibleMints:data.eligibleMints}));
+ }catch(error:any){console.error("M20_RADAR_REFRESH_FAILED",String(error?.message||error))}
+}
+await refreshRadarMonitoring();
 if(!apiKey||!from){console.log("LIFECYCLE_WORKER_BLOCKED provider_not_configured; set RESEND_API_KEY and verified RESEND_FROM; queued messages preserved");await db.end({timeout:5});}
 else{
  await db.unsafe("UPDATE lifecycle_emails SET status='pending',scheduled_at=NOW(),updated_at=NOW(),last_error='Recovered stale worker claim' WHERE status='sending' AND updated_at<NOW()-INTERVAL '20 minutes'");
