@@ -183,3 +183,23 @@ test("real database community lifecycle, security boundaries and Company OS cont
 
   expect((await request("/api/v1/strategies")).response.status).toBe(401);
 },40000);
+
+
+test("Token Radar public route and invalid-source research boundary", async () => {
+  const radar = await fetch(BASE + "/radar");
+  expect(radar.status).toBe(200);
+  expect(await radar.text()).toContain("Know what the");
+  const validPage = await fetch(BASE + "/tokens/solana/So11111111111111111111111111111111111111112");
+  expect(validPage.status).toBe(200);
+  expect(await validPage.text()).toContain("Solana token So111");
+  const invalidPage = await fetch(BASE + "/tokens/solana/not-a-real-mint");
+  expect(invalidPage.status).toBe(404);
+  const bad = await request("/api/tokens/lookup?chain=solana&address=not-a-token");
+  expect(bad.response.status).toBe(400);
+  expect(bad.data.error).toBe("INVALID_SOLANA_ADDRESS");
+  const unsupported = await request("/api/tokens/lookup?chain=ethereum&address=So11111111111111111111111111111111111111112");
+  expect(unsupported.response.status).toBe(400);
+  expect(unsupported.data.error).toBe("UNSUPPORTED_CHAIN");
+  const wrongMethod = await request("/api/tokens/lookup", {method:"POST"});
+  expect(wrongMethod.response.status).toBe(405);
+});
