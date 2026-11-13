@@ -1,6 +1,8 @@
+> **2026-11-13 workforce expansion:** SignalForge now has **100 defined work-role contracts across 11 departments** in [organization.v2.json](./organization.v2.json) and a typed [workforce-floor.ts](./workforce-floor.ts) workstream decomposition. This does **not** mean 100 AI processes, paid employees, authorized executions or verified completed tasks. The existing Sina M20, Agent Fabric, Governor, verifier and scheduler remain authoritative. The admin-only `/admin/company-floor` renders this private projection; real activity requires authenticated canonical dispatch/readback. v1 is historical.
+
 # SIGNALFORGE COMPANY OS — ONE PLATFORM, ONE EXECUTIVE BRAIN
 
-> **Founder OS-first correction, 2026-11-10:** This file describes SignalForge as one **real proving product** operated by the reusable Company OS. The primary technology/product being created is Sina/Company OS itself, which should discover, build, verify, operate, monetize and improve products without repeated Founder prompts. Neither the 26 role contracts nor SignalForge feature work constitute the completion of autonomous OS engineering. Preserve this manual's detailed SignalForge teams and tasks as an example, not as the top-level business or OS architecture. Canonical parent: [Sina OS-first complete rewrite](https://github.com/Noetfield-Systems/sina_founder_os/blob/main/architecture/OS-FIRST-COMPANY-OS-END-TO-END-v2.fa.md), [machine-readable direction lock](https://github.com/Noetfield-Systems/sina_founder_os/blob/main/architecture/OS-FIRST-FOUNDER-INTENT-LOCK-v2.json). Continue using existing M20/Agent Fabric/Runway/Governor/Verifier and unchanged product/legal boundaries.
+> **Founder OS-first correction, 2026-11-10:** This file describes SignalForge as one **real proving product** operated by the reusable Company OS. The primary technology/product being created is Sina/Company OS itself, which should discover, build, verify, operate, monetize and improve products without repeated Founder prompts. Neither the 100 role contracts nor SignalForge feature work constitute the completion of autonomous OS engineering. Preserve this manual's detailed SignalForge teams and tasks as an example, not as the top-level business or OS architecture. Canonical parent: [Sina OS-first complete rewrite](https://github.com/Noetfield-Systems/sina_founder_os/blob/main/architecture/OS-FIRST-COMPANY-OS-END-TO-END-v2.fa.md), [machine-readable direction lock](https://github.com/Noetfield-Systems/sina_founder_os/blob/main/architecture/OS-FIRST-FOUNDER-INTENT-LOCK-v2.json). Continue using existing M20/Agent Fabric/Runway/Governor/Verifier and unchanged product/legal boundaries.
 
 **Status:** executable read-only decision compiler + typed organization, with the existing Sina Founder/Company OS responsible for dispatch. 2026-11-10.
 
@@ -36,7 +38,7 @@ SIGNALFORGE MANAGING DIRECTOR (one CEO / Goalkeeper)
             └── Independent Verifier → reports directly to Sina OS, never CEO.
 ```
 
-Canonical machine-readable roles: [organization.v1.json](./organization.v1.json). They are **26 logical role contracts**, not 26 continuously running LLM processes, salaried people or evidence that 26 independent remote agents have already been provisioned. The existing Agent Fabric supplies model/task execution on demand. `SPECIFIED_AGENT_FABRIC_BINDING_PENDING` must change to an independently verified binding when the actual worker role has been commissioned.
+Canonical machine-readable roles: [organization.v2.json](./organization.v1.json). They are **100 defined role contracts**, not 26 continuously running LLM processes, salaried people or evidence that 26 independent remote agents have already been provisioned. The existing Agent Fabric supplies model/task execution on demand. `SPECIFIED_AGENT_FABRIC_BINDING_PENDING` must change to an independently verified binding when the actual worker role has been commissioned.
 
 **Decision hierarchy**, highest authority first:
 1. Immutable founder intent, legal/safety and external-money constraints (Sina).
@@ -116,12 +118,12 @@ Order of authority: risk/financial incidents > verified cash leak > activation/r
 
 **Speed comes from suppressing wasted work**, not running every role every minute:
 - No change in validated product facts → no new external action.
-- Always keep the 26 virtual roles *available* to map to approved tasks; only activate requested specialists.
+- Always keep the 100 specified roles *available* to map to approved tasks; only activate requested specialists.
 - Independent evidence mandatory for marking done.
 - Data/contract verification can run parallel to product drafts; revenue, token and production external effects stay separately gated.
 - One continuous task graph in canonical Sina/Company OS; code work always targets `Noetfield-Systems/SignalForge`.
 - Reconcile failed work or dependencies first, then optimize conversion, then expand research modalities.
-- Maximum 1 unverified strategic task admitted per product initially, with optional evidence-backed upgrade to limited parallel internal drafts. This is an intentional safety gate, not inability to use many specialists.
+- Product-side capacity describes at most four proposed scoped strategic streams and eight parallel internal drafts; the existing canonical Company OS must still enforce its own live configuration and resource limits. This is an intentional safety gate, not inability to use many specialists.
 
 ## 7. Outcome gates for 7 / 30 / 60 / 90 days
 
