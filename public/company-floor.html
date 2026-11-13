@@ -11,11 +11,18 @@ section.block{padding:44px 0;border-top:1px solid var(--line)}h2{font-size:29px;
 .roster{display:grid;grid-template-columns:1fr 1fr;gap:10px}.seat h3{font-size:15px;letter-spacing:-.02em;margin:0 0 7px}.seat .accept{border-top:1px solid var(--line);padding-top:10px}.work{margin-bottom:10px}.work h3{font-size:16px;margin:8px 0}.work .lane{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-top:16px}.step{background:#0e1921;border-top:2px solid #7db49b;padding:13px;font-size:11px;border-radius:4px}.step b{color:var(--mint);font-size:10px}.step p{color:#a6bbc0;margin:8px 0}.step .state{color:#c9ba98;font-size:9px}.empty{color:var(--mut);font-size:12px}footer{border-top:1px solid var(--line);padding:28px 0;color:#8198a0;font-size:11px}
 @media(max-width:900px){.departments{grid-template-columns:1fr 1fr}.work .lane{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){.wrap{padding:0 16px}.metrics{grid-template-columns:1fr 1fr}.metric{padding:13px}.metric b{font-size:26px}.departments,.roster,.work .lane{grid-template-columns:1fr}.hero{padding:35px 0}.links{font-size:11px}}
-</style></head><body>
+.dept .task{font-size:12px;color:#cedbd3;line-height:1.65;margin:14px 0}.dept .scope{color:#b9ccbd;font:10px ui-monospace,monospace}.dept details{margin-top:12px;border-top:1px solid var(--line);padding-top:12px}.dept summary{cursor:pointer;color:#c8d8c9;font-size:11px}.dept pre{white-space:pre-wrap;word-break:break-word;max-height:260px;overflow:auto;font:11px/1.55 ui-monospace,monospace;color:#c3d8cb;background:#0b151b;padding:12px;border:1px solid #344950;border-radius:4px}.dept .state{display:inline-block;font:9px/1.5 ui-monospace,monospace;color:#d6c0a4;margin-top:8px}</style></head><body>
 <header><div class="wrap"><nav><a class="brand" href="/">◈ SIGNALFORGE / COMPANY FLOOR</a><div class="links"><a href="/app">Research Terminal</a><a href="/admin/revenue">Revenue Control</a><a href="/">Public Website</a></div></nav></div></header>
 <main class="wrap">
 <div class="hero"><div class="eyebrow">PRIVATE OPERATIONS · SOURCE-OBSERVED COMPANY OS</div><h1>One company.<br><em>100 defined work seats.</em></h1><p>One product organization with atomic duties, accountable managers, acceptance criteria and source-triggered work plans. Role definitions are not a claim that 100 human employees or independently executing AI agents are active.</p><div id="notice" class="notice" role="status" aria-live="polite">Reading authorized Company OS evidence…</div></div>
 <div class="metrics"><div class="metric"><span>DEFINED ROLES</span><b id="nRoles">—</b></div><div class="metric"><span>DEPARTMENTS</span><b id="nDepts">—</b></div><div class="metric"><span>VERIFIED AGENT BINDINGS</span><b id="nBound">Unknown</b></div><div class="metric"><span>WORKSTREAM CANDIDATES</span><b id="nWork">—</b></div></div>
+<section class="block" id="signalforge-autonomy">
+ <div class="eyebrow">M20 / THE AUTONOMOUS COMPANY MISSION</div>
+ <h2>11 department missions · 100 compiled role prompts</h2>
+ <p class="explain">Live SignalForge evidence determines the next departmental focus. These are prompt instructions ready for the existing AgentOS queue, not proof that all agents are currently executing.</p>
+ <div id="autonomyStatus" class="notice" role="status" aria-live="polite">Loading authenticated operating instructions…</div>
+ <div id="autonomyDepartments" class="departments"></div>
+</section>
 <section class="block"><h2>Departments & accountability</h2><p class="explain">Defined capacity and proposed work do not imply actual workers have been invoked.</p><div class="departments" id="departments"></div></section>
 <section class="block"><h2>Current workstream DAG</h2><p class="explain">Real source-driven candidate tasks, decomposed into Discover → Deliver → Review → Independent Verify. Admission and proof remain with existing Company OS and Agent Fabric.</p><div id="work"></div></section>
 <section class="block"><h2>Role contracts</h2><p class="explain">100 distinct jobs with scoped output, manager and acceptance criteria.</p><div class="filters"><select id="filterDept" aria-label="Department filter"><option value="">All departments</option></select><input id="filterSearch" aria-label="Search roles" placeholder="Search role, output, task…"></div><div class="roster" id="roster"></div></section>
@@ -74,6 +81,32 @@ function render(){
  });
  renderRoster();
 }
+async function loadAutonomy(){
+ try{
+  var response=await fetch("/api/admin/company-autonomy",{credentials:"same-origin",cache:"no-store"});
+  if(!response.ok)throw new Error("Cannot load scoped SignalForge plan ("+response.status+")");
+  var x=await response.json();
+  if(x.schema!=="signalforge.company-os.autonomous-operation.v1"||
+      x.project_id!=="signalforge-market-intelligence"||
+      x.department_workstreams.length!==11||x.role_assignments.length!==100)
+    throw new Error("Unexpected SignalForge-only plan");
+  $("autonomyStatus").textContent="Source observation: "+x.source_generated_at+
+   ". All 11 head prompts compiled; dispatch remains governed by the existing canonical AgentOS WorkPacket queue. No independent completion has been claimed.";
+  var host=$("autonomyDepartments");host.replaceChildren();
+  x.department_workstreams.forEach(function(d){
+   var c=node("article",null,"dept");
+   c.append(node("small",d.id.toUpperCase()+" / "+d.defined_roles+" ROLE CONTRACTS"),
+    node("h3",human(d.head_role_id)),node("p",d.next_action,"task"),
+    node("div",human(d.operational_state),"state"),
+    node("p","WorkPacket: "+(d.workpacket_id||"awaiting fresh source trigger"),"scope"));
+   var details=node("details"),heading=node("summary","Inspect compiled agent prompt");
+   var pre=node("pre",d.prompt);
+   details.append(heading,pre);c.append(details);host.append(c);
+  });
+ }catch(error){
+  $("autonomyStatus").textContent="SignalForge autonomous plan unavailable: "+String(error.message||error);
+ }
+}
 async function load(){
  try{
   var response=await fetch("/api/admin/company-floor",{credentials:"same-origin",cache:"no-store"});
@@ -86,5 +119,6 @@ async function load(){
 $("filterDept").addEventListener("change",function(){if(data)renderRoster()});
 $("filterSearch").addEventListener("input",function(){if(data)renderRoster()});
 load();
+loadAutonomy();
 }());
 </script></body></html>
