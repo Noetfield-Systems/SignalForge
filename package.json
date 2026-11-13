@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "SignalForge market intelligence, premium community and governed Company OS read-only telemetry",
+  "description": "SignalForge premium crypto market research: OHLC charts, scanner, explainable signals, token radar, backtesting, research community and governed internal operations.",
   "scripts": {
     "start": "bun run src/server.ts",
     "dev": "bun --watch src/server.ts",
