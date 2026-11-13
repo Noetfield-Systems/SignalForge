@@ -23,6 +23,12 @@ SignalForge is a read-only crypto market research product with a member communit
 
 A single Sina Founder OS mission M20 remains the source of executive authority and existing Agent Fabric/Company OS owns actual execution, permissions and verification. No new scheduler or parallel agent registry.
 
+## SignalForge-specific autonomous operating plan
+
+- [SignalForge Autonomous Company Execution Master v1](docs/SIGNALFORGE-AUTONOMOUS-COMPANY-EXECUTION-MASTER-v1.md): 11 departments, 100 specialist role prompts, 24-hour bootstrap, event-driven continuation, test/evidence gates, 7/30/90/180-day outcomes.
+- [Source-bound prompt/workboard compiler](company-os/signalforge-autonomy.ts) is accessible to the existing Company OS via authenticated `GET /api/company-os/autonomy` and to SignalForge admins via `GET /api/admin/company-autonomy` and `/admin/company-floor`. All output is a **read-only proposal**, not evidence that a model or tool has already executed.
+- Existing Agent Fabric, Sina Founder OS, Runway/GitHub Actions and independent verifier remain the **only** task execution path; this change does not install a new runner or promise 100 concurrent model workers.
+
 ## Architecture
 
 This repository is now the **canonical SignalForge product source**. It is intentionally separate from the Sina Founder OS / Company OS governance repository. Existing corporate operating infrastructure is reused rather than duplicated.
