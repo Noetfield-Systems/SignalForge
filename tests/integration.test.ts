@@ -47,7 +47,7 @@ test("real database community lifecycle, security boundaries and Company OS cont
   expect(healthData.database).toBe("connected");
   expect(healthData.mode).toContain("no broker execution");
 
-  let homepage=await fetch(BASE+"/");
+  let homepage=await fetch(BASE+"/app");
   expect(homepage.status).toBe(200);
   const html=await homepage.text();
   expect(html).toContain("Signal Rooms");
@@ -57,6 +57,14 @@ test("real database community lifecycle, security boundaries and Company OS cont
   expect(html).toContain('data-subscribe');
   expect(html).toContain('payNow:true');
   expect(html).toContain('id="view-community"');
+
+  let publicHome=await fetch(BASE+"/");
+  expect(publicHome.status).toBe(200);
+  const landingHtml = await publicHome.text();
+  expect(landingHtml).toContain("The market moves.");
+  expect(landingHtml).toContain("SignalForge");
+  expect(landingHtml).toContain("href=\"/radar\"");
+  expect(landingHtml).toContain("href=\"/app\"");
 
   let welcome=await fetch(BASE+"/welcome");
   expect(welcome.status).toBe(200);
