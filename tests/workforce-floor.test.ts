@@ -44,6 +44,10 @@ test("source-observed goals expand to dependent microtasks with independent veri
   expect(tasks[2].depends_on).toEqual([tasks[1].id]);
   expect(tasks[3].depends_on).toEqual([tasks[2].id]);
   expect(tasks[3].role_id).toBe("independent_verifier");
+  expect(tasks[1].role_id).toBe(stream.delivery_specialist);
+  expect(tasks[1].role_id).not.toBe("independent_verifier");
+  expect(tasks[2].role_id).toBe(stream.review_specialist);
+  expect(tasks[2].role_id).not.toBe(tasks[1].role_id);
   expect(tasks.every(t=>t.state==="PROPOSED_NOT_DISPATCHED")).toBe(true);
   expect(tasks.every(t=>t.external_effects_authorized===false)).toBe(true);
  }
