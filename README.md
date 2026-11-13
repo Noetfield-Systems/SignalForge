@@ -14,7 +14,9 @@ SignalForge is a read-only crypto market research product with a member communit
 ## One operating company: SignalForge Web3 / Ethereum
 
 - [Company OS operating manual](company-os/OPERATING-MANUAL.md): one managing director, Ethereum/onchain/quant, paper-trading engineering, token research, community, revenue, risk, SRE and independent verifier.
-- [26 governed role contracts](company-os/organization.v1.json); these are virtual role definitions, not 26 newly provisioned workers.
+- [100 accountable work-role contracts](company-os/organization.v2.json) across 11 departments; these are defined specialist seats, **not 100 provisioned or independently active AI agents**. Historical 26-role manifest is retained as v1.
+- [100-role Company Floor engine](company-os/workforce-floor.ts): source-driven, dependency-linked DISCOVER → DELIVER → REVIEW → VERIFY microtasks. Never self-claims dispatch or independent completion.
+- Authenticated `GET /api/company-os/workforce` shares scoped read-only work plans with existing Company OS. Admin-only `/admin/company-floor` and `/api/admin/company-floor` display contracts, proposals and truthful runtime binding unknowns.
 - [Deterministic operating engine](company-os/operating-engine.ts): evaluates actual authenticated aggregate inputs and emits prioritized, zero-external-effect WorkPacket **candidates**. Use `GET /api/company-os/operations` with the existing server-to-server Company OS workload key.
 
 A single Sina Founder OS mission M20 remains the source of executive authority and existing Agent Fabric/Company OS owns actual execution, permissions and verification. No new scheduler or parallel agent registry.
