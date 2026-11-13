@@ -115,6 +115,14 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 @media(max-width:780px){.shell{display:block}.main{padding:0 14px 35px}.topbar{height:62px}.topright .ghost.mobilemenu{display:inline-flex}.pagehead{align-items:flex-start;flex-direction:column;margin:21px 0}.pagehead h1{font-size:34px}.headactions{width:100%;flex-wrap:wrap}.chartcanvas{height:310px}.sf-research-stations{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));overflow:visible}.sf-research-station{min-width:0;max-width:none;min-height:128px}.sf-research-path-heading h2{font-size:21px}.sf-research-path-heading{display:block}}
 @media(max-width:490px){.main{padding:0 10px 25px}.pagehead h1{font-size:30px}.chartcanvas{height:242px}.chartwrap{padding:9px}.contentgrid{gap:10px}.panelhead{padding:13px 12px}.pricebig{font-size:23px}.stats{gap:8px}.stat{padding:12px}.statvalue{font-size:21px}.sf-research-path{padding:16px}.sf-research-stations{grid-template-columns:1fr}.sf-research-station{min-height:95px}.sf-research-truth{font-size:9px}.sectionrow h2{font-size:20px}}
 @media(prefers-reduced-motion:reduce){.sf-research-station,.nav button{transition:none}}
+
+/* Keep external growth acquisition CTAs, but never allow them to displace the chart. */
+#view-dashboard #launchHero{margin:23px 0 24px!important;padding:22px 25px!important;background:linear-gradient(95deg,#182821,#14211f)!important;border:1px solid #4d684f!important;border-radius:5px!important;box-shadow:none!important}
+#view-dashboard #launchHero h2{font:500 20px/1.3 var(--display)!important;letter-spacing:-.035em!important;margin:7px 0!important}
+#view-dashboard #launchHero p{font:400 12px/1.75 "DM Sans",sans-serif!important;color:#9fb6a4!important}
+#view-dashboard #launchHero .eyebrow{font:500 10px var(--mono)!important;color:#dabd92!important}
+#view-dashboard #launchHero .chip{background:#20372b!important;border-color:#46634b!important;color:#a9c5a8!important;border-radius:3px!important}
+@media(max-width:780px){#view-dashboard #launchHero{padding:17px!important}#view-dashboard #launchHero h2{font-size:18px!important}}
 </style><style>
 .sf-room-hero{padding:31px;background:radial-gradient(600px 300px at 90% 0%,#21474b 0,transparent 80%),linear-gradient(125deg,#11232d,#111923);border:1px solid #32515a;border-radius:16px;display:grid;grid-template-columns:1.45fr 1fr;gap:28px;margin-bottom:20px}.sf-room-hero h2{font-size:clamp(27px,3.5vw,43px);line-height:1.1;letter-spacing:-.06em;margin:10px 0 18px;max-width:430px}.sf-room-hero p{font-size:12px;line-height:1.8;color:#a8bfcc;max-width:500px}.sf-room-hero-art{display:grid;gap:7px;align-content:center;border-left:1px solid #35505b;padding-left:24px}.sf-room-hero-art span{font:9px ui-monospace,monospace;letter-spacing:.13em;color:#68cdbb;margin-top:8px}.sf-room-hero-art b{font-size:17px;letter-spacing:-.02em;color:#e7f6f4}.sf-room-controls{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:13px}.sf-room-tabs{display:flex;flex-wrap:wrap;gap:7px}.sf-room-tabs button{background:#111e2b;color:#a5b7c9;border:1px solid #2a3f50;border-radius:8px;padding:9px 12px;font-size:10px}.sf-room-tabs button.active{background:#163930;border-color:#448f7c;color:#85f2d1}.sf-room-layout{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:16px}.sf-room-feed{display:grid;gap:11px;align-content:start}.sf-room-post{border:1px solid #293b48;background:linear-gradient(125deg,#121d29,#0e1722);border-radius:13px;padding:20px}.sf-room-meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:10px;color:#9aafbd}.sf-room-tag{border:1px solid #3c6d65;color:#8de3ca;border-radius:6px;padding:3px 7px;font-size:9px}.sf-room-post h3{font-size:17px;letter-spacing:-.025em;margin:13px 0 9px;line-height:1.4}.sf-room-post p{font-size:12px;line-height:1.7;color:#acbfcd;white-space:pre-wrap;overflow-wrap:anywhere}.sf-room-actions{display:flex;flex-wrap:wrap;gap:7px;border-top:1px solid #263949;padding-top:11px;margin-top:15px}.sf-room-actions button{border:1px solid #2f4351;border-radius:7px;background:#132330;color:#a6c2ce;font-size:10px;padding:7px 10px}.sf-room-actions button:hover{border-color:#75c9b7;color:#caffef}.sf-room-side{position:static;height:auto;border:0;background:transparent;padding:0;display:grid;gap:12px;align-content:start}.sf-room-sidecard{padding:18px}.sf-room-sidecard h3{font-size:17px;margin:10px 0}.sf-room-sidecard p{font-size:11px;color:#9db1c0;line-height:1.8}.sf-room-modal{position:fixed;inset:0;z-index:45;background:#050b12e8;display:grid;place-items:center;padding:20px}.sf-room-dialog{width:min(600px,100%);max-height:95vh;overflow:auto;border:1px solid #416071;border-radius:17px;background:#111d29;padding:25px;box-shadow:0 30px 100px #0009}.sf-room-dialoghead{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}.sf-room-dialog h2{margin:0;font-size:23px}.sf-room-dialog label{display:block;font-size:9px;letter-spacing:.12em;color:#8caaaf;margin:13px 0 7px}.sf-room-dialog input,.sf-room-dialog textarea,.sf-room-dialog select,.sf-room-reply{width:100%;background:#0a1521;border:1px solid #34505e;border-radius:8px;color:#e9f7f6;padding:12px;font-size:12px}.sf-room-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}.sf-room-dialog small{display:block;color:#8297a9;margin:8px 0 16px}.sf-room-thread{margin-top:14px;display:grid;gap:9px}.sf-room-comment{border-left:2px solid #3a8377;background:#101d27;padding:10px 12px;border-radius:4px}.sf-room-comment small{color:#83b6ab}.sf-room-comment p{margin:7px 0 0}.sf-room-feedback{font-size:11px;color:#eab77a;margin-top:7px}@media(max-width:900px){.sf-room-layout,.sf-room-hero{grid-template-columns:1fr}.sf-room-side{display:none}.sf-room-hero-art{border-left:0;border-top:1px solid #35505b;padding:15px 0 0}.sf-room-controls{align-items:flex-start;flex-direction:column}.sf-room-tabs{max-width:100%}}@media(max-width:500px){.sf-room-hero{padding:20px}.sf-room-post{padding:15px}.sf-room-fields{grid-template-columns:1fr}}
 </style><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"><style>
@@ -348,5 +356,25 @@ window.SignalForgeCommunity={load};document.querySelector('[data-view="community
   }
   refresh.addEventListener("click",check);
   check();
+})();
+</script><script>
+(function(){
+ // The existing Growth service injects trial acquisition content above the
+ // page heading. Keep its consent/plan events intact but place it AFTER actual
+ // OHLC chart, research stats and navigation. DOM relocation preserves events.
+ const dashboard=document.getElementById("view-dashboard");
+ const research=dashboard&&dashboard.querySelector(".sf-research-path");
+ if(!dashboard||!research)return;
+ function afterChart(){
+  const banner=document.getElementById("launchHero");
+  if(!banner)return false;
+  if(banner.previousElementSibling!==research)research.insertAdjacentElement("afterend",banner);
+  return true;
+ }
+ if(!afterChart()){
+  const observer=new MutationObserver(()=>{if(afterChart())observer.disconnect()});
+  observer.observe(dashboard,{childList:true});
+  window.addEventListener("load",afterChart,{once:true});
+ }
 })();
 </script><script src="https://signalforge-growth-assets-production.up.railway.app/launch.js" defer></script></body></html>
