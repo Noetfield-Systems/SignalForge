@@ -2,7 +2,7 @@ import postgres from "postgres";
 import { researchSolanaToken, TokenRadarError, validSolanaAddress } from "./token-radar.mjs";
 import { persistTokenObservation, getTokenHistory, getSavedTokenList, saveToken, removeSavedToken, getTokenNotifications } from "./token-radar-storage.mjs";
 import {assessCompanyOutcome} from "../company-os/shared-evidence-gate.mjs";
-import { compileOperatingBoard } from "../company-os/operating-engine.ts";
+import { compileOperatingBoard, verifySingleCompanyHierarchy } from "../company-os/operating-engine.ts";
 import { compileWorkforceFloor } from "../company-os/workforce-floor.ts";
 const COMPANY_FLOOR_HTML = await Bun.file(new URL("../public/company-floor.html", import.meta.url)).text();
 import { evaluateCompanyPolicy } from "./company-os-policy";
@@ -176,7 +176,7 @@ const [users,community,reports,activity,signals,operatingMetrics,commercial]=awa
  db.unsafe("SELECT COUNT(*)::int AS recorded,COUNT(*) FILTER(WHERE status='CLOSED')::int AS resolved FROM signal_events"),
  operationalCohorts(),
  getRevenueSnapshot(db)
-]);return json({schemaVersion:"1.0.0",tenant:"signalforge",generatedAt:new Date().toISOString(),environment:"production",source:"SignalForge PostgreSQL aggregate observations",readOnly:true,privacy:{identifiersIncluded:false,freeTextIncluded:false,syntheticUsersExcluded:true},users:users[0],community:community[0],moderation:reports[0],product:activity[0],signals:signals[0],operatingMetrics,operatingPolicy:evaluateCompanyPolicy(operatingMetrics),
+]);return json({schemaVersion:"1.0.0",tenant:"signalforge",generatedAt:new Date().toISOString(),environment:"production",source:"SignalForge PostgreSQL aggregate observations",readOnly:true,privacy:{identifiersIncluded:false,freeTextIncluded:false,syntheticUsersExcluded:true},organizationContract:{schema:"signalforge.company-os.organization-link.v2",projectId:"signalforge-market-intelligence",definedRoles:verifySingleCompanyHierarchy().roles,departmentCount:verifySingleCompanyHierarchy().departments.length,roleContract:"github:Noetfield-Systems/SignalForge/company-os/organization.v2.json",actualWorkerBindings:null,independentRoleCompletionEvidence:null,status:"DEFINED_ROLE_CONTRACTS_ONLY"},users:users[0],community:community[0],moderation:reports[0],product:activity[0],signals:signals[0],operatingMetrics,operatingPolicy:evaluateCompanyPolicy(operatingMetrics),
  commercialEvidence:{
   source:"SignalForge signed local webhook and authenticated source activity",
   asOf:commercial.asOf,
