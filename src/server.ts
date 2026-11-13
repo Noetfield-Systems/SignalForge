@@ -4,6 +4,7 @@ import { persistTokenObservation, getTokenHistory, getSavedTokenList, saveToken,
 import {assessCompanyOutcome} from "../company-os/shared-evidence-gate.mjs";
 import { compileOperatingBoard, verifySingleCompanyHierarchy } from "../company-os/operating-engine.ts";
 import { compileWorkforceFloor } from "../company-os/workforce-floor.ts";
+import { compileSignalForgeCompany } from "../company-os/signalforge-autonomy.ts";
 import productIdentity from "../strategy/PRODUCT-IDENTITY-SSOT-v3.json";
 const COMPANY_FLOOR_HTML = await Bun.file(new URL("../public/company-floor.html", import.meta.url)).text();
 import { evaluateCompanyPolicy } from "./company-os-policy";
@@ -467,6 +468,30 @@ if(method==="GET"&&path==="/api/company-os/workforce"){
  catch(error:any){
   console.error("Company workforce projection rejected:",String(error?.message||"invalid").slice(0,100));
   return json({error:"Company workforce projection unavailable",state:"SOURCE_VALIDATION_FAILED"},503);
+ }
+}
+if(method==="GET"&&path==="/api/company-os/autonomy"){
+ const snapshot=await companySnapshot(req);
+ if(snapshot.status!==200)return snapshot;
+ try{return json(compileSignalForgeCompany(compileOperatingBoard(await snapshot.json())),
+   200,{"cache-control":"no-store"});}
+ catch(error:any){
+  console.error("SignalForge autonomy source contract rejected:",String(error?.message||"invalid").slice(0,120));
+  return json({error:"SignalForge company mission unavailable",state:"SOURCE_VALIDATION_FAILED"},503);
+ }
+}
+if(method==="GET"&&path==="/api/admin/company-autonomy"){
+ const viewer=await userFor(req);
+ if(!viewer||viewer.role!=="admin")return json({error:"Admin access required"},403);
+ if(!Bun.env.SIGNALFORGE_COMPANY_OS_KEY)return json({error:"Company OS integration unavailable"},503);
+ const internalReq=new Request(req.url,{headers:{"authorization":"Bearer "+Bun.env.SIGNALFORGE_COMPANY_OS_KEY}});
+ const snapshot=await companySnapshot(internalReq);
+ if(snapshot.status!==200)return snapshot;
+ try{return json(compileSignalForgeCompany(compileOperatingBoard(await snapshot.json())),
+   200,{"cache-control":"no-store"});}
+ catch(error:any){
+  console.error("SignalForge private autonomy unavailable:",String(error?.message||"invalid").slice(0,120));
+  return json({error:"SignalForge private autonomy unavailable"},503);
  }
 }
 if(method==="GET"&&path==="/admin/company-floor"){
