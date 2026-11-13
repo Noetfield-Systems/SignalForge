@@ -179,23 +179,37 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offse
 <main id="main">
  <div class="container marquee"><span><b>Digital asset market intelligence</b> &nbsp; / &nbsp; Research · Explain · Validate</span><a href="/radar">Explore Solana Token Radar ↗</a></div>
  <section class="hero" id="markets"><div class="container hero-grid">
-  <div class="hero-copy"><div class="eyebrow">Professional crypto research workspace</div><h1>Research every move.<br><em>Trade with context.</em></h1>
-  <p class="lead">Real candlestick charts, explainable market signals, token intelligence and strategy validation — unified in one clear research workspace. Follow the evidence behind the move, not the noise around it.</p>
-  <div class="hero-actions"><a class="btn" href="/app?view=dashboard">↗ &nbsp; Open market terminal <span class="arrow" aria-hidden="true">→</span></a><a class="btn ghost" href="/radar">Explore Token Radar <span class="arrow" aria-hidden="true">→</span></a></div>
-  <div class="hero-caption"><span>Public market sources</span><span>Read-only analysis</span><span>No wallet required to explore</span></div>
+  <div class="hero-copy">
+   <div class="hero-artline"><span>AN INTELLIGENT VIEW OF DIGITAL ASSET MARKETS</span><span>RESEARCH SYSTEM / 001</span></div>
+   <div class="hero-titleblock">
+    <div class="eyebrow">SIGNALFORGE / INDEPENDENT MARKET INTELLIGENCE</div>
+    <h1>Research every move.<br><em>Trade with context.</em></h1>
+    <div class="hero-notation" aria-hidden="true"><span>OBSERVE</span><b>—</b><span>QUESTION</span><b>—</b><span>VALIDATE</span></div>
+   </div>
+   <div class="hero-summary"><div class="hero-summary-top"><span>01 — A BETTER READ ON THE MARKET</span><span>↗</span></div>
+    <p class="lead">Price tells you what happened. SignalForge connects market structure, explainable signals, token evidence and historical research — so you can understand the move before drawing your own conclusion.</p>
+    <div class="hero-actions"><a class="btn" href="/app?view=dashboard">Open market terminal <span class="arrow" aria-hidden="true">↗</span></a><a class="btn ghost" href="/radar">Explore Token Radar <span class="arrow" aria-hidden="true">↗</span></a></div>
+    <div class="hero-caption"><span>Real market sources</span><span>No wallet required</span><span>Read-only research</span></div>
+   </div>
   </div>
-  <div class="terminal-outer"><div class="terminal" aria-label="Interactive crypto market terminal preview">
-   <div class="termbar"><span class="termbrand"><strong>◈</strong> &nbsp; SIGNALFORGE / MARKET DESK</span><span class="termbarside"><span class="live-indicator" id="dataMode" role="status" aria-live="polite">Checking public source</span><span>RESEARCH / 01</span></span></div>
+  <div class="terminal-outer">
+   <div class="stage-heading"><span><i aria-hidden="true">◆</i> THE MARKET DESK <b>/</b> SOURCE-DRIVEN RESEARCH</span><span>01 / PRODUCT ENVIRONMENT</span></div>
+   <div class="terminal" aria-label="Interactive crypto market terminal preview">
+   <div class="termbar"><span class="termbrand"><strong>◈</strong> &nbsp; SIGNALFORGE <span class="term-brand-split">/</span> MARKET INTELLIGENCE</span><span class="termbarside"><span class="live-indicator" id="dataMode" role="status" aria-live="polite">Checking public source</span><span>RESEARCH / 01</span></span></div>
    <div class="termbody"><div class="term-main">
     <div class="term-top"><div class="assetswitch" aria-label="Choose preview market" role="group"><button type="button" data-symbol="BTCUSD" aria-pressed="true">BTC / USD</button><button type="button" data-symbol="ETHUSD" aria-pressed="false">ETH / USD</button><button type="button" data-symbol="SOLUSD" aria-pressed="false">SOL / USD</button></div><div class="asset-price"><strong id="lastPrice">—</strong><small id="lastChange">—</small></div></div>
     <div class="term-controls"><span>Public OHLC / Kraken</span><button type="button" data-interval="15" aria-pressed="false">15m</button><button type="button" data-interval="60" aria-pressed="true">1h</button><button type="button" data-interval="240" aria-pressed="false">4h</button><a href="/app?view=dashboard" style="font-size:10px;color:var(--gold);margin-left:8px">Full chart ↗</a></div>
-    <div class="chart-shell"><canvas id="candleChart" role="img" aria-label="Source reported OHLC candlesticks, if available"></canvas><div id="chartEmpty" class="chart-empty">Connecting to public market data…</div></div>
+    <div class="chart-shell"><canvas id="candleChart" role="img" aria-label="Source-reported OHLC candlesticks when available"></canvas><div id="chartEmpty" class="chart-empty" role="status" aria-live="polite"><span class="chart-placeholder-glyph" aria-hidden="true">⌁</span><strong>Establishing market data connection</strong><small>Only verified public OHLC is plotted as live.</small></div></div>
     <div class="chart-footer"><span id="chartTimestamp">Source observation: pending</span><strong id="chartLegend">OHLC · PRICE / USD</strong></div>
-   </div><div class="term-side"><div class="sheading">MARKET WATCH <small>USD</small></div><div id="marketWatch"><div class="watchitem"><div class="watchitem-sub">Awaiting source observations…</div></div></div>
+   </div><div class="term-side">
+    <div class="sheading">MARKET WATCH <small>USD</small></div><div id="marketWatch"><div class="watchitem"><div class="watchitem-sub">Awaiting source observations…</div></div></div>
+   <div class="side-notes-label"><span>02 / RESEARCH CONTEXT</span><span>→</span></div>
    <div class="side-note"><div class="signal-label">EXPLAINABLE SIGNALS</div><b id="strategyLabel">Waiting for market context</b><p id="strategyDesc">A confluence score is not a probability of profit.</p><a href="/app?view=strategies">View strategy library ↗</a></div>
    </div></div>
    <div class="term-bottom"><strong>● &nbsp; Source mode is always disclosed</strong><span>RESEARCH ONLY · NO BROKER EXECUTION</span></div>
-  </div></div>
+  </div>
+   <div class="stage-foot"><span>01 — ANALYZE</span><a href="/app?view=dashboard">ENTER THE FULL WORKSPACE <span aria-hidden="true">↗</span></a><span>OHLC / SIGNALS / VALIDATION</span></div>
+  </div>
  </div></section>
  <div class="strip"><div class="container strip-grid">
   <div class="strip-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19V9m5 11V5m5 16V12m5 6V3M2 16h4m1-7h4m1 9h4m1-11h4"/></svg><div><b>Professional chart research</b><small>OHLC, volume &amp; indicators</small></div></div>
@@ -203,7 +217,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offse
   <div class="strip-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 17 9 11l4 3 8-9M3 21h18"/></svg><div><b>Explainable signals</b><small>Transparent confluence conditions</small></div></div>
   <div class="strip-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m12 3 9 4-9 4-9-4 9-4Zm-9 9 9 4 9-4m-18 5 9 4 9-4"/></svg><div><b>Historical validation</b><small>Backtests kept distinct from live results</small></div></div>
  </div></div>
- <section class="section" id="features"><div class="container"><div class="section-head"><div class="section-kicker">The intelligence stack</div><h2>Everything behind the chart.</h2><p>From price action to token context and reproducible research. Each tool helps answer a different question before making a decision.</p></div>
+ <section class="section" id="features"><div class="container"><div class="section-head"><div class="section-kicker">THE RESEARCH SYSTEM / 02</div><h2>Every move has a story.<br><em>Find the evidence.</em></h2><p>From price action to token context and reproducible research. Each tool helps answer a different question before making a decision.</p></div>
   <div class="cards">
    <article class="feature"><div class="feature-icon">▥</div><h3>Candlestick analytics</h3><p>Explore OHLC price action, volume, multi-timeframe structure and the indicators already available in the research terminal.</p><a href="/app?view=dashboard">Open market desk ↗</a><div class="graphic"><span class="graphic-label">ILLUSTRATIVE PRICE PATTERN</span><svg viewBox="0 0 260 115" aria-hidden="true"><path d="M0 91 260 91M0 52 260 52M0 12 260 12" stroke="#2b4641" stroke-width=".6"/><g stroke="#79deb1" stroke-width="2"><path d="M22 91V70M44 76V48M66 81V45M88 69V40M110 55V26M134 64V35M157 50V15M180 37V6M204 42V14M226 25V4"/></g><g fill="#78dda9"><rect x="18" y="78" width="8" height="9"/><rect x="40" y="54" width="8" height="16"/><rect x="84" y="47" width="8" height="14"/><rect x="106" y="32" width="8" height="18"/><rect x="153" y="22" width="8" height="21"/><rect x="176" y="14" width="8" height="16"/><rect x="222" y="11" width="8" height="11"/></g><g fill="#d67a77"><rect x="62" y="54" width="8" height="18"/><rect x="130" y="42" width="8" height="15"/><rect x="200" y="25" width="8" height="11"/></g></svg></div></article>
    <article class="feature"><div class="feature-icon">◎</div><h3>Token Radar</h3><p>Research Solana token mints, available pools, reported liquidity, activity and historical changes with visible source timestamps.</p><a href="/radar">Research the token. ↗</a><div class="graphic"><span class="graphic-label">SOURCE / LIQUIDITY / ACTIVITY</span><svg viewBox="0 0 260 115" aria-hidden="true"><g fill="none" stroke="#528e7b" stroke-width="1"><circle cx="129" cy="59" r="42"/><circle cx="129" cy="59" r="26"/><path d="M129 9v101M80 59h100"/></g><path d="m129 17 36 22v42l-36 22-36-22V39Z" fill="#7dd4ab26" stroke="#8cddb7"/><path d="m129 35 21 13v24l-21 13-21-13V48Z" fill="#73dcb638" stroke="#8cddb7"/></svg></div></article>
@@ -222,7 +236,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offse
    <p class="research-disclaimer">Illustrative research workspace. Example lines are decorative, not actual price data or trading advice. Open the terminal for sourced market observations.</p>
   </div></div>
  </div></section>
- <section class="workflow" id="workflow"><div class="container"><div class="section-head"><div class="section-kicker">An evidence-led workflow</div><h2>Your research. One continuous process.</h2><p>Move from discovery to a recorded thesis with the tools already available in SignalForge.</p></div>
+ <section class="workflow" id="workflow"><div class="container"><div class="section-head"><div class="section-kicker">A DISCIPLINED RESEARCH PROCESS / 04</div><h2>From observation<br><em>to conviction.</em></h2><p>Move from discovery to a recorded thesis with the tools already available in SignalForge.</p></div>
  <div class="workflow-grid"><div class="workstep"><div class="stepnum">01 / DISCOVER</div><h3>Find a market</h3><p>Start with market watch, the scanner or a Solana token mint.</p><a href="/app?view=scanner">Open scanner ↗</a></div><div class="workstep"><div class="stepnum">02 / ANALYZE</div><h3>Read the chart</h3><p>Inspect real-source candles, timeframe and indicator context.</p><a href="/app?view=dashboard">View charts ↗</a></div><div class="workstep"><div class="stepnum">03 / VALIDATE</div><h3>Test the rules</h3><p>Compare explainable strategy criteria with historical performance.</p><a href="/app?view=backtest">Open backtests ↗</a></div><div class="workstep"><div class="stepnum">04 / TRACK</div><h3>Preserve evidence</h3><p>Separate recorded forward outcomes from simulated results.</p><a href="/app?view=trackrecord">Track record ↗</a></div><div class="workstep"><div class="stepnum">05 / DISCUSS</div><h3>Challenge the thesis</h3><p>Share research with members in Signal Rooms, with context.</p><a href="/app?view=community">Signal Rooms ↗</a></div></div>
  </div></section>
  <section class="pricing" id="pricing"><div class="container pricing-grid"><div class="pricing-intro"><div class="section-kicker">Research membership</div><h2>Clarity at every level.</h2><p>Explore the public tools first. Upgrade voluntarily when the depth of your research calls for more. Plans and entitlements are shown in the live application.</p><a href="/app?view=pricing">See plans and access details ↗</a></div>
