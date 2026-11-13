@@ -35,9 +35,9 @@ test("real 100 role contracts compile into 11 scoped department missions",()=>{
   expect(d.current_evidence_state).toBe("PRODUCT_SOURCE_REPORTED_UNVERIFIED");
  }
  for(const r of x.role_assignments){
-  expect(r.prompt).toContain("Original".replace("Original","Founder goal:"));
+  expect(r.prompt).toContain("Founder goal:");
   expect(r.prompt).toContain("M20");
-  expect(r.prompt).toContain("Prompt");
+  expect(r.prompt).toContain("ROLE PROMPT CONTRACT");
   expect(r.actual_provider_invocations).toBe(0);
   expect(r.artifact_receipt).toBeNull();
  }
