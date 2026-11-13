@@ -1,0 +1,90 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>SignalForge — Company Floor</title>
+<style>
+:root{color-scheme:dark;--bg:#090f15;--panel:#121f28;--card:#192731;--line:#344950;--mint:#b3efda;--mut:#96aeb5}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% 0,#1c41413d,transparent 48%),var(--bg);color:#edf4f1;font:14px/1.65 system-ui,-apple-system,sans-serif}a{color:var(--mint);text-decoration:none}
+.wrap{max-width:1380px;margin:auto;padding:0 30px}header{border-bottom:1px solid var(--line)}nav{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;padding:17px 0}.brand{font-weight:800;letter-spacing:-.05em;font-size:17px}.links{display:flex;gap:20px;flex-wrap:wrap;font-size:12px}
+.hero{padding:65px 0 34px}.eyebrow{color:var(--mint);font-size:10px;letter-spacing:.16em;font-weight:800}.hero h1{font-size:clamp(42px,5vw,70px);font-weight:500;line-height:1.08;letter-spacing:-.075em;margin:16px 0}.hero h1 em{font-style:normal;color:var(--mint)}.hero p{max-width:840px;color:var(--mut);margin:0 0 24px}.notice{border:1px solid #857149;background:#33291c;color:#eed7a7;border-radius:6px;padding:13px 17px;font-size:12px}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:30px 0 42px}.metric{background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:22px}.metric span{font-size:10px;color:var(--mut);letter-spacing:.1em}.metric b{display:block;font-size:34px;letter-spacing:-.05em;margin-top:7px}
+section.block{padding:44px 0;border-top:1px solid var(--line)}h2{font-size:29px;letter-spacing:-.05em;margin:0 0 5px}.explain{color:var(--mut);margin:0 0 24px;font-size:12px}
+.departments{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.dept,.seat,.work{background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:20px}.dept h3{font-size:16px;text-transform:capitalize;margin:0 0 9px}.dept small,.seat small,.work small{font-size:10px;color:var(--mint);letter-spacing:.04em}.dept p,.seat p{font-size:12px;color:var(--mut);margin:9px 0}
+.filters{display:flex;gap:10px;margin-bottom:18px}input,select{background:#0e1921;border:1px solid #465f63;border-radius:4px;color:#e9f7ee;padding:10px 12px;font:12px system-ui}input{flex:1;min-width:0}
+.roster{display:grid;grid-template-columns:1fr 1fr;gap:10px}.seat h3{font-size:15px;letter-spacing:-.02em;margin:0 0 7px}.seat .accept{border-top:1px solid var(--line);padding-top:10px}.work{margin-bottom:10px}.work h3{font-size:16px;margin:8px 0}.work .lane{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-top:16px}.step{background:#0e1921;border-top:2px solid #7db49b;padding:13px;font-size:11px;border-radius:4px}.step b{color:var(--mint);font-size:10px}.step p{color:#a6bbc0;margin:8px 0}.step .state{color:#c9ba98;font-size:9px}.empty{color:var(--mut);font-size:12px}footer{border-top:1px solid var(--line);padding:28px 0;color:#8198a0;font-size:11px}
+@media(max-width:900px){.departments{grid-template-columns:1fr 1fr}.work .lane{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.wrap{padding:0 16px}.metrics{grid-template-columns:1fr 1fr}.metric{padding:13px}.metric b{font-size:26px}.departments,.roster,.work .lane{grid-template-columns:1fr}.hero{padding:35px 0}.links{font-size:11px}}
+</style></head><body>
+<header><div class="wrap"><nav><a class="brand" href="/">◈ SIGNALFORGE / COMPANY FLOOR</a><div class="links"><a href="/app">Research Terminal</a><a href="/admin/revenue">Revenue Control</a><a href="/">Public Website</a></div></nav></div></header>
+<main class="wrap">
+<div class="hero"><div class="eyebrow">PRIVATE OPERATIONS · SOURCE-OBSERVED COMPANY OS</div><h1>One company.<br><em>100 defined work seats.</em></h1><p>One product organization with atomic duties, accountable managers, acceptance criteria and source-triggered work plans. Role definitions are not a claim that 100 human employees or independently executing AI agents are active.</p><div id="notice" class="notice" role="status" aria-live="polite">Reading authorized Company OS evidence…</div></div>
+<div class="metrics"><div class="metric"><span>DEFINED ROLES</span><b id="nRoles">—</b></div><div class="metric"><span>DEPARTMENTS</span><b id="nDepts">—</b></div><div class="metric"><span>VERIFIED AGENT BINDINGS</span><b id="nBound">Unknown</b></div><div class="metric"><span>WORKSTREAM CANDIDATES</span><b id="nWork">—</b></div></div>
+<section class="block"><h2>Departments & accountability</h2><p class="explain">Defined capacity and proposed work do not imply actual workers have been invoked.</p><div class="departments" id="departments"></div></section>
+<section class="block"><h2>Current workstream DAG</h2><p class="explain">Real source-driven candidate tasks, decomposed into Discover → Deliver → Review → Independent Verify. Admission and proof remain with existing Company OS and Agent Fabric.</p><div id="work"></div></section>
+<section class="block"><h2>Role contracts</h2><p class="explain">100 distinct jobs with scoped output, manager and acceptance criteria.</p><div class="filters"><select id="filterDept" aria-label="Department filter"><option value="">All departments</option></select><input id="filterSearch" aria-label="Search roles" placeholder="Search role, output, task…"></div><div class="roster" id="roster"></div></section>
+</main><footer><div class="wrap">SIGNALFORGE · ONE CANONICAL WORK QUEUE · NO CLAIMS OF UNVERIFIED COMPLETION OR COLLECTED REVENUE</div></footer>
+<script>
+(function(){
+"use strict";
+var $=id=>document.getElementById(id);
+var node=function(tag,value,cls){var x=document.createElement(tag);if(value!==undefined&&value!==null)x.textContent=String(value);if(cls)x.className=cls;return x};
+var human=s=>String(s||"").replace(/_/g," ");
+var data;
+function renderRoster(){
+ var root=$("roster");root.replaceChildren();
+ var d=$("filterDept").value,q=$("filterSearch").value.toLowerCase().trim();
+ data.department_workcells.forEach(function(group){
+  if(d&&d!==group.id)return;
+  group.role_contracts.forEach(function(r){
+   if(q&&[r.title,r.id,r.atomic_task,r.deliverable].join(" ").toLowerCase().indexOf(q)<0)return;
+   var c=node("article",null,"seat");
+   c.append(node("small",group.id.toUpperCase()),node("h3",r.title),node("p",r.atomic_task),
+    node("p","Output: "+r.deliverable),node("p","Acceptance: "+r.acceptance_criteria[0],"accept"),
+    node("small","Reports to "+human(r.reports_to)+" · Runtime binding unverified"));
+   root.append(c);
+  });
+ });
+ if(!root.children.length)root.append(node("p","No matching role.","empty"));
+}
+function render(){
+ $("nRoles").textContent=data.org.defined_roles;
+ $("nDepts").textContent=data.org.departments;
+ $("nBound").textContent=data.org.verified_live_agents===null?"Unknown":data.org.verified_live_agents;
+ $("nWork").textContent=data.workstreams.length;
+ $("notice").textContent="Source observed at "+data.source_generated_at+". All workstreams remain proposals until canonical dispatch and independent readback.";
+ var dst=$("departments");dst.replaceChildren();
+ data.department_workcells.forEach(function(d){
+  var c=node("article",null,"dept");
+  c.append(node("h3",human(d.id)),node("small",d.defined_seats+" defined roles"),
+   node("p","Accountable to: "+human(d.accountable_head)),
+   node("p",d.pending_workstreams+" proposed workstreams"));
+  dst.append(c);
+  var opt=node("option",human(d.id));opt.value=d.id;$("filterDept").append(opt);
+ });
+ var work=$("work");work.replaceChildren();
+ if(!data.workstreams.length)work.append(node("p","No triggered work proposals in this observation window.","empty"));
+ data.workstreams.forEach(function(w){
+  var c=node("article",null,"work");
+  c.append(node("small",w.id+" / "+human(w.department)+" / priority "+w.priority),
+   node("h3",w.title),node("small","Owner: "+human(w.owner)+" · NOT DISPATCHED"));
+  var lane=node("div",null,"lane");
+  data.microtasks.filter(function(t){return t.parent_workpacket===w.id}).forEach(function(t){
+   var step=node("div",null,"step");
+   step.append(node("b",t.stage),node("p",t.task),node("div",human(t.state),"state"));
+   lane.append(step);
+  });
+  c.append(lane);work.append(c);
+ });
+ renderRoster();
+}
+async function load(){
+ try{
+  var response=await fetch("/api/admin/company-floor",{credentials:"same-origin",cache:"no-store"});
+  if(!response.ok)throw new Error("Company source unavailable (HTTP "+response.status+")");
+  data=await response.json();
+  if(data.schema!=="signalforge.company-os.workforce-floor.v2"||data.org.defined_roles!==100)throw Error("Unexpected workforce version");
+  render();
+ }catch(error){$("notice").textContent="Unable to load verified company context: "+String(error.message||error);}
+}
+$("filterDept").addEventListener("change",function(){if(data)renderRoster()});
+$("filterSearch").addEventListener("input",function(){if(data)renderRoster()});
+load();
+}());
+</script></body></html>
