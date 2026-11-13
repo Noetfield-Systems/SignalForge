@@ -54,6 +54,37 @@ function compactRole(r:typeof org.agents[number]){
   evidence_owner:r.operating_contract.evidence_owner
  };
 }
+const SPECIALIST_BY_WORKSTREAM:Record<string,string>={
+ "SF-P0-01":"payments_engineer",
+ "SF-P0-02":"onboarding_growth",
+ "SF-P0-RELEASE-RECOVERY":"incident_engineer",
+ "SF-P1-ETH-DATA":"evm_rpc_engineer",
+ "SF-P1-ONCHAIN-TOKEN":"token_holder_researcher",
+ "SF-P1-PAPER-TRADING":"model_evaluation_engineer",
+ "SF-P1-RESEARCH-CARDS":"ux_systems_engineer",
+ "SF-P1-ABUSE-DEFENSE":"fraud_analyst",
+ "SF-P0-OPEN-REPORTS":"support_triage",
+ "SF-P1-COMMUNITY-ACTIVATION":"community_programs",
+ "SF-P1-SIGNAL-TRACK-RECORD":"model_evaluation_engineer",
+ "SF-P1-TRIAL-PATH":"checkout_quality",
+ "SF-P0-BILLING_RECONCILE":"paid_conversion_analyst",
+ "SF-P0-MODERATION_OVERDUE":"support_triage",
+ "SF-P0-ACTIVATION_REPAIR":"onboarding_growth",
+ "SF-P0-RETENTION_REPAIR":"cohort_analyst",
+ "SF-P0-TRIAL_CONVERSION_REPAIR":"subscription_growth"
+};
+const SPECIALIST_BY_DEPARTMENT:Record<string,string>={
+ executive:"chief_of_staff",research:"protocol_due_diligence",
+ product:"product_discovery",engineering:"api_architect",data:"data_quality_engineer",
+ growth:"growth_experimenter",commercial:"subscription_growth",customer:"support_knowledge",
+ trust:"appsec_specialist",operations:"incident_engineer"
+};
+function assignDeliverySpecialist(packet:Packet){
+ const selected=SPECIALIST_BY_WORKSTREAM[packet.id]||SPECIALIST_BY_DEPARTMENT[packet.owner_department];
+ const role=selected?roleById.get(selected):null;
+ if(!role||role.department==="verification")throw Error("SPECIALIST_BINDING_MISSING");
+ return role;
+}
 function selectReviewer(owner:string,department:string){
  const selectors=department==="engineering"||department==="product"||department==="data"
   ?["qa_engineer","appsec_specialist"]
@@ -81,10 +112,11 @@ export function compileWorkforceFloor(board:OperatingBoard){
       !Number.isFinite(packet.priority_score))
      throw Error("UNTRUSTED_WORKPACKET");
    const role=roleById.get(packet.owner_role_id)!;
-   const peer=selectReviewer(role.id,role.department);
+   const specialist=assignDeliverySpecialist(packet);
+   const peer=selectReviewer(specialist.id,specialist.department);
    const stages=[
      {step:"DISCOVER",role:role.id,task:"Inspect authenticated product observation and scoped repository evidence for: "+packet.title,done_when:"Source, measurement window and affected function are reproducible"},
-     {step:"DELIVER",role:role.id,task:packet.objective,done_when:role.operating_contract.deliverable+"; "+role.operating_contract.acceptance_criteria[0]},
+     {step:"DELIVER",role:specialist.id,task:"Execute scoped workstream objective: "+packet.objective+" Specialist atomic responsibility: "+specialist.operating_contract.atomic_task,done_when:specialist.operating_contract.deliverable+"; "+specialist.operating_contract.acceptance_criteria[0]},
      {step:"REVIEW",role:peer,task:"Reproduce acceptance conditions, adverse cases and regressions for: "+packet.title,done_when:"Independent of the builder: evidence-backed test report and failure classification"},
      {step:"VERIFY",role:"independent_verifier",task:"Independently compare source SHA, CI, deployed SHA and product outcome for: "+packet.title,done_when:"Verified signed receipt from canonical independent verifier only"}
    ] as const;
@@ -101,7 +133,7 @@ export function compileWorkforceFloor(board:OperatingBoard){
     prior=id;
    }
    summary.push({id:packet.id,title:packet.title,department:role.department,owner:role.id,
-     priority:packet.priority_score,stage_count:STAGES.length,state:"PROPOSED_NOT_DISPATCHED",
+     priority:packet.priority_score,delivery_specialist:specialist.id,review_specialist:peer,stage_count:STAGES.length,state:"PROPOSED_NOT_DISPATCHED",
      evidence_state:"SOURCE_REPORTED_UNVERIFIED"});
  }
  const departments=org.departments.map(d=>{
