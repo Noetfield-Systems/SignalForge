@@ -3,6 +3,8 @@ import { researchSolanaToken, TokenRadarError, validSolanaAddress } from "./toke
 import { persistTokenObservation, getTokenHistory, getSavedTokenList, saveToken, removeSavedToken, getTokenNotifications } from "./token-radar-storage.mjs";
 import {assessCompanyOutcome} from "../company-os/shared-evidence-gate.mjs";
 import { compileOperatingBoard } from "../company-os/operating-engine.ts";
+import { compileWorkforceFloor } from "../company-os/workforce-floor.ts";
+const COMPANY_FLOOR_HTML = await Bun.file(new URL("../public/company-floor.html", import.meta.url)).text();
 import { evaluateCompanyPolicy } from "./company-os-policy";
 import { stripeCheckoutUrlKey } from "./billing-keys";
 import { getRevenueSnapshot } from "./revenue-metrics.mjs";
@@ -439,6 +441,33 @@ if(path==="/api/company-os/operations"&&method==="GET"){
  catch(error:any){
    console.error("Company OS aggregate gate rejected:",String(error?.message||"invalid").slice(0,100));
    return json({error:"Company operating board unavailable",state:"SOURCE_VALIDATION_FAILED"},503);
+ }
+}
+if(method==="GET"&&path==="/api/company-os/workforce"){
+ const snapshot=await companySnapshot(req);
+ if(snapshot.status!==200)return snapshot;
+ try{return json(compileWorkforceFloor(compileOperatingBoard(await snapshot.json())))}
+ catch(error:any){
+  console.error("Company workforce projection rejected:",String(error?.message||"invalid").slice(0,100));
+  return json({error:"Company workforce projection unavailable",state:"SOURCE_VALIDATION_FAILED"},503);
+ }
+}
+if(method==="GET"&&path==="/admin/company-floor"){
+ const viewer=await userFor(req);
+ if(!viewer||viewer.role!=="admin")return json({error:"Admin access required"},403);
+ return new Response(COMPANY_FLOOR_HTML,{headers:{"content-type":"text/html; charset=utf-8","cache-control":"no-store","x-content-type-options":"nosniff"}});
+}
+if(method==="GET"&&path==="/api/admin/company-floor"){
+ const viewer=await userFor(req);
+ if(!viewer||viewer.role!=="admin")return json({error:"Admin access required"},403);
+ if(!Bun.env.SIGNALFORGE_COMPANY_OS_KEY)return json({error:"Company OS integration unavailable"},503);
+ const internalReq=new Request(req.url,{headers:{"authorization":"Bearer "+Bun.env.SIGNALFORGE_COMPANY_OS_KEY}});
+ const snapshot=await companySnapshot(internalReq);
+ if(snapshot.status!==200)return snapshot;
+ try{return json(compileWorkforceFloor(compileOperatingBoard(await snapshot.json())),200,{"cache-control":"no-store"})}
+ catch(error:any){
+  console.error("Company private floor unavailable:",String(error?.message||"invalid").slice(0,100));
+  return json({error:"Company operating floor unavailable"},503);
  }
 }
 if(path.startsWith("/api/community/"))return communityRoute(req,path,method,u);
