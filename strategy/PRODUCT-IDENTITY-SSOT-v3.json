@@ -1,0 +1,203 @@
+{
+  "schema": "signalforge.product-identity.v3",
+  "version": "3.0.0",
+  "locked_on": "2026-11-13",
+  "lock_owner": "FOUNDER",
+  "project_id": "signalforge-market-intelligence",
+  "canonical_repository": "Noetfield-Systems/SignalForge",
+  "brand": "SignalForge",
+  "one_sentence": "Source-aware crypto market intelligence and explainable research, unifying OHLC charting, market scanning, strategy signals, backtesting, token research and a persistent research workspace.",
+  "primary_business": "AI-powered crypto market intelligence, chart research and evidence-based strategy validation.",
+  "not_primary_business": [
+    "Agent workforce marketplace",
+    "Company OS sales landing",
+    "AI company/100-agent showcase",
+    "brokerage or exchange execution",
+    "token issuance or guaranteed trading returns"
+  ],
+  "target_segments": [
+    "Independent crypto traders and serious market participants",
+    "Crypto and onchain researchers",
+    "Web3 builders and token analysts",
+    "Small market research teams and quantitative strategy testers"
+  ],
+  "north_star": "Verified users completing useful source-linked market research, returning to research, converting voluntarily to paid membership, with genuine collected contribution margin.",
+  "product_surfaces": {
+    "landing": {
+      "path": "/",
+      "purpose": "Market-first acquisition and first-click research"
+    },
+    "terminal": {
+      "path": "/app",
+      "purpose": "OHLC chart, indicators, scanner, strategies, backtests, recorded signals, accounts, watchlists and membership",
+      "entry_views": [
+        "dashboard",
+        "scanner",
+        "strategies",
+        "backtest",
+        "trackrecord",
+        "community",
+        "models",
+        "api",
+        "pricing"
+      ]
+    },
+    "token_radar": {
+      "path": "/radar",
+      "purpose": "Public Solana token search with source-reported DEX pools, liquidity and observations"
+    },
+    "saved_research": {
+      "path": "/app?view=dashboard",
+      "purpose": "Authenticated research notes and watchlists where currently supported"
+    },
+    "signal_rooms": {
+      "path": "/app?view=community",
+      "purpose": "Member-sourced research discussion, never synthetic participation"
+    },
+    "pricing": {
+      "path": "/app?view=pricing",
+      "purpose": "Verified commercial plans, trial and voluntary checkout"
+    }
+  },
+  "current_capabilities": {
+    "live_or_baseline": [
+      {
+        "name": "public OHLC",
+        "route": "/api/market",
+        "source": "Kraken",
+        "require_mode": "LIVE_PUBLIC_DATA",
+        "fallback": "DEMO_DATA must be visibly labeled"
+      },
+      {
+        "name": "market screener",
+        "route": "/api/scanner",
+        "source": "existing market integration",
+        "require_mode": "MIXED_OR_DEMO must not be called live-only"
+      },
+      {
+        "name": "explainable strategies",
+        "route": "/api/strategies",
+        "note": "Confluence score is not predicted probability"
+      },
+      {
+        "name": "historical backtesting",
+        "route": "/api/backtest",
+        "note": "Historical performance remains separate from forward outcomes"
+      },
+      {
+        "name": "recorded outcomes",
+        "route": "/api/performance",
+        "note": "Empty/low-sample states are valid"
+      },
+      {
+        "name": "Solana Token Radar",
+        "route": "/radar",
+        "note": "Source-linked liquidity/pool observations and freshness"
+      },
+      {
+        "name": "member research and community",
+        "route": "/app?view=community",
+        "note": "Only authentic users and source-linked research"
+      },
+      {
+        "name": "research subscriptions",
+        "route": "/app?view=pricing",
+        "note": "Only signed Stripe events and independent settlement prove money"
+      }
+    ],
+    "roadmap_not_live": [
+      "Cross-chain wallet entity intelligence and verified smart-money labeling",
+      "Full holder-cluster graph comparable to Bubblemaps",
+      "Production paper trading with simulated fills, fee and slippage reconciliation",
+      "Active AI forecasting/inference across all cataloged model adapters",
+      "Enterprise multi-team workspaces and institutional data coverage"
+    ]
+  },
+  "reference_benchmarks": [
+    {
+      "name": "TradingView",
+      "reference": "https://www.tradingview.com/features/",
+      "adapt": "Responsive OHLC charts, indicators, timeframe selection, screeners and strategy validation",
+      "status": "CHART_AND_BACKTEST_BASELINE; NOT_FEATURE_PARITY",
+      "priority": "P0"
+    },
+    {
+      "name": "DEX Screener",
+      "reference": "https://dexscreener.com/",
+      "adapt": "Token-first discovery, pool liquidity, volume and transparent source timestamps",
+      "status": "SOLANA_RADAR_BASELINE; NOT_MULTI_CHAIN_PARITY",
+      "priority": "P0"
+    },
+    {
+      "name": "Nansen",
+      "reference": "https://docs.nansen.ai/api/overview",
+      "adapt": "Token due diligence, holder flows and provenance-aware onchain research",
+      "status": "FUTURE_CHAIN_PROVIDER_AND_DATA_RIGHTS_NEEDED",
+      "priority": "P1"
+    },
+    {
+      "name": "Arkham",
+      "reference": "https://platform.arkm.com/",
+      "adapt": "Wallet/contract evidence investigation and entity provenance",
+      "status": "FUTURE; NO_LIVE_ENTITY_GRAPH_CLAIM",
+      "priority": "P2"
+    },
+    {
+      "name": "Bubblemaps",
+      "reference": "https://bubblemaps.io/",
+      "adapt": "Visual token holder concentration and clusters with explicit source",
+      "status": "FUTURE; NO_LIVE_CLUSTER_GRAPH_CLAIM",
+      "priority": "P2"
+    }
+  ],
+  "market_ui_rules": [
+    "Above the fold lead with market candles and research signals, not internal operations headcount.",
+    "Public CTAs must lead to the working product: /app, /radar, allowlisted /app?view= pages.",
+    "Do not show fictitious price, performance, volume, user counts, AI workers, profitability or fake live indicators.",
+    "Market data fallback, incomplete coverage, strategy scores and historical simulation are visibly distinguished.",
+    "Company OS, workforce contracts and proof endpoints remain internal operational surfaces, not headline acquisition claims.",
+    "Mobile-first responsive chart controls, visible focus, semantic landmarks, keyboard operability and reduced-motion mode.",
+    "No clone of competitor trade dress; benchmark capabilities and interaction patterns, not brand or proprietary code."
+  ],
+  "company_os": {
+    "role": "Internal executive and workforce operating layer to build, test, monitor, grow and maintain SignalForge.",
+    "canonical_parent": "Noetfield-Systems/sina_founder_os",
+    "existing_mission": "M20-SIGNALFORGE-COMMUNITY",
+    "team_manifest": "company-os/organization.v2.json",
+    "defined_roles": 100,
+    "reality": "100 role specifications are NOT 100 live model workers, 100 paid employees, or verified execution.",
+    "non_customer_facing_by_default": true,
+    "departments": {
+      "executive": "Own single product goal, prioritized backlog, dependency and outcome arbitration.",
+      "research": "Validate candles, onchain intelligence claims, tokenomics and explainable signal methodology.",
+      "product": "Own customer-first workflow, discovery, market terminal and premium UX quality.",
+      "engineering": "Implement and maintain actual chart/API/strategy/backtest/research functionality; review code and tests.",
+      "data": "Ensure source contracts, ingestion integrity, refresh, candle freshness, historical provenance and metrics.",
+      "growth": "Acquire authentic crypto researchers; optimize SEO, referral quality, activation and retention.",
+      "commercial": "Operate honest pricing, checkout, signed Stripe lifecycle and collected revenue conversion.",
+      "customer": "Resolve member support, onboarding, actionable feedback and member education.",
+      "trust": "Safeguard customer accounts, moderation, anti-manipulation, privacy and research claims.",
+      "operations": "Own SRE, provider availability, reliability, cost and incident recovery.",
+      "verification": "Independently read source SHA, CI, deployment, user outcomes and revenue evidence."
+    },
+    "invariants": [
+      "ONE_CANONICAL_COMPANY_OS_QUEUE",
+      "NO_PARALLEL_SCHEDULER",
+      "NO_CROSS_TENANT_LEAK",
+      "NO_SELF_VERIFICATION",
+      "NO_UNVERIFIED_REVENUE",
+      "NO_FOUNDER_INTENT_DRIFT",
+      "NO_FAKE_100_LIVE_AGENTS"
+    ],
+    "decision_priority": [
+      "customer-critical failures and market data integrity",
+      "first useful market research activation",
+      "repeated research retention",
+      "working commercial paid flow and settled margin",
+      "quality improvements to core market tools",
+      "evidence-backed growth",
+      "unrelated infrastructure polish last"
+    ]
+  },
+  "proof_definition": "A deployed code change is verified only by matching GitHub SHA, green CI, active Railway revision, relevant HTTP/user acceptance evidence and independently sourced proof where applicable."
+}
