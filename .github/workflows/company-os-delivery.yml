@@ -10,6 +10,9 @@ on:
       - "scripts/company-os-closeout.py"
       - "company-os/organization.v2.json"
       - "company-os/workforce-floor.ts"
+      - "AGENTS.md"
+      - "strategy/PRODUCT-IDENTITY-SSOT-v3.json"
+      - "docs/FOUNDER-PRODUCT-UX-OPERATING-CONTRACT-v3.md"
   schedule:
     - cron: "*/30 * * * *"
   workflow_dispatch: {}
