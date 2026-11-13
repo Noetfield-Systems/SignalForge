@@ -105,3 +105,16 @@ test("v4 delivery source uses actual API and prevents a decorative fake-live mar
   expect(landing).toContain('href="'+href+'"');
  }
 });
+
+test("responsive first viewport prioritizes actual chart and preserves conversion",()=>{
+ expect(landing).toContain('class="mobile-title"');
+ expect(landing).toContain("Read the market.");
+ expect(landing).toContain('class="mobile-lead"');
+ expect(landing).toContain("@media(max-width:760px)");
+ expect(landing).toContain(".hero-artline,.hero-notation,.hero-summary-top,.hero-caption{display:none}");
+ expect(landing).toContain(".hero-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)");
+ expect(terminal).toContain('research.insertAdjacentElement("afterend",banner)');
+ expect(terminal).toContain('const observer=new MutationObserver');
+ expect(terminal).toContain('id="priceChart"');
+ expect(terminal).toContain("launch.js");
+});
