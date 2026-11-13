@@ -4,8 +4,10 @@ import {readFileSync} from "node:fs";
 const html=readFileSync(new URL("../public/index.html",import.meta.url),"utf8");
 test("SignalForge five-station Research Path only navigates to real existing research views",()=>{
  const start=html.indexOf('class="sf-research-path"');
- const end=html.indexOf('id="feedNotice"',start);
- assert.ok(start>=0&&end>start,"Premium research path must appear on original dashboard");
+ const end=html.indexOf('<div class="sectionrow"><h2>Market watch',start);
+ const chart=html.indexOf('class="grid contentgrid"');
+ assert.ok(start>=0&&end>start&&chart>0&&start>chart,
+  "Premium research path must remain on dashboard after the real market chart");
  const block=html.slice(start,end);
  const expected=["dashboard","scanner","backtest","trackrecord","community"];
  const matches=[...block.matchAll(/data-view="([^"]+)"/g)].map(m=>m[1]);
