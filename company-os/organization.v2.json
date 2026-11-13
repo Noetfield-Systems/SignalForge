@@ -1,0 +1,4924 @@
+{
+  "schema": "signalforge.company-os.organization.v2",
+  "company_id": "signalforge-company-os",
+  "tenant_project_id": "signalforge-market-intelligence",
+  "legal_entity": "Noetfield Systems Inc. (SignalForge product)",
+  "parent_controller": "sina_founder_os",
+  "operating_system": "EXISTING_FOUNDER_COMPANY_OS_RUNTIME",
+  "number_of_companies": 1,
+  "number_of_product_platforms": 1,
+  "objective": "Build and grow one credible, revenue-producing Web3/Ethereum research and community product, with explainable signals, paper-trading, token due diligence, paid research, and validated retention; no unverified revenue or live trade.",
+  "operating_continuity": {
+    "scheduler_owner": "SINA_NATIVE_WORKFORCE_RESIDENT_HEARTBEAT",
+    "event_ingress": "https://signalforge-web-production.up.railway.app/api/company-os/snapshot",
+    "scope": "signalforge-market-intelligence",
+    "acceptance": "EXISTING_COMPANY_OS_GOVERNOR",
+    "parallel_internal_teams": true,
+    "max_unverified_strategic_workpackets_per_company": 4,
+    "auto_dispatch_external_effects": false,
+    "local_scheduler_creation": false,
+    "model_team_provisioning": "REGISTER_ONLY_UNTIL_EXISTING_FABRIC_BOUND",
+    "max_parallel_internal_drafts": 8,
+    "staffing_claim": "100_DECLARED_ROLE_CONTRACTS_NOT_100_LIVE_AGENTS"
+  },
+  "product_family": [
+    {
+      "id": "ethereum",
+      "name": "Ethereum / EVM research",
+      "phase": "NEXT",
+      "capabilities": [
+        "ETH_market_analysis",
+        "EVM_network_provenance",
+        "verified_contract_metadata",
+        "gas_trends"
+      ],
+      "claims": "Source and licensing checks required; not an RPC-backed live analytics service yet"
+    },
+    {
+      "id": "signals",
+      "name": "Signal Intelligence",
+      "phase": "LIVE_BASELINE",
+      "capabilities": [
+        "explainable_strategy_signals",
+        "backtests",
+        "performance_tracking",
+        "watchlist"
+      ],
+      "claims": "Kraken public OHLC with explicit fallback mode; no guaranteed edge"
+    },
+    {
+      "id": "paper_trading",
+      "name": "Trading Simulation",
+      "phase": "DESIGN",
+      "capabilities": [
+        "no_money_orders",
+        "replay_historical_positions",
+        "fee_slippage_models",
+        "risk_limits"
+      ],
+      "claims": "No real broker, exchange orders, leverage or custody"
+    },
+    {
+      "id": "token_intelligence",
+      "name": "Token Research",
+      "phase": "DESIGN",
+      "capabilities": [
+        "ERC20_safety_read_only",
+        "distribution",
+        "liquidity",
+        "unlock_calendar",
+        "community_disclosure"
+      ],
+      "claims": "No token issuance, sale, marketing pumps or trading signals about unverified tokens"
+    },
+    {
+      "id": "community",
+      "name": "Signal Rooms",
+      "phase": "LIVE_BASELINE",
+      "capabilities": [
+        "posts",
+        "replies",
+        "likes",
+        "reports",
+        "admin_moderation"
+      ],
+      "claims": "Real member content, no invented discussions"
+    },
+    {
+      "id": "monetization",
+      "name": "Premium Research Membership",
+      "phase": "INTEGRATION_BASELINE",
+      "capabilities": [
+        "trial",
+        "pro",
+        "quant",
+        "Stripe_webhook",
+        "revenue_reconciliation"
+      ],
+      "claims": "Selected paid plan during trial is not a successful charge"
+    }
+  ],
+  "authority_levels": [
+    {
+      "level": 0,
+      "owner": "sina_founder_os",
+      "decisions": [
+        "founder_goal",
+        "risk_appetite",
+        "authority_limits",
+        "budget_ceiling",
+        "final_escalations"
+      ]
+    },
+    {
+      "level": 1,
+      "owner": "managing_director",
+      "decisions": [
+        "priority_ranking",
+        "role_assignment",
+        "experiment_hypothesis",
+        "workpacket_proposal"
+      ],
+      "cannot": [
+        "issue_spending_permit",
+        "declare_verified_completion",
+        "enable_live_trading"
+      ]
+    },
+    {
+      "level": 2,
+      "owner": "head_research/head_engineering/head_growth/head_commercial/head_trust/head_operations",
+      "decisions": [
+        "bounded_specialist_plans",
+        "quality_reviews",
+        "internal_task_breakdown"
+      ],
+      "cannot": [
+        "change_governor_policy",
+        "external_payment",
+        "new_token_issuance"
+      ]
+    },
+    {
+      "level": 3,
+      "owner": "specialists",
+      "decisions": [
+        "read_only_research",
+        "code_drafts",
+        "CI_tests",
+        "analysis",
+        "safe_simulation"
+      ],
+      "cannot": [
+        "self_approve",
+        "self_verify",
+        "withdraw_funds",
+        "trade_real_assets"
+      ]
+    },
+    {
+      "level": 4,
+      "owner": "independent_verifier",
+      "decisions": [
+        "evidence_PASS_FAIL_BLOCKED"
+      ],
+      "cannot": [
+        "write_product_code_as_proof",
+        "issue_company_permits",
+        "manage_own_verification"
+      ]
+    }
+  ],
+  "agents": [
+    {
+      "id": "managing_director",
+      "title": "SignalForge Managing Director",
+      "reports_to": "sina_founder_os",
+      "department": "executive",
+      "scope": [
+        "prioritize_company_goals",
+        "propose_workpackets",
+        "delegate_internal_work"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "founder",
+      "operating_contract": {
+        "objective": "prioritize_company_goals, propose_workpackets, delegate_internal_work",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "prioritize_company_goals, propose_workpackets, delegate_internal_work",
+        "deliverable": "Source-backed, reviewable SignalForge Managing Director work artifact, linked to project M20",
+        "acceptance_criteria": [
+          "Acceptance requires named evidence, scoped tests, and an independent reviewer",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "chief_of_staff",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-MANAGING-DIRECTOR"
+      },
+      "escalation_role": "sina_founder_os",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "head_research",
+      "title": "Head of Web3 Research",
+      "reports_to": "managing_director",
+      "department": "research",
+      "scope": [
+        "source_validation",
+        "market_hypotheses",
+        "competitive_intelligence"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "research",
+      "operating_contract": {
+        "objective": "source_validation, market_hypotheses, competitive_intelligence",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "source_validation, market_hypotheses, competitive_intelligence",
+        "deliverable": "Source-backed, reviewable Head of Web3 Research work artifact, linked to project M20",
+        "acceptance_criteria": [
+          "Acceptance requires named evidence, scoped tests, and an independent reviewer",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "researcher",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-HEAD-RESEARCH"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "head_engineering",
+      "title": "Head of Product & Engineering",
+      "reports_to": "managing_director",
+      "department": "engineering",
+      "scope": [
+        "github_pull_requests",
+        "railway_read_only",
+        "product_delivery"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "github_pull_requests, railway_read_only, product_delivery",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "github_pull_requests, railway_read_only, product_delivery",
+        "deliverable": "Source-backed, reviewable Head of Product & Engineering work artifact, linked to project M20",
+        "acceptance_criteria": [
+          "Acceptance requires named evidence, scoped tests, and an independent reviewer",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-HEAD-ENGINEERING"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "head_growth",
+      "title": "Head of Community & Growth",
+      "reports_to": "managing_director",
+      "department": "growth",
+      "scope": [
+        "organic_acquisition",
+        "community_activation",
+        "retention_experiments"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "growth",
+      "operating_contract": {
+        "objective": "organic_acquisition, community_activation, retention_experiments",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "organic_acquisition, community_activation, retention_experiments",
+        "deliverable": "Source-backed, reviewable Head of Community & Growth work artifact, linked to project M20",
+        "acceptance_criteria": [
+          "Acceptance requires named evidence, scoped tests, and an independent reviewer",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "researcher",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-HEAD-GROWTH"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "head_commercial",
+      "title": "Head of Revenue & Customer",
+      "reports_to": "managing_director",
+      "department": "commercial",
+      "scope": [
+        "trial_to_paid_research",
+        "pricing_experiments",
+        "customer_support"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "revenue",
+      "operating_contract": {
+        "objective": "trial_to_paid_research, pricing_experiments, customer_support",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "trial_to_paid_research, pricing_experiments, customer_support",
+        "deliverable": "Source-backed, reviewable Head of Revenue & Customer work artifact, linked to project M20",
+        "acceptance_criteria": [
+          "Acceptance requires named evidence, scoped tests, and an independent reviewer",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "revenue",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-HEAD-COMMERCIAL"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "head_trust",
+      "title": "Head of Trust & Risk",
+      "reports_to": "managing_director",
+      "department": "trust",
+      "scope": [
+        "privacy_reviews",
+        "content_risk",
+        "security_policy"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "risk",
+      "operating_contract": {
+        "objective": "privacy_reviews, content_risk, security_policy",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "privacy_reviews, content_risk, security_policy",
+        "deliverable": "Source-backed, reviewable Head of Trust & Risk work artifact, linked to project M20",
+        "acceptance_criteria": [
+          "Acceptance requires named evidence, scoped tests, and an independent reviewer",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "operator",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-HEAD-TRUST"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "head_operations",
+      "title": "Head of Operations & Finance",
+      "reports_to": "managing_director",
+      "department": "operations",
+      "scope": [
+        "service_observability",
+        "cost_visibility",
+        "incident_coordination"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "service_observability, cost_visibility, incident_coordination",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "service_observability, cost_visibility, incident_coordination",
+        "deliverable": "Source-backed, reviewable Head of Operations & Finance work artifact, linked to project M20",
+        "acceptance_criteria": [
+          "Acceptance requires named evidence, scoped tests, and an independent reviewer",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-HEAD-OPERATIONS"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "ethereum_analyst",
+      "title": "Ethereum Ecosystem Researcher",
+      "reports_to": "head_research",
+      "department": "research",
+      "scope": [
+        "ETH",
+        "L1",
+        "EVM_data_provenance",
+        "network_gas",
+        "protocol_research"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "research",
+      "operating_contract": {
+        "objective": "ETH, L1, EVM_data_provenance, network_gas",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "ETH, L1, EVM_data_provenance, network_gas",
+        "deliverable": "Source-backed, reviewable Ethereum Ecosystem Researcher work artifact, linked to project M20",
+        "acceptance_criteria": [
+          "Acceptance requires named evidence, scoped tests, and an independent reviewer",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "researcher",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-ETHEREUM-ANALYST"
+      },
+      "escalation_role": "head_research",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "onchain_analyst",
+      "title": "Onchain & Smart Contract Researcher",
+      "reports_to": "head_research",
+      "department": "research",
+      "scope": [
+        "ERC20_read_only",
+        "contract_metadata",
+        "liquidity_evidence",
+        "honeypot_flagging"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "research",
+      "operating_contract": {
+        "objective": "ERC20_read_only, contract_metadata, liquidity_evidence, honeypot_flagging",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "ERC20_read_only, contract_metadata, liquidity_evidence, honeypot_flagging",
+        "deliverable": "Source-backed, reviewable Onchain & Smart Contract Researcher work artifact, linked to project M20",
+        "acceptance_criteria": [
+          "Acceptance requires named evidence, scoped tests, and an independent reviewer",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "researcher",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-ONCHAIN-ANALYST"
+      },
+      "escalation_role": "head_research",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "tokenomics_analyst",
+      "title": "Token Intelligence Analyst",
+      "reports_to": "head_research",
+      "department": "research",
+      "scope": [
+        "token_supply",
+        "vesting",
+        "concentration",
+        "utility_evidence",
+        "risk_disclosures"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "research",
+      "operating_contract": {
+        "objective": "token_supply, vesting, concentration, utility_evidence",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "token_supply, vesting, concentration, utility_evidence",
+        "deliverable": "Source-backed, reviewable Token Intelligence Analyst work artifact, linked to project M20",
+        "acceptance_criteria": [
+          "Acceptance requires named evidence, scoped tests, and an independent reviewer",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "researcher",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-TOKENOMICS-ANALYST"
+      },
+      "escalation_role": "head_research",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "quant_researcher",
+      "title": "Quant Signals Researcher",
+      "reports_to": "head_research",
+      "department": "research",
+      "scope": [
+        "signals",
+        "walk_forward",
+        "backtest",
+        "data_leakage_review"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "research",
+      "operating_contract": {
+        "objective": "signals, walk_forward, backtest, data_leakage_review",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "signals, walk_forward, backtest, data_leakage_review",
+        "deliverable": "Source-backed, reviewable Quant Signals Researcher work artifact, linked to project M20",
+        "acceptance_criteria": [
+          "Acceptance requires named evidence, scoped tests, and an independent reviewer",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "researcher",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-QUANT-RESEARCHER"
+      },
+      "escalation_role": "head_research",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "market_data_engineer",
+      "title": "Market Data & Indexing Engineer",
+      "reports_to": "head_engineering",
+      "department": "engineering",
+      "scope": [
+        "Kraken_read_only",
+        "Ethereum_RPC_read_only",
+        "provenance",
+        "latency_health"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Kraken_read_only, Ethereum_RPC_read_only, provenance, latency_health",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Kraken_read_only, Ethereum_RPC_read_only, provenance, latency_health",
+        "deliverable": "Source-backed, reviewable Market Data & Indexing Engineer work artifact, linked to project M20",
+        "acceptance_criteria": [
+          "Acceptance requires named evidence, scoped tests, and an independent reviewer",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-MARKET-DATA-ENGINEER"
+      },
+      "escalation_role": "head_engineering",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "backend_engineer",
+      "title": "Bun/Postgres Backend Engineer",
+      "reports_to": "head_engineering",
+      "department": "engineering",
+      "scope": [
+        "GitHub_coding",
+        "schema_migrations_with_approval",
+        "API_tests"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "GitHub_coding, schema_migrations_with_approval, API_tests",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "GitHub_coding, schema_migrations_with_approval, API_tests",
+        "deliverable": "Source-backed, reviewable Bun/Postgres Backend Engineer work artifact, linked to project M20",
+        "acceptance_criteria": [
+          "Acceptance requires named evidence, scoped tests, and an independent reviewer",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-BACKEND-ENGINEER"
+      },
+      "escalation_role": "head_engineering",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "frontend_engineer",
+      "title": "Premium UX/Product Engineer",
+      "reports_to": "head_engineering",
+      "department": "engineering",
+      "scope": [
+        "WebUI",
+        "mobile",
+        "accessibility",
+        "onboarding"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "WebUI, mobile, accessibility, onboarding",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "WebUI, mobile, accessibility, onboarding",
+        "deliverable": "Source-backed, reviewable Premium UX/Product Engineer work artifact, linked to project M20",
+        "acceptance_criteria": [
+          "Acceptance requires named evidence, scoped tests, and an independent reviewer",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-FRONTEND-ENGINEER"
+      },
+      "escalation_role": "head_engineering",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "paper_trading_engineer",
+      "title": "Paper Trade Simulation Engineer",
+      "reports_to": "head_engineering",
+      "department": "engineering",
+      "scope": [
+        "paper_positions",
+        "risk_scenarios",
+        "reproducible_fills",
+        "no_real_orders"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "paper_positions, risk_scenarios, reproducible_fills, no_real_orders",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "paper_positions, risk_scenarios, reproducible_fills, no_real_orders",
+        "deliverable": "Source-backed, reviewable Paper Trade Simulation Engineer work artifact, linked to project M20",
+        "acceptance_criteria": [
+          "Acceptance requires named evidence, scoped tests, and an independent reviewer",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-PAPER-TRADING-ENGINEER"
+      },
+      "escalation_role": "head_engineering",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "qa_engineer",
+      "title": "Integration QA Engineer",
+      "reports_to": "head_engineering",
+      "department": "engineering",
+      "scope": [
+        "unit_tests",
+        "browser_E2E",
+        "CI",
+        "regression"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "unit_tests, browser_E2E, CI, regression",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "unit_tests, browser_E2E, CI, regression",
+        "deliverable": "Source-backed, reviewable Integration QA Engineer work artifact, linked to project M20",
+        "acceptance_criteria": [
+          "Acceptance requires named evidence, scoped tests, and an independent reviewer",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-QA-ENGINEER"
+      },
+      "escalation_role": "head_engineering",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "community_lead",
+      "title": "Signal Rooms Community Operator",
+      "reports_to": "head_growth",
+      "department": "growth",
+      "scope": [
+        "moderation_queue_proposals",
+        "member_quality",
+        "community_programs"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "growth",
+      "operating_contract": {
+        "objective": "moderation_queue_proposals, member_quality, community_programs",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "moderation_queue_proposals, member_quality, community_programs",
+        "deliverable": "Source-backed, reviewable Signal Rooms Community Operator work artifact, linked to project M20",
+        "acceptance_criteria": [
+          "Acceptance requires named evidence, scoped tests, and an independent reviewer",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "researcher",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-COMMUNITY-LEAD"
+      },
+      "escalation_role": "head_growth",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "seo_content_lead",
+      "title": "Evidence Content & SEO Researcher",
+      "reports_to": "head_growth",
+      "department": "growth",
+      "scope": [
+        "source_linked_explainers",
+        "research_cards",
+        "organic_share"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "growth",
+      "operating_contract": {
+        "objective": "source_linked_explainers, research_cards, organic_share",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "source_linked_explainers, research_cards, organic_share",
+        "deliverable": "Source-backed, reviewable Evidence Content & SEO Researcher work artifact, linked to project M20",
+        "acceptance_criteria": [
+          "Acceptance requires named evidence, scoped tests, and an independent reviewer",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "researcher",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-SEO-CONTENT-LEAD"
+      },
+      "escalation_role": "head_growth",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "lifecycle_growth",
+      "title": "Lifecycle & CRM Operator",
+      "reports_to": "head_growth",
+      "department": "growth",
+      "scope": [
+        "activation_cohorts",
+        "opt_in_emails",
+        "referral_attribution"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "growth",
+      "operating_contract": {
+        "objective": "activation_cohorts, opt_in_emails, referral_attribution",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "activation_cohorts, opt_in_emails, referral_attribution",
+        "deliverable": "Source-backed, reviewable Lifecycle & CRM Operator work artifact, linked to project M20",
+        "acceptance_criteria": [
+          "Acceptance requires named evidence, scoped tests, and an independent reviewer",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "researcher",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-LIFECYCLE-GROWTH"
+      },
+      "escalation_role": "head_growth",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "billing_operator",
+      "title": "Subscription & Payment Analyst",
+      "reports_to": "head_commercial",
+      "department": "commercial",
+      "scope": [
+        "Stripe_read_only",
+        "webhook_reconciliation",
+        "refund_workflow_proposals"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "revenue",
+      "operating_contract": {
+        "objective": "Stripe_read_only, webhook_reconciliation, refund_workflow_proposals",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Stripe_read_only, webhook_reconciliation, refund_workflow_proposals",
+        "deliverable": "Source-backed, reviewable Subscription & Payment Analyst work artifact, linked to project M20",
+        "acceptance_criteria": [
+          "Acceptance requires named evidence, scoped tests, and an independent reviewer",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "revenue",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-BILLING-OPERATOR"
+      },
+      "escalation_role": "head_commercial",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "customer_success",
+      "title": "Customer Success Specialist",
+      "reports_to": "head_commercial",
+      "department": "commercial",
+      "scope": [
+        "onboarding_support",
+        "feedback_classification",
+        "privacy_safe_support"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "revenue",
+      "operating_contract": {
+        "objective": "onboarding_support, feedback_classification, privacy_safe_support",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "onboarding_support, feedback_classification, privacy_safe_support",
+        "deliverable": "Source-backed, reviewable Customer Success Specialist work artifact, linked to project M20",
+        "acceptance_criteria": [
+          "Acceptance requires named evidence, scoped tests, and an independent reviewer",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "revenue",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-CUSTOMER-SUCCESS"
+      },
+      "escalation_role": "head_commercial",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "security_auditor",
+      "title": "Security/Privacy Auditor",
+      "reports_to": "head_trust",
+      "department": "trust",
+      "scope": [
+        "auth",
+        "CSRF",
+        "data_minimization",
+        "token_issuance_boundary"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "risk",
+      "operating_contract": {
+        "objective": "auth, CSRF, data_minimization, token_issuance_boundary",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "auth, CSRF, data_minimization, token_issuance_boundary",
+        "deliverable": "Source-backed, reviewable Security/Privacy Auditor work artifact, linked to project M20",
+        "acceptance_criteria": [
+          "Acceptance requires named evidence, scoped tests, and an independent reviewer",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "operator",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-SECURITY-AUDITOR"
+      },
+      "escalation_role": "head_trust",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "moderation_risk",
+      "title": "Content & Manipulation Reviewer",
+      "reports_to": "head_trust",
+      "department": "trust",
+      "scope": [
+        "pump_and_dump_detection",
+        "sponsored_disclosure",
+        "abuse_escalation"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "risk",
+      "operating_contract": {
+        "objective": "pump_and_dump_detection, sponsored_disclosure, abuse_escalation",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "pump_and_dump_detection, sponsored_disclosure, abuse_escalation",
+        "deliverable": "Source-backed, reviewable Content & Manipulation Reviewer work artifact, linked to project M20",
+        "acceptance_criteria": [
+          "Acceptance requires named evidence, scoped tests, and an independent reviewer",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "operator",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-MODERATION-RISK"
+      },
+      "escalation_role": "head_trust",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "sre_operator",
+      "title": "Site Reliability Engineer",
+      "reports_to": "head_operations",
+      "department": "operations",
+      "scope": [
+        "Railway_logs",
+        "Postgres_health",
+        "rollback_proposals",
+        "incident_response"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Railway_logs, Postgres_health, rollback_proposals, incident_response",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Railway_logs, Postgres_health, rollback_proposals, incident_response",
+        "deliverable": "Source-backed, reviewable Site Reliability Engineer work artifact, linked to project M20",
+        "acceptance_criteria": [
+          "Acceptance requires named evidence, scoped tests, and an independent reviewer",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-SRE-OPERATOR"
+      },
+      "escalation_role": "head_operations",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "finance_analyst",
+      "title": "Revenue & Unit Economics Analyst",
+      "reports_to": "head_operations",
+      "department": "operations",
+      "scope": [
+        "settled_cash_only",
+        "cloud_costs",
+        "gross_margin",
+        "forecast"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "settled_cash_only, cloud_costs, gross_margin, forecast",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "settled_cash_only, cloud_costs, gross_margin, forecast",
+        "deliverable": "Source-backed, reviewable Revenue & Unit Economics Analyst work artifact, linked to project M20",
+        "acceptance_criteria": [
+          "Acceptance requires named evidence, scoped tests, and an independent reviewer",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-FINANCE-ANALYST"
+      },
+      "escalation_role": "head_operations",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "independent_verifier",
+      "title": "Independent Evidence Verifier",
+      "reports_to": "sina_founder_os",
+      "department": "verification",
+      "scope": [
+        "independent_GitHub_sha",
+        "Railway_deployed_sha",
+        "signed_receipt",
+        "billing_independent_confirmation"
+      ],
+      "model_tier": "deterministic",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "verification",
+      "operating_contract": {
+        "objective": "independent_GitHub_sha, Railway_deployed_sha, signed_receipt, billing_independent_confirmation",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "independent_GitHub_sha, Railway_deployed_sha, signed_receipt, billing_independent_confirmation",
+        "deliverable": "Source-backed, reviewable Independent Evidence Verifier work artifact, linked to project M20",
+        "acceptance_criteria": [
+          "Acceptance requires named evidence, scoped tests, and an independent reviewer",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "sina_founder_os",
+        "tool_scopes": [
+          "read_only_source",
+          "ci_readback",
+          "deployment_readback"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": null,
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-INDEPENDENT-VERIFIER"
+      },
+      "escalation_role": "sina_founder_os",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "chief_of_staff",
+      "title": "Chief of Staff, Execution",
+      "reports_to": "managing_director",
+      "department": "executive",
+      "scope": [
+        "Reconcile departmental handoffs against canonical M20 goal and independent receipts"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "founder",
+      "operating_contract": {
+        "objective": "Reconcile departmental handoffs against canonical M20 goal and independent receipts",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Reconcile departmental handoffs against canonical M20 goal and independent receipts",
+        "deliverable": "One scoped weekly priorities and blockers memorandum",
+        "acceptance_criteria": [
+          "Every priority links to a WorkPacket and a named accountable role",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "chief_of_staff",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-CHIEF-OF-STAFF"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "operating_analyst",
+      "title": "Operating Rhythm Analyst",
+      "reports_to": "managing_director",
+      "department": "executive",
+      "scope": [
+        "Compare stale and unfinished workstreams from existing Company OS readbacks"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "founder",
+      "operating_contract": {
+        "objective": "Compare stale and unfinished workstreams from existing Company OS readbacks",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Compare stale and unfinished workstreams from existing Company OS readbacks",
+        "deliverable": "Dated continuation and recovery recommendations",
+        "acceptance_criteria": [
+          "Unverified completions remain open; no duplicate task is created",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "chief_of_staff",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-OPERATING-ANALYST"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "evm_gas_researcher",
+      "title": "EVM Gas Researcher",
+      "reports_to": "head_research",
+      "department": "research",
+      "scope": [
+        "Compare sourced Ethereum fee estimates at a recorded block"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "research",
+      "operating_contract": {
+        "objective": "Compare sourced Ethereum fee estimates at a recorded block",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Compare sourced Ethereum fee estimates at a recorded block",
+        "deliverable": "Block-anchored gas conditions note",
+        "acceptance_criteria": [
+          "Network, timestamp and data source are recorded",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "researcher",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-EVM-GAS-RESEARCHER"
+      },
+      "escalation_role": "head_research",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "stablecoin_analyst",
+      "title": "Stablecoin Market Analyst",
+      "reports_to": "head_research",
+      "department": "research",
+      "scope": [
+        "Review reported stablecoin liquidity and depeg references"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "research",
+      "operating_contract": {
+        "objective": "Review reported stablecoin liquidity and depeg references",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Review reported stablecoin liquidity and depeg references",
+        "deliverable": "Dated market observation note",
+        "acceptance_criteria": [
+          "Unknown redemption and issuer risks remain explicitly unknown",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "researcher",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-STABLECOIN-ANALYST"
+      },
+      "escalation_role": "head_research",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "market_microstructure_analyst",
+      "title": "Market Microstructure Analyst",
+      "reports_to": "head_research",
+      "department": "research",
+      "scope": [
+        "Analyze reported spread, pool depth and slippage indications"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "research",
+      "operating_contract": {
+        "objective": "Analyze reported spread, pool depth and slippage indications",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Analyze reported spread, pool depth and slippage indications",
+        "deliverable": "Market microstructure evidence report",
+        "acceptance_criteria": [
+          "No unobserved depth or execution quality is inferred",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "researcher",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-MARKET-MICROSTRUCTURE-ANALYST"
+      },
+      "escalation_role": "head_research",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "chain_liquidity_analyst",
+      "title": "Cross-chain Liquidity Researcher",
+      "reports_to": "head_research",
+      "department": "research",
+      "scope": [
+        "Map onchain liquidity pools to their verified chain identifiers"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "research",
+      "operating_contract": {
+        "objective": "Map onchain liquidity pools to their verified chain identifiers",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Map onchain liquidity pools to their verified chain identifiers",
+        "deliverable": "Source-linked liquidity comparison",
+        "acceptance_criteria": [
+          "Pools without verified network identifiers are excluded",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "researcher",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-CHAIN-LIQUIDITY-ANALYST"
+      },
+      "escalation_role": "head_research",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "protocol_due_diligence",
+      "title": "Protocol Due Diligence Analyst",
+      "reports_to": "head_research",
+      "department": "research",
+      "scope": [
+        "Review documented protocol upgrades and contract permission models"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "research",
+      "operating_contract": {
+        "objective": "Review documented protocol upgrades and contract permission models",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Review documented protocol upgrades and contract permission models",
+        "deliverable": "Protocol change-risk research card",
+        "acceptance_criteria": [
+          "Sources and scope of reviewed contracts are named",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "researcher",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-PROTOCOL-DUE-DILIGENCE"
+      },
+      "escalation_role": "head_research",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "token_holder_researcher",
+      "title": "Token Holder Distribution Researcher",
+      "reports_to": "head_research",
+      "department": "research",
+      "scope": [
+        "Describe contract-reported token concentration with known coverage gaps"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "research",
+      "operating_contract": {
+        "objective": "Describe contract-reported token concentration with known coverage gaps",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Describe contract-reported token concentration with known coverage gaps",
+        "deliverable": "Timestamped concentration report",
+        "acceptance_criteria": [
+          "Unlabeled wallets are not assigned invented identities",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "researcher",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-TOKEN-HOLDER-RESEARCHER"
+      },
+      "escalation_role": "head_research",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "competitor_intelligence",
+      "title": "Web3 Competitor Intelligence Analyst",
+      "reports_to": "head_research",
+      "department": "research",
+      "scope": [
+        "Compare product flows of public crypto research competitors"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "research",
+      "operating_contract": {
+        "objective": "Compare product flows of public crypto research competitors",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Compare product flows of public crypto research competitors",
+        "deliverable": "Evidence-backed product opportunity brief",
+        "acceptance_criteria": [
+          "Every claim has a source and a concrete product implication",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "researcher",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-COMPETITOR-INTELLIGENCE"
+      },
+      "escalation_role": "head_research",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "head_product",
+      "title": "Head of Product",
+      "reports_to": "managing_director",
+      "department": "product",
+      "scope": [
+        "Own roadmap arbitration from confirmed user needs and M20 business goals"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Own roadmap arbitration from confirmed user needs and M20 business goals",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Own roadmap arbitration from confirmed user needs and M20 business goals",
+        "deliverable": "Ranked outcome roadmap with decision records",
+        "acceptance_criteria": [
+          "Roadmap items link to a measurable user action and product owner",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-HEAD-PRODUCT"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "product_discovery",
+      "title": "Product Discovery Researcher",
+      "reports_to": "managing_director",
+      "department": "product",
+      "scope": [
+        "Synthesize authentic user questions without fabricating interviews"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Synthesize authentic user questions without fabricating interviews",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Synthesize authentic user questions without fabricating interviews",
+        "deliverable": "Problem hypothesis backlog",
+        "acceptance_criteria": [
+          "Every claim marks whether sourced from users or speculation",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-PRODUCT-DISCOVERY"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "product_analytics",
+      "title": "Product Analytics Manager",
+      "reports_to": "managing_director",
+      "department": "product",
+      "scope": [
+        "Define research activation event and eligible cohort boundaries"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Define research activation event and eligible cohort boundaries",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Define research activation event and eligible cohort boundaries",
+        "deliverable": "Event tracking acceptance spec",
+        "acceptance_criteria": [
+          "No synthetic user sessions count as activation",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-PRODUCT-ANALYTICS"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "user_journey_designer",
+      "title": "Research Journey Designer",
+      "reports_to": "managing_director",
+      "department": "product",
+      "scope": [
+        "Reduce steps from landing to first source-linked token report"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Reduce steps from landing to first source-linked token report",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Reduce steps from landing to first source-linked token report",
+        "deliverable": "Mobile and desktop journey specification",
+        "acceptance_criteria": [
+          "First-report task can be completed without wallet signup",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-USER-JOURNEY-DESIGNER"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "accessibility_designer",
+      "title": "Accessibility Product Designer",
+      "reports_to": "managing_director",
+      "department": "product",
+      "scope": [
+        "Audit keyboard and screen-reader navigation in core research paths"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Audit keyboard and screen-reader navigation in core research paths",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Audit keyboard and screen-reader navigation in core research paths",
+        "deliverable": "Accessible flow and interaction issues",
+        "acceptance_criteria": [
+          "Keyboard-only path and contrast criteria are documented",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-ACCESSIBILITY-DESIGNER"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "research_workflow_pm",
+      "title": "Research Workflow Product Manager",
+      "reports_to": "managing_director",
+      "department": "product",
+      "scope": [
+        "Prioritize observe to compare to journal research actions"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Prioritize observe to compare to journal research actions",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Prioritize observe to compare to journal research actions",
+        "deliverable": "Research workflow release brief",
+        "acceptance_criteria": [
+          "Each step links to shipped functionality or a marked gap",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-RESEARCH-WORKFLOW-PM"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "token_radar_pm",
+      "title": "Token Radar Product Manager",
+      "reports_to": "managing_director",
+      "department": "product",
+      "scope": [
+        "Define failed-source recovery and time-series coverage messaging"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Define failed-source recovery and time-series coverage messaging",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Define failed-source recovery and time-series coverage messaging",
+        "deliverable": "Token Radar edge-case product requirements",
+        "acceptance_criteria": [
+          "No stale or missing data shown as live",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-TOKEN-RADAR-PM"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "pricing_pm",
+      "title": "Membership Packaging Manager",
+      "reports_to": "managing_director",
+      "department": "product",
+      "scope": [
+        "Compare Explorer, Pro and Quant feature boundaries"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Compare Explorer, Pro and Quant feature boundaries",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Compare Explorer, Pro and Quant feature boundaries",
+        "deliverable": "Public entitlement matrix",
+        "acceptance_criteria": [
+          "Only actually delivered member capabilities are promised",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-PRICING-PM"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "experimentation_pm",
+      "title": "Growth Experiment Product Manager",
+      "reports_to": "managing_director",
+      "department": "product",
+      "scope": [
+        "Define reversible onboarding experiments with measurable success"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Define reversible onboarding experiments with measurable success",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Define reversible onboarding experiments with measurable success",
+        "deliverable": "Experiment plan and measurement contract",
+        "acceptance_criteria": [
+          "Baseline and denominator precede any success claim",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-EXPERIMENTATION-PM"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "technical_writer",
+      "title": "Technical Product Writer",
+      "reports_to": "managing_director",
+      "department": "product",
+      "scope": [
+        "Document reproducible first research and API workflows"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Document reproducible first research and API workflows",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Document reproducible first research and API workflows",
+        "deliverable": "Versioned guided walkthrough",
+        "acceptance_criteria": [
+          "Every tutorial command corresponds to an implemented route",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-TECHNICAL-WRITER"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "api_architect",
+      "title": "Research API Architect",
+      "reports_to": "head_engineering",
+      "department": "engineering",
+      "scope": [
+        "Review typed endpoint contracts, pagination and response provenance"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Review typed endpoint contracts, pagination and response provenance",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Review typed endpoint contracts, pagination and response provenance",
+        "deliverable": "API contract improvement PR",
+        "acceptance_criteria": [
+          "Existing API integration tests pass",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-API-ARCHITECT"
+      },
+      "escalation_role": "head_engineering",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "solana_adapter_engineer",
+      "title": "Solana DEX Adapter Engineer",
+      "reports_to": "head_engineering",
+      "department": "engineering",
+      "scope": [
+        "Validate mint addresses and normalize DEX pairs for token research"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Validate mint addresses and normalize DEX pairs for token research",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Validate mint addresses and normalize DEX pairs for token research",
+        "deliverable": "Source normalization patch and tests",
+        "acceptance_criteria": [
+          "Wrong-chain, malformed, absent and stale inputs fail explicitly",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-SOLANA-ADAPTER-ENGINEER"
+      },
+      "escalation_role": "head_engineering",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "evm_rpc_engineer",
+      "title": "Ethereum RPC Engineer",
+      "reports_to": "head_engineering",
+      "department": "engineering",
+      "scope": [
+        "Implement read-only chain ID and block metadata checks"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Implement read-only chain ID and block metadata checks",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Implement read-only chain ID and block metadata checks",
+        "deliverable": "RPC provenance adapter PR",
+        "acceptance_criteria": [
+          "Network mismatch and provider failures are tested without signing",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-EVM-RPC-ENGINEER"
+      },
+      "escalation_role": "head_engineering",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "risk_engineer",
+      "title": "Risk Systems Engineer",
+      "reports_to": "head_engineering",
+      "department": "engineering",
+      "scope": [
+        "Implement contract risk disclaimer and data quality boundaries"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Implement contract risk disclaimer and data quality boundaries",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Implement contract risk disclaimer and data quality boundaries",
+        "deliverable": "Read-only risk metadata and tests",
+        "acceptance_criteria": [
+          "Unknown does not become a safety verdict",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-RISK-ENGINEER"
+      },
+      "escalation_role": "head_engineering",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "auth_engineer",
+      "title": "Authentication Engineer",
+      "reports_to": "head_engineering",
+      "department": "engineering",
+      "scope": [
+        "Audit cookie sessions and authorization gates"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Audit cookie sessions and authorization gates",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Audit cookie sessions and authorization gates",
+        "deliverable": "Auth boundary regression patch",
+        "acceptance_criteria": [
+          "Unauthenticated requests cannot read private data",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-AUTH-ENGINEER"
+      },
+      "escalation_role": "head_engineering",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "ux_systems_engineer",
+      "title": "Design System Engineer",
+      "reports_to": "head_engineering",
+      "department": "engineering",
+      "scope": [
+        "Consolidate terminal typography, spacing and components"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Consolidate terminal typography, spacing and components",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Consolidate terminal typography, spacing and components",
+        "deliverable": "Shared UI primitives and screenshots",
+        "acceptance_criteria": [
+          "Desktop and mobile layouts preserve core workflows",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-UX-SYSTEMS-ENGINEER"
+      },
+      "escalation_role": "head_engineering",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "performance_engineer",
+      "title": "Performance Engineer",
+      "reports_to": "head_engineering",
+      "department": "engineering",
+      "scope": [
+        "Profile response time and payload size under repeat token requests"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Profile response time and payload size under repeat token requests",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Profile response time and payload size under repeat token requests",
+        "deliverable": "Benchmark-linked optimization PR",
+        "acceptance_criteria": [
+          "P95 measurement and before-after fixture accompany change",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-PERFORMANCE-ENGINEER"
+      },
+      "escalation_role": "head_engineering",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "accessibility_engineer",
+      "title": "Accessibility Engineer",
+      "reports_to": "head_engineering",
+      "department": "engineering",
+      "scope": [
+        "Implement semantic controls and keyboard focus for research screens"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Implement semantic controls and keyboard focus for research screens",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Implement semantic controls and keyboard focus for research screens",
+        "deliverable": "Accessible UI code and audit tests",
+        "acceptance_criteria": [
+          "Keyboard and assistive navigation regression checks pass",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-ACCESSIBILITY-ENGINEER"
+      },
+      "escalation_role": "head_engineering",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "payments_engineer",
+      "title": "Billing Integration Engineer",
+      "reports_to": "head_engineering",
+      "department": "engineering",
+      "scope": [
+        "Review webhook dedupe and entitlement lifecycle"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Review webhook dedupe and entitlement lifecycle",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Review webhook dedupe and entitlement lifecycle",
+        "deliverable": "Signed-event billing regression patch",
+        "acceptance_criteria": [
+          "No payment grants entitlement without matching verified event",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-PAYMENTS-ENGINEER"
+      },
+      "escalation_role": "head_engineering",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "release_engineer",
+      "title": "Release Engineer",
+      "reports_to": "head_engineering",
+      "department": "engineering",
+      "scope": [
+        "Maintain CI to image to Railway release traceability"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Maintain CI to image to Railway release traceability",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Maintain CI to image to Railway release traceability",
+        "deliverable": "Release evidence bundle template",
+        "acceptance_criteria": [
+          "Commit, CI and active Railway SHA agree before closeout",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-RELEASE-ENGINEER"
+      },
+      "escalation_role": "head_engineering",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "migrations_engineer",
+      "title": "Database Migration Engineer",
+      "reports_to": "head_engineering",
+      "department": "engineering",
+      "scope": [
+        "Harden forward-only PostgreSQL schema compatibility"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Harden forward-only PostgreSQL schema compatibility",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Harden forward-only PostgreSQL schema compatibility",
+        "deliverable": "Idempotent migration and rollback note",
+        "acceptance_criteria": [
+          "Disposable DB and existing schema fixtures both pass",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-MIGRATIONS-ENGINEER"
+      },
+      "escalation_role": "head_engineering",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "qa_automation",
+      "title": "End-to-End QA Engineer",
+      "reports_to": "head_engineering",
+      "department": "engineering",
+      "scope": [
+        "Cover signup to research to save to return sequence"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Cover signup to research to save to return sequence",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Cover signup to research to save to return sequence",
+        "deliverable": "E2E acceptance test PR",
+        "acceptance_criteria": [
+          "Tests run on isolated state and assert actual responses",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-QA-AUTOMATION"
+      },
+      "escalation_role": "head_engineering",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "developer_experience_engineer",
+      "title": "Developer Experience Engineer",
+      "reports_to": "head_engineering",
+      "department": "engineering",
+      "scope": [
+        "Improve local onboarding and repeatable test commands"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Improve local onboarding and repeatable test commands",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Improve local onboarding and repeatable test commands",
+        "deliverable": "Reproducible local environment scripts",
+        "acceptance_criteria": [
+          "Clean checkout test path documented and verified",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-DEVELOPER-EXPERIENCE-ENGINEER"
+      },
+      "escalation_role": "head_engineering",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "incident_engineer",
+      "title": "Production Recovery Engineer",
+      "reports_to": "head_engineering",
+      "department": "engineering",
+      "scope": [
+        "Reproduce a recent class of runtime failure and document recovery"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Reproduce a recent class of runtime failure and document recovery",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Reproduce a recent class of runtime failure and document recovery",
+        "deliverable": "Root cause and prevention PR",
+        "acceptance_criteria": [
+          "Healthcheck, failure and recovery behavior have test cases",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-INCIDENT-ENGINEER"
+      },
+      "escalation_role": "head_engineering",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "head_data",
+      "title": "Head of Data and Quant Infrastructure",
+      "reports_to": "managing_director",
+      "department": "data",
+      "scope": [
+        "Set provider freshness and research dataset integrity standards"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Set provider freshness and research dataset integrity standards",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Set provider freshness and research dataset integrity standards",
+        "deliverable": "Source accountability contract",
+        "acceptance_criteria": [
+          "Each source has documented owner, TTL and fallback behavior",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-HEAD-DATA"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "pipeline_engineer",
+      "title": "Data Pipeline Engineer",
+      "reports_to": "managing_director",
+      "department": "data",
+      "scope": [
+        "Normalize public OHLC ingestion and interval semantics"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Normalize public OHLC ingestion and interval semantics",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Normalize public OHLC ingestion and interval semantics",
+        "deliverable": "Source-to-candle test fixture",
+        "acceptance_criteria": [
+          "Timestamp ordering and duplicate candle behavior are tested",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-PIPELINE-ENGINEER"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "indexer_engineer",
+      "title": "Research Observation Indexer",
+      "reports_to": "managing_director",
+      "department": "data",
+      "scope": [
+        "Design idempotent token observation persistence"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Design idempotent token observation persistence",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Design idempotent token observation persistence",
+        "deliverable": "Observation dedupe PR",
+        "acceptance_criteria": [
+          "Repeated identical observations never create new user-facing events",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-INDEXER-ENGINEER"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "source_reliability_engineer",
+      "title": "Source Reliability Analyst",
+      "reports_to": "managing_director",
+      "department": "data",
+      "scope": [
+        "Measure upstream failure rate and freshness degradation"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Measure upstream failure rate and freshness degradation",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Measure upstream failure rate and freshness degradation",
+        "deliverable": "Provider reliability ledger",
+        "acceptance_criteria": [
+          "No unknown availability labeled healthy",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-SOURCE-RELIABILITY-ENGINEER"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "data_quality_engineer",
+      "title": "Data Quality Engineer",
+      "reports_to": "managing_director",
+      "department": "data",
+      "scope": [
+        "Detect impossible price, liquidity and market volume values"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Detect impossible price, liquidity and market volume values",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Detect impossible price, liquidity and market volume values",
+        "deliverable": "Invalid-source screening rules",
+        "acceptance_criteria": [
+          "Malformed data is rejected with explicit failure mode",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-DATA-QUALITY-ENGINEER"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "metrics_engineer",
+      "title": "Analytics Instrumentation Engineer",
+      "reports_to": "managing_director",
+      "department": "data",
+      "scope": [
+        "Specify authenticated server-side product action records"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Specify authenticated server-side product action records",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Specify authenticated server-side product action records",
+        "deliverable": "Event provenance acceptance test",
+        "acceptance_criteria": [
+          "Client spoofed traffic cannot impersonate real users",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-METRICS-ENGINEER"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "experimentation_analyst",
+      "title": "Experimentation Analyst",
+      "reports_to": "managing_director",
+      "department": "data",
+      "scope": [
+        "Calculate eligible trial and first-action cohorts"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Calculate eligible trial and first-action cohorts",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Calculate eligible trial and first-action cohorts",
+        "deliverable": "Experiment cohort worksheet",
+        "acceptance_criteria": [
+          "Incomplete denominators are marked unknown",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-EXPERIMENTATION-ANALYST"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "cohort_analyst",
+      "title": "Retention Cohort Analyst",
+      "reports_to": "managing_director",
+      "department": "data",
+      "scope": [
+        "Distinguish eligible D1 and D7 research returns"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Distinguish eligible D1 and D7 research returns",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Distinguish eligible D1 and D7 research returns",
+        "deliverable": "Cohort query and test data",
+        "acceptance_criteria": [
+          "Only observed and eligible returns enter ratios",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-COHORT-ANALYST"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "market_data_validator",
+      "title": "Market Data Validator",
+      "reports_to": "managing_director",
+      "department": "data",
+      "scope": [
+        "Compare normalized candles against source response"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Compare normalized candles against source response",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Compare normalized candles against source response",
+        "deliverable": "Source-parity test suite",
+        "acceptance_criteria": [
+          "Mismatched symbols and timeframes fail visibly",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-MARKET-DATA-VALIDATOR"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "model_evaluation_engineer",
+      "title": "Signal Evaluation Engineer",
+      "reports_to": "managing_director",
+      "department": "data",
+      "scope": [
+        "Check strategy data leakage, future candles and benchmark baseline"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Check strategy data leakage, future candles and benchmark baseline",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Check strategy data leakage, future candles and benchmark baseline",
+        "deliverable": "Reproducible strategy evaluation",
+        "acceptance_criteria": [
+          "Out-of-sample and backtest results remain separate",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-MODEL-EVALUATION-ENGINEER"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "knowledge_curator",
+      "title": "Evidence Knowledge Curator",
+      "reports_to": "managing_director",
+      "department": "data",
+      "scope": [
+        "Index source-backed research notes without adding unsourced claims"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Index source-backed research notes without adding unsourced claims",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Index source-backed research notes without adding unsourced claims",
+        "deliverable": "Searchable research provenance catalog",
+        "acceptance_criteria": [
+          "Every retained item has a source and capture timestamp",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-KNOWLEDGE-CURATOR"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "data_retention_engineer",
+      "title": "Data Lifecycle Engineer",
+      "reports_to": "managing_director",
+      "department": "data",
+      "scope": [
+        "Document minimum retention and deletion for research aggregates"
+      ],
+      "model_tier": "reasoning",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Document minimum retention and deletion for research aggregates",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Document minimum retention and deletion for research aggregates",
+        "deliverable": "Data lifecycle implementation note",
+        "acceptance_criteria": [
+          "Expiry is testable and user identifiers are excluded from aggregate exports",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-DATA-RETENTION-ENGINEER"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "organic_distribution_lead",
+      "title": "Organic Distribution Manager",
+      "reports_to": "head_growth",
+      "department": "growth",
+      "scope": [
+        "Select relevant developer and researcher communities from actual participation"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "growth",
+      "operating_contract": {
+        "objective": "Select relevant developer and researcher communities from actual participation",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Select relevant developer and researcher communities from actual participation",
+        "deliverable": "Source-linked distribution opportunities",
+        "acceptance_criteria": [
+          "No fabricated partnerships, engagement or spam",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "researcher",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-ORGANIC-DISTRIBUTION-LEAD"
+      },
+      "escalation_role": "head_growth",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "growth_analyst",
+      "title": "Growth Funnel Analyst",
+      "reports_to": "head_growth",
+      "department": "growth",
+      "scope": [
+        "Measure landing to token report conversion from authenticated events"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "growth",
+      "operating_contract": {
+        "objective": "Measure landing to token report conversion from authenticated events",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Measure landing to token report conversion from authenticated events",
+        "deliverable": "Attribution funnel measurement",
+        "acceptance_criteria": [
+          "Anonymous visits never count as verified signups",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "researcher",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-GROWTH-ANALYST"
+      },
+      "escalation_role": "head_growth",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "growth_experimenter",
+      "title": "Conversion Experiment Specialist",
+      "reports_to": "head_growth",
+      "department": "growth",
+      "scope": [
+        "Test one reversible landing CTA hypothesis"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "growth",
+      "operating_contract": {
+        "objective": "Test one reversible landing CTA hypothesis",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Test one reversible landing CTA hypothesis",
+        "deliverable": "A B test change with clear metric",
+        "acceptance_criteria": [
+          "Winner claims require recorded cohort comparison",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "researcher",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-GROWTH-EXPERIMENTER"
+      },
+      "escalation_role": "head_growth",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "onboarding_growth",
+      "title": "Activation Growth Operator",
+      "reports_to": "head_growth",
+      "department": "growth",
+      "scope": [
+        "Reduce failed first-report steps observed in support or analytics"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "growth",
+      "operating_contract": {
+        "objective": "Reduce failed first-report steps observed in support or analytics",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Reduce failed first-report steps observed in support or analytics",
+        "deliverable": "Onboarding improvement issue or PR",
+        "acceptance_criteria": [
+          "First useful report completion is measurable",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "researcher",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-ONBOARDING-GROWTH"
+      },
+      "escalation_role": "head_growth",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "community_programs",
+      "title": "Research Community Program Manager",
+      "reports_to": "head_growth",
+      "department": "growth",
+      "scope": [
+        "Plan opt-in source-linked challenges within Signal Rooms"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "growth",
+      "operating_contract": {
+        "objective": "Plan opt-in source-linked challenges within Signal Rooms",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Plan opt-in source-linked challenges within Signal Rooms",
+        "deliverable": "Member research challenge specification",
+        "acceptance_criteria": [
+          "No bot posts or manufactured discussions",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "researcher",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-COMMUNITY-PROGRAMS"
+      },
+      "escalation_role": "head_growth",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "developer_education",
+      "title": "Developer Relations Educator",
+      "reports_to": "head_growth",
+      "department": "growth",
+      "scope": [
+        "Create reproducible API and research examples"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "growth",
+      "operating_contract": {
+        "objective": "Create reproducible API and research examples",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Create reproducible API and research examples",
+        "deliverable": "Developer walkthrough and sample",
+        "acceptance_criteria": [
+          "Endpoint and sample output confirmed by tests",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "researcher",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-DEVELOPER-EDUCATION"
+      },
+      "escalation_role": "head_growth",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "referral_analyst",
+      "title": "Referral Quality Analyst",
+      "reports_to": "head_growth",
+      "department": "growth",
+      "scope": [
+        "Detect referral loops and unearned attribution"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "growth",
+      "operating_contract": {
+        "objective": "Detect referral loops and unearned attribution",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Detect referral loops and unearned attribution",
+        "deliverable": "Qualified referral policy and tests",
+        "acceptance_criteria": [
+          "No credits for self-referrals or synthetic accounts",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "researcher",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-REFERRAL-ANALYST"
+      },
+      "escalation_role": "head_growth",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "partnerships_growth",
+      "title": "Ecosystem Outreach Researcher",
+      "reports_to": "head_growth",
+      "department": "growth",
+      "scope": [
+        "Identify credible research communities and data ecosystem partners"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "growth",
+      "operating_contract": {
+        "objective": "Identify credible research communities and data ecosystem partners",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Identify credible research communities and data ecosystem partners",
+        "deliverable": "Qualified collaboration shortlist",
+        "acceptance_criteria": [
+          "Named partners are sourced; contact requires existing authority",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "researcher",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-PARTNERSHIPS-GROWTH"
+      },
+      "escalation_role": "head_growth",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "subscription_growth",
+      "title": "Subscription Conversion Owner",
+      "reports_to": "head_commercial",
+      "department": "commercial",
+      "scope": [
+        "Diagnose observed plan to paid drop-off"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "revenue",
+      "operating_contract": {
+        "objective": "Diagnose observed plan to paid drop-off",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Diagnose observed plan to paid drop-off",
+        "deliverable": "Checkout funnel repair proposal",
+        "acceptance_criteria": [
+          "Real payment receipts separate from selected plans",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "revenue",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-SUBSCRIPTION-GROWTH"
+      },
+      "escalation_role": "head_commercial",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "checkout_quality",
+      "title": "Checkout Experience Specialist",
+      "reports_to": "head_commercial",
+      "department": "commercial",
+      "scope": [
+        "Test cardless trial and voluntary checkout expectations"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "revenue",
+      "operating_contract": {
+        "objective": "Test cardless trial and voluntary checkout expectations",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Test cardless trial and voluntary checkout expectations",
+        "deliverable": "Pricing and checkout acceptance scenarios",
+        "acceptance_criteria": [
+          "No automatic charge occurs on cardless trial",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "revenue",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-CHECKOUT-QUALITY"
+      },
+      "escalation_role": "head_commercial",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "account_executive",
+      "title": "Research Teams Account Executive",
+      "reports_to": "head_commercial",
+      "department": "commercial",
+      "scope": [
+        "Qualify demand for shared research workspaces"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "revenue",
+      "operating_contract": {
+        "objective": "Qualify demand for shared research workspaces",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Qualify demand for shared research workspaces",
+        "deliverable": "Qualified demand ledger",
+        "acceptance_criteria": [
+          "No sales claimed without signed contracts or receipts",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "revenue",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-ACCOUNT-EXECUTIVE"
+      },
+      "escalation_role": "head_commercial",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "b2b_sales",
+      "title": "Research API Sales Specialist",
+      "reports_to": "head_commercial",
+      "department": "commercial",
+      "scope": [
+        "Define buyer-facing API scope and proof of value"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "revenue",
+      "operating_contract": {
+        "objective": "Define buyer-facing API scope and proof of value",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Define buyer-facing API scope and proof of value",
+        "deliverable": "API offer and demo checklist",
+        "acceptance_criteria": [
+          "Paid endpoint authorization and rate limits checked",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "revenue",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-B2B-SALES"
+      },
+      "escalation_role": "head_commercial",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "paid_conversion_analyst",
+      "title": "Paid Cohort Analyst",
+      "reports_to": "head_commercial",
+      "department": "commercial",
+      "scope": [
+        "Reconcile paid subscription candidates with signed invoices"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "revenue",
+      "operating_contract": {
+        "objective": "Reconcile paid subscription candidates with signed invoices",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Reconcile paid subscription candidates with signed invoices",
+        "deliverable": "Verified subscription conversion breakdown",
+        "acceptance_criteria": [
+          "Unsettled cash remains unknown",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "revenue",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-PAID-CONVERSION-ANALYST"
+      },
+      "escalation_role": "head_commercial",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "affiliate_business_development",
+      "title": "Channel Partnerships Analyst",
+      "reports_to": "head_commercial",
+      "department": "commercial",
+      "scope": [
+        "Find transparent, disclosed commercial referral options"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "revenue",
+      "operating_contract": {
+        "objective": "Find transparent, disclosed commercial referral options",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Find transparent, disclosed commercial referral options",
+        "deliverable": "Partner fit and margin evaluation",
+        "acceptance_criteria": [
+          "No fabricated or undisclosed endorsements",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "revenue",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-AFFILIATE-BUSINESS-DEVELOPMENT"
+      },
+      "escalation_role": "head_commercial",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "head_customer",
+      "title": "Head of Customer Experience",
+      "reports_to": "managing_director",
+      "department": "customer",
+      "scope": [
+        "Own support response time and customer research journey"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "customer",
+      "operating_contract": {
+        "objective": "Own support response time and customer research journey",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Own support response time and customer research journey",
+        "deliverable": "Customer service operating standard",
+        "acceptance_criteria": [
+          "Owners and response states are explicit",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "operator",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-HEAD-CUSTOMER"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "support_triage",
+      "title": "Support Triage Specialist",
+      "reports_to": "managing_director",
+      "department": "customer",
+      "scope": [
+        "Classify new customer support reports by severity"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "customer",
+      "operating_contract": {
+        "objective": "Classify new customer support reports by severity",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Classify new customer support reports by severity",
+        "deliverable": "Prioritized support work queue",
+        "acceptance_criteria": [
+          "Each issue has next action and escalation owner",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "operator",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-SUPPORT-TRIAGE"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "support_knowledge",
+      "title": "Support Knowledge Engineer",
+      "reports_to": "managing_director",
+      "department": "customer",
+      "scope": [
+        "Write answers for reproducible technical support issues"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "customer",
+      "operating_contract": {
+        "objective": "Write answers for reproducible technical support issues",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Write answers for reproducible technical support issues",
+        "deliverable": "Versioned knowledge-base article",
+        "acceptance_criteria": [
+          "Response is tested against actual product path",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "operator",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-SUPPORT-KNOWLEDGE"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "customer_onboarding",
+      "title": "Member Onboarding Specialist",
+      "reports_to": "managing_director",
+      "department": "customer",
+      "scope": [
+        "Help users perform their first source-linked report"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "customer",
+      "operating_contract": {
+        "objective": "Help users perform their first source-linked report",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Help users perform their first source-linked report",
+        "deliverable": "Welcome journey improvement",
+        "acceptance_criteria": [
+          "Opt-in and privacy boundaries respected",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "operator",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-CUSTOMER-ONBOARDING"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "success_analytics",
+      "title": "Customer Success Analyst",
+      "reports_to": "managing_director",
+      "department": "customer",
+      "scope": [
+        "Measure repeat research usage and unresolved issues"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "customer",
+      "operating_contract": {
+        "objective": "Measure repeat research usage and unresolved issues",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Measure repeat research usage and unresolved issues",
+        "deliverable": "Retention and support quality report",
+        "acceptance_criteria": [
+          "Counts use eligible unique member activity",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "operator",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-SUCCESS-ANALYTICS"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "feedback_ops",
+      "title": "Product Feedback Operator",
+      "reports_to": "managing_director",
+      "department": "customer",
+      "scope": [
+        "Turn recurring authentic complaints into specific product bugs"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "customer",
+      "operating_contract": {
+        "objective": "Turn recurring authentic complaints into specific product bugs",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Turn recurring authentic complaints into specific product bugs",
+        "deliverable": "Deduplicated customer feedback backlog",
+        "acceptance_criteria": [
+          "Every card links to observed issue or states hypothesis",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "operator",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-FEEDBACK-OPS"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "customer_training",
+      "title": "Research Education Manager",
+      "reports_to": "managing_director",
+      "department": "customer",
+      "scope": [
+        "Teach responsible interpretation of signals and backtests"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "customer",
+      "operating_contract": {
+        "objective": "Teach responsible interpretation of signals and backtests",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Teach responsible interpretation of signals and backtests",
+        "deliverable": "Research literacy training module",
+        "acceptance_criteria": [
+          "No trading profit or risk-free claims",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "operator",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-CUSTOMER-TRAINING"
+      },
+      "escalation_role": "managing_director",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "appsec_specialist",
+      "title": "Application Security Specialist",
+      "reports_to": "head_trust",
+      "department": "trust",
+      "scope": [
+        "Check API privilege boundaries and input handling"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "risk",
+      "operating_contract": {
+        "objective": "Check API privilege boundaries and input handling",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Check API privilege boundaries and input handling",
+        "deliverable": "Security regression issues with repro",
+        "acceptance_criteria": [
+          "Unauthorized reads and writes are denied in tests",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "operator",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-APPSEC-SPECIALIST"
+      },
+      "escalation_role": "head_trust",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "data_privacy_officer",
+      "title": "Data Privacy Specialist",
+      "reports_to": "head_trust",
+      "department": "trust",
+      "scope": [
+        "Audit minimized telemetry and retention boundaries"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "risk",
+      "operating_contract": {
+        "objective": "Audit minimized telemetry and retention boundaries",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Audit minimized telemetry and retention boundaries",
+        "deliverable": "Privacy mapping and deletion requirements",
+        "acceptance_criteria": [
+          "No direct identifiers in Company OS metrics",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "operator",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-DATA-PRIVACY-OFFICER"
+      },
+      "escalation_role": "head_trust",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "research_integrity",
+      "title": "Research Integrity Reviewer",
+      "reports_to": "head_trust",
+      "department": "trust",
+      "scope": [
+        "Check claims about market performance and provider coverage"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "risk",
+      "operating_contract": {
+        "objective": "Check claims about market performance and provider coverage",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Check claims about market performance and provider coverage",
+        "deliverable": "Research claim review record",
+        "acceptance_criteria": [
+          "Unverified predictions and guarantees are removed",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "operator",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-RESEARCH-INTEGRITY"
+      },
+      "escalation_role": "head_trust",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "fraud_analyst",
+      "title": "Abuse and Referral Fraud Analyst",
+      "reports_to": "head_trust",
+      "department": "trust",
+      "scope": [
+        "Identify manipulative market posts and abusive referral patterns"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "risk",
+      "operating_contract": {
+        "objective": "Identify manipulative market posts and abusive referral patterns",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Identify manipulative market posts and abusive referral patterns",
+        "deliverable": "Evidence-backed abuse triage rule",
+        "acceptance_criteria": [
+          "No automated bans without accountable authorized review",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "operator",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-FRAUD-ANALYST"
+      },
+      "escalation_role": "head_trust",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "incident_commander",
+      "title": "Service Incident Commander",
+      "reports_to": "head_operations",
+      "department": "operations",
+      "scope": [
+        "Route verified incidents to accountable responders"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Route verified incidents to accountable responders",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Route verified incidents to accountable responders",
+        "deliverable": "Incident task and recovery timeline",
+        "acceptance_criteria": [
+          "Post-incident review includes observable service status",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-INCIDENT-COMMANDER"
+      },
+      "escalation_role": "head_operations",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "platform_cost_ops",
+      "title": "Infrastructure Cost Operator",
+      "reports_to": "head_operations",
+      "department": "operations",
+      "scope": [
+        "Compare provider resource usage with observed value"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Compare provider resource usage with observed value",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Compare provider resource usage with observed value",
+        "deliverable": "Cloud and API cost snapshot",
+        "acceptance_criteria": [
+          "Forecast costs are separated from invoices",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-PLATFORM-COST-OPS"
+      },
+      "escalation_role": "head_operations",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "vendor_ops",
+      "title": "External Service Operations Manager",
+      "reports_to": "head_operations",
+      "department": "operations",
+      "scope": [
+        "Track API, data and billing service dependencies"
+      ],
+      "model_tier": "fast",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "product",
+      "operating_contract": {
+        "objective": "Track API, data and billing service dependencies",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Track API, data and billing service dependencies",
+        "deliverable": "Dependency health and renewal inventory",
+        "acceptance_criteria": [
+          "Each dependency has owner, failure mode and cost",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "independent_verifier",
+        "tool_scopes": [
+          "read_only_sources",
+          "scoped_repository_draft",
+          "test_draft"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": "engineer",
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-VENDOR-OPS"
+      },
+      "escalation_role": "head_operations",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    },
+    {
+      "id": "release_verifier",
+      "title": "Independent Release Evidence Auditor",
+      "reports_to": "sina_founder_os",
+      "department": "verification",
+      "scope": [
+        "Compare source SHA, CI checks and Railway active deployment"
+      ],
+      "model_tier": "deterministic",
+      "mode": "SPECIFIED_AGENT_FABRIC_BINDING_PENDING",
+      "financial_authority": "NONE",
+      "release_authority": "GOVERNOR_ONLY",
+      "evidence_authority": "NONE",
+      "functional_unit": "verification",
+      "operating_contract": {
+        "objective": "Compare source SHA, CI checks and Railway active deployment",
+        "inputs": [
+          "Latest authenticated SignalForge aggregate or canonical WorkPacket",
+          "Relevant repository and source evidence"
+        ],
+        "atomic_task": "Compare source SHA, CI checks and Railway active deployment",
+        "deliverable": "Independent release evidence receipt",
+        "acceptance_criteria": [
+          "Reviewer did not author candidate code and receives no execution permit",
+          "All outputs must cite actual product/source evidence",
+          "No self-certified completion"
+        ],
+        "evidence_owner": "sina_founder_os",
+        "tool_scopes": [
+          "read_only_source",
+          "ci_readback",
+          "deployment_readback"
+        ],
+        "current_binding": "NOT_VERIFIED",
+        "fabric_role": null,
+        "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
+        "task_template_id": "SF-JOB-RELEASE-VERIFIER"
+      },
+      "escalation_role": "sina_founder_os",
+      "permission_contract": {
+        "independent_payment": false,
+        "mainnet_trades": false,
+        "production_write": false,
+        "bulk_outreach": false
+      }
+    }
+  ],
+  "global_nonnegotiables": [
+    "NO_REAL_MONEY_TRADES",
+    "NO_BROKER_EXECUTION",
+    "NO_TOKEN_ISSUANCE_OR_PUMP_AUTOMATION",
+    "NO_WALLET_CUSTODY",
+    "NO_CREDENTIAL_EXFILTRATION",
+    "NO_UNAPPROVED_EXTERNAL_OUTREACH",
+    "NO_UNVERIFIED_REVENUE_CLAIMS",
+    "NO_SELF_VERIFICATION",
+    "FAIL_CLOSED_ON_MISSING_EVIDENCE"
+  ],
+  "version": "2026-11-13",
+  "headcount_target_roles": 100,
+  "operating_model": "100_LOGICAL_SEATS_EVENT_DRIVEN_SHARED_COMPANY_OS_AND_AGENT_FABRIC",
+  "department_targets": {
+    "executive": 3,
+    "research": 12,
+    "product": 10,
+    "engineering": 20,
+    "data": 12,
+    "growth": 12,
+    "commercial": 9,
+    "customer": 7,
+    "trust": 7,
+    "operations": 6,
+    "verification": 2
+  },
+  "departments": [
+    {
+      "id": "executive",
+      "role_count": 3,
+      "division_outcome": "FOUNDATION"
+    },
+    {
+      "id": "research",
+      "role_count": 12,
+      "division_outcome": "RESEARCH"
+    },
+    {
+      "id": "product",
+      "role_count": 10,
+      "division_outcome": "PRODUCT"
+    },
+    {
+      "id": "engineering",
+      "role_count": 20,
+      "division_outcome": "ENGINEERING"
+    },
+    {
+      "id": "data",
+      "role_count": 12,
+      "division_outcome": "DATA"
+    },
+    {
+      "id": "growth",
+      "role_count": 12,
+      "division_outcome": "GROWTH"
+    },
+    {
+      "id": "commercial",
+      "role_count": 9,
+      "division_outcome": "REVENUE"
+    },
+    {
+      "id": "customer",
+      "role_count": 7,
+      "division_outcome": "CUSTOMER"
+    },
+    {
+      "id": "trust",
+      "role_count": 7,
+      "division_outcome": "TRUST"
+    },
+    {
+      "id": "operations",
+      "role_count": 6,
+      "division_outcome": "OPS"
+    },
+    {
+      "id": "verification",
+      "role_count": 2,
+      "division_outcome": "EVIDENCE"
+    }
+  ]
+}

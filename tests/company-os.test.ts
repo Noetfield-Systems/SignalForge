@@ -1,5 +1,5 @@
 import {expect,test} from "bun:test";
-import config from "../company-os/organization.v1.json";
+import config from "../company-os/organization.v2.json";
 import {compileOperatingBoard, validateSnapshot, verifySingleCompanyHierarchy} from "../company-os/operating-engine";
 
 const at=new Date("2026-11-10T10:00:00.000Z");
@@ -17,7 +17,7 @@ function make(overrides:Record<string,any>={}):any{
 }
 test("one and only one Web3 company with management hierarchy and independent verifier",()=>{
  const result=verifySingleCompanyHierarchy();
- expect(result.roles).toBe(26);
+ expect(result.roles).toBe(100);
  expect(result.root).toBe("sina_founder_os");
  expect(config.number_of_companies).toBe(1);
  expect(config.number_of_product_platforms).toBe(1);
@@ -29,7 +29,7 @@ test("one and only one Web3 company with management hierarchy and independent ve
 test("real-source-shaped observations create ranked evidence-gated per-team work proposals",()=>{
  const board=compileOperatingBoard(make(),at);
  expect(board.managed_platforms).toBe(1);
- expect(board.company_operating_team).toBe(26);
+ expect(board.company_operating_team).toBe(100);
  expect(board.goal).toBe("M20-SIGNALFORGE-COMMUNITY");
  expect(board.tenant).toBe("signalforge-market-intelligence");
  expect(board.operating_state.verified_collected_cash_cad).toBeNull();
