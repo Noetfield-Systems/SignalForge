@@ -350,6 +350,39 @@ body:before{height:1350px;background:radial-gradient(ellipse at 58% 46%,#1e36302
 @media(max-width:760px){.container{width:calc(100% - 38px)}.header{height:68px}.brand{font-size:20px}.marquee{min-height:48px;padding:12px 0;font-size:9px}.hero{padding-bottom:80px}.hero-copy{padding:33px 0 40px;gap:21px}.hero-artline{font-size:9px;letter-spacing:.01em}.hero-artline span:last-child{display:none}.hero-titleblock{padding-top:10px}.hero h1{font-size:clamp(53px,10.2vw,76px);letter-spacing:-.07em;line-height:1.025;margin:22px 0}.hero-notation{font-size:9px;gap:8px}.hero-summary-top{font-size:9px}.hero .lead{font-size:15px;line-height:1.75}.hero-caption{font-size:9px}.stage-heading{font-size:9px}.stage-heading>span:last-child{display:none}.stage-foot{font-size:9px}.stage-foot>span:last-child{display:none}.termbody{grid-template-columns:1fr;min-height:auto}.term-main{border-right:0}.term-side{display:none}.termbar{height:46px;padding:0 12px}.termbrand{font-size:9px}.term-top{padding:12px}.assetswitch{gap:2px}.assetswitch button{font-size:9px;padding:6px 7px}.asset-price{gap:5px}.asset-price strong{font-size:20px}.term-controls{gap:6px;padding:9px 11px}.term-controls span{display:none}.term-controls a{font-size:9px!important}.chart-shell{height:310px}.chart-footer{padding:10px 12px;font-size:9px}.term-bottom{padding:11px 12px;font-size:9px}.strip{padding:27px 0}.strip-item{gap:10px;padding:8px 15px}.strip-item b{font-size:12px}.strip-item small{font-size:9px}.section,.workflow,.pricing{padding:82px 0}.section-head{display:block;margin-bottom:35px}.section-head .section-kicker{display:block;margin:0 0 21px}.section-head h2{font-size:clamp(40px,8vw,60px)}.section-head p{font-size:14px;margin-top:17px}.cards{gap:13px}.feature:first-child,.feature:nth-child(2),.feature:nth-child(3),.feature:nth-child(4){grid-column:span 12;min-height:340px}.feature{padding:26px 26px 0}.feature h3{font-size:26px}.feature p{font-size:12px}.graphic{height:128px}.graphic svg{height:125px}.product-split{padding:80px 0}.split-copy h2{font-size:clamp(41px,9vw,65px)}.split-copy p{font-size:15px}.research-ui{grid-template-columns:1fr;min-height:0}.research-body{padding:17px}.research-visual svg{height:145px}.workflow-grid{grid-template-columns:1fr 1fr;gap:20px}.workstep{min-height:190px}.workstep h3{margin-top:20px}.plans{grid-template-columns:1fr}.plan{min-height:260px}.final{padding:83px 0}.final h2{font-size:clamp(44px,9.5vw,69px)}.final p{font-size:15px}.footer{padding:40px 0 25px}}
 @media(max-width:460px){.container{width:calc(100% - 30px)}.hero h1{font-size:clamp(48px,12.2vw,60px)}.hero-actions{display:grid;grid-template-columns:1fr}.hero-actions .btn{width:100%;justify-content:space-between;font-size:12px}.hero-notation{letter-spacing:.035em}.chart-shell{height:245px}.chart-empty{inset:12px;font-size:10px}.chart-placeholder-glyph{font-size:34px}.asset-price strong{font-size:16px}.asset-price small{display:none}.term-bottom span{display:none}.stage-foot>span:first-child{display:none}.stage-foot{justify-content:flex-end}.strip-item{padding:3px 10px}.strip-item:first-child,.strip-item:nth-child(3){padding-left:0}.strip-item svg{width:20px;height:20px}.strip-item b{font-size:11px}.feature{min-height:310px}.workflow-grid{grid-template-columns:1fr}.workstep{min-height:155px}.section-head h2{font-size:39px}.plan{padding:28px 24px}}
 
+
+/* V4.1: screenshot-driven above-the-fold corrections */
+.mobile-title,.mobile-lead,.mobile-cta{display:none}
+@media(min-width:1071px){
+ .hero-copy{padding-top:63px;padding-bottom:42px}
+ .hero h1{font-size:clamp(59px,5.75vw,94px);margin:20px 0}
+}
+@media(max-width:760px){
+ .marquee{display:none}
+ .hero-artline,.hero-notation,.hero-summary-top,.hero-caption{display:none}
+ .hero-copy{padding:22px 0 19px;gap:13px}
+ .hero-titleblock{padding-top:0}
+ .hero h1{font-size:clamp(40px,10.5vw,54px);line-height:1.03;margin:13px 0 0;letter-spacing:-.067em}
+ .desktop-title,.desktop-lead,.desktop-cta{display:none!important}
+ .mobile-title,.mobile-lead,.mobile-cta{display:inline}
+ .hero .lead{font-size:13px;line-height:1.7}
+ .hero-summary{padding:0}
+ .hero-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin-top:15px}
+ .hero-actions .btn{width:100%;min-height:44px;font-size:10px;padding:10px 12px;gap:4px;justify-content:space-between}
+ .hero-actions .btn .arrow{font-size:17px}
+ .terminal-outer{margin-top:11px}
+ .stage-heading{display:none}
+ .termbar{height:42px}
+ .chart-shell{height:290px}
+}
+@media(max-width:460px){
+ .hero h1{font-size:clamp(39px,10.7vw,47px)}
+ .hero-actions{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+ .hero-actions .btn{font-size:10px;min-height:44px}
+ .chart-shell{height:245px}
+ .term-top{padding:9px}
+ .term-controls{padding:7px 9px}
+}
 </style>
 </head>
 <body>
@@ -366,12 +399,12 @@ body:before{height:1350px;background:radial-gradient(ellipse at 58% 46%,#1e36302
    <div class="hero-artline"><span>AN INTELLIGENT VIEW OF DIGITAL ASSET MARKETS</span><span>RESEARCH SYSTEM / 001</span></div>
    <div class="hero-titleblock">
     <div class="eyebrow">SIGNALFORGE / INDEPENDENT MARKET INTELLIGENCE</div>
-    <h1>Research every move.<br><em>Trade with context.</em></h1>
+    <h1><span class="desktop-title">Research every move.<br><em>Trade with context.</em></span><span class="mobile-title">Read the market.<br><em>See the signal.</em></span></h1>
     <div class="hero-notation" aria-hidden="true"><span>OBSERVE</span><b>—</b><span>QUESTION</span><b>—</b><span>VALIDATE</span></div>
    </div>
    <div class="hero-summary"><div class="hero-summary-top"><span>01 — A BETTER READ ON THE MARKET</span><span>↗</span></div>
-    <p class="lead">Price tells you what happened. SignalForge connects market structure, explainable signals, token evidence and historical research — so you can understand the move before drawing your own conclusion.</p>
-    <div class="hero-actions"><a class="btn" href="/app?view=dashboard">Open market terminal <span class="arrow" aria-hidden="true">↗</span></a><a class="btn ghost" href="/radar">Explore Token Radar <span class="arrow" aria-hidden="true">↗</span></a></div>
+    <p class="lead"><span class="desktop-lead">Price tells you what happened. SignalForge connects market structure, explainable signals, token evidence and historical research — so you can understand the move before drawing your own conclusion.</span><span class="mobile-lead">Candlestick charts, source-aware signals, token research and backtests. One clear view of the market.</span></p>
+    <div class="hero-actions"><a class="btn" href="/app?view=dashboard"><span class="desktop-cta">Open market terminal</span><span class="mobile-cta">Open terminal</span> <span class="arrow" aria-hidden="true">↗</span></a><a class="btn ghost" href="/radar"><span class="desktop-cta">Explore Token Radar</span><span class="mobile-cta">Token Radar</span> <span class="arrow" aria-hidden="true">↗</span></a></div>
     <div class="hero-caption"><span>Real market sources</span><span>No wallet required</span><span>Read-only research</span></div>
    </div>
   </div>
