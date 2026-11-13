@@ -2,7 +2,7 @@
 
 Scope: repository \`Noetfield-Systems/SignalForge\`, company/product project \`signalforge-market-intelligence\`, Founder mission \`M20-SIGNALFORGE-COMMUNITY\`.
 
-**Read in order before any change:**
+**SignalForge-only autonomous company work:** Read `docs/SIGNALFORGE-AUTONOMOUS-COMPANY-EXECUTION-MASTER-v1.md` and `company-os/signalforge-autonomy.ts`. This authorizes specialization and real scoped outcomes only for SignalForge, not a portfolio-wide Company OS campaign. Prompt generation is internal to the existing Agent Fabric; source-observed prompts are NOT independently verified runs.\n\n**Read in order before any change:**
 1. \`strategy/PRODUCT-IDENTITY-SSOT-v3.json\` — machine-readable Founder product lock.
 2. \`docs/FOUNDER-PRODUCT-UX-OPERATING-CONTRACT-v3.md\` — benchmark- and evidence-grounded product/UX/revenue rules.
 3. \`company-os/organization.v2.json\` — department, specialist, accountable deliverable and independent verification mapping.

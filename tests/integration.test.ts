@@ -218,6 +218,19 @@ test("real database community lifecycle, security boundaries and Company OS cont
   expect(workforce.data.microtasks.every((t:any)=>t.external_effects_authorized===false)).toBe(true);
   expect(JSON.stringify(workforce.data)).not.toContain(email);
   expect((await request("/api/company-os/workforce")).response.status).toBe(401);
+  const autonomy=await request("/api/company-os/autonomy",{headers:{authorization:"Bearer "+SECRET}});
+  expect(autonomy.response.status).toBe(200);
+  expect(autonomy.data.schema).toBe("signalforge.company-os.autonomous-operation.v1");
+  expect(autonomy.data.project_id).toBe("signalforge-market-intelligence");
+  expect(autonomy.data.department_workstreams).toHaveLength(11);
+  expect(autonomy.data.role_assignments).toHaveLength(100);
+  expect(autonomy.data.orchestration.no_new_scheduler).toBe(true);
+  expect(autonomy.data.independent_completion_claimed).toBe(false);
+  expect(autonomy.data.counts.provider_invocations_from_this_projection).toBe(0);
+  expect(JSON.stringify(autonomy.data)).not.toContain(email);
+  expect((await request("/api/company-os/autonomy")).response.status).toBe(401);
+  expect((await request("/api/admin/company-autonomy")).response.status).toBe(403);
+
   expect((await request("/admin/company-floor")).response.status).toBe(403);
   expect((await request("/api/admin/company-floor")).response.status).toBe(403);
 

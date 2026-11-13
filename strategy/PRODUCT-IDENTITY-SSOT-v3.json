@@ -197,7 +197,23 @@
       "quality improvements to core market tools",
       "evidence-backed growth",
       "unrelated infrastructure polish last"
-    ]
+    ],
+    "signalforge_only_autonomy": {
+      "schema": "signalforge.autonomous-company-plan.v1",
+      "canonical_goal": "M20-SIGNALFORGE-COMMUNITY",
+      "manual": "docs/SIGNALFORGE-AUTONOMOUS-COMPANY-EXECUTION-MASTER-v1.md",
+      "engine": "company-os/signalforge-autonomy.ts",
+      "authenticated_api": "/api/company-os/autonomy",
+      "private_admin_api": "/api/admin/company-autonomy",
+      "departments": 11,
+      "defined_roles": 100,
+      "prompt_generation": "EXISTING_AGENT_FABRIC_PROMPT_CYCLE",
+      "execution": "EXISTING_COMPANY_OS_GOVERNOR_AGENT_FABRIC_RUNWAY",
+      "source_bound": true,
+      "independent_verification_required": true,
+      "no_portfolio_scope_expansion": true,
+      "not_claimed": "PROMPTS_OR_ROLES_ARE_NOT_PROOF_OF_LIVE_AGENT_DISPATCH_OR_REVENUE"
+    }
   },
   "proof_definition": "A deployed code change is verified only by matching GitHub SHA, green CI, active Railway revision, relevant HTTP/user acceptance evidence and independently sourced proof where applicable."
 }
