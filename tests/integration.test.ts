@@ -195,12 +195,26 @@ test("real database community lifecycle, security boundaries and Company OS cont
   const ops=await request("/api/company-os/operations",{headers:{authorization:"Bearer "+SECRET}});
   expect(ops.response.status).toBe(200);
   expect(ops.data.managed_platforms).toBe(1);
-  expect(ops.data.company_operating_team).toBe(26);
+  expect(ops.data.company_operating_team).toBe(100);
   expect(ops.data.tenant).toBe("signalforge-market-intelligence");
   expect(ops.data.operating_state.verified_collected_cash_cad).toBeNull();
   expect(ops.data.workpackets.every((x:any)=>x.resources.real_trades_allowed===false)).toBe(true);
   expect(JSON.stringify(ops.data)).not.toContain(email);
   expect((await request("/api/company-os/operations")).response.status).toBe(401);
+  const workforce=await request("/api/company-os/workforce",{headers:{authorization:"Bearer "+SECRET}});
+  expect(workforce.response.status).toBe(200);
+  expect(workforce.data.schema).toBe("signalforge.company-os.workforce-floor.v2");
+  expect(workforce.data.org.defined_roles).toBe(100);
+  expect(workforce.data.org.departments).toBe(11);
+  expect(workforce.data.org.verified_live_agents).toBeNull();
+  expect(workforce.data.capacity.admitted_workpackets).toBeNull();
+  expect(workforce.data.microtasks.every((t:any)=>t.state==="PROPOSED_NOT_DISPATCHED")).toBe(true);
+  expect(workforce.data.microtasks.every((t:any)=>t.external_effects_authorized===false)).toBe(true);
+  expect(JSON.stringify(workforce.data)).not.toContain(email);
+  expect((await request("/api/company-os/workforce")).response.status).toBe(401);
+  expect((await request("/admin/company-floor")).response.status).toBe(403);
+  expect((await request("/api/admin/company-floor")).response.status).toBe(403);
+
 
 
   expect((await request("/api/v1/strategies")).response.status).toBe(401);
