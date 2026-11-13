@@ -1,39 +1,323 @@
-<!doctype html><html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#08131a">
-<title>SignalForge — Solana Token Research, Liquidity History & Onchain Intelligence</title>
-<meta name="description" content="Paste any Solana token mint to inspect source-linked liquidity, DEX pools, trading activity and observed changes. Free token research and premium research workflows and voluntary source-backed daily digests.">
-<meta property="og:title" content="SignalForge — Know What Changed Onchain"><meta property="og:description" content="See actual Solana token pools, liquidity, activity and research history with clear sources. No wallet or signup needed for a first report.">
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#090d12">
+<meta name="description" content="SignalForge is the research workspace for digital asset markets. Explore source-linked Solana liquidity, explainable market signals, research history and strategy analysis.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="SignalForge — Intelligence beyond the price.">
+<meta property="og:description" content="Source-linked token research, explainable signals and market history. Explore free with no wallet connection.">
+<meta name="twitter:card" content="summary">
+<link rel="canonical" href="https://signalforge-web-production.up.railway.app/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>SignalForge — Intelligence Beyond the Price</title>
 <style>
-:root{--bg:#08131b;--white:#eef8fa;--mut:#91a7b6;--stroke:#28424e;--teal:#6befcb;--amber:#f0c983}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(1100px 750px at 65% -30%,#194f5c 0,transparent 74%),var(--bg);font:15px/1.65 Inter,system-ui,sans-serif;color:var(--white)}
-a{color:inherit;text-decoration:none}.wrap{width:min(1150px,calc(100% - 42px));margin:auto}
-nav{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:26px 0;border-bottom:1px solid #31526164}.brand{font-size:17px;font-weight:750;letter-spacing:-.05em}.mark{display:inline-grid;place-items:center;width:36px;height:36px;background:#6befcb;color:#07171b;border-radius:11px;font-size:22px;font-weight:900;margin-right:12px}.tag{font:11px/1.4 ui-monospace,SFMono-Regular,monospace;color:var(--teal);text-transform:uppercase;letter-spacing:.15em}.navright{display:flex;align-items:center;gap:22px;font-size:12px;color:#c9dadd}.navright a:hover{text-decoration:underline}.navright .cta{color:#0b2023;background:#6befcb;padding:11px 17px;border-radius:7px;font-weight:800}.navright .cta:hover{text-decoration:none;background:#8fffe0}
-.hero{padding:110px 0 100px}.hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:45px;align-items:center}
-h1{font-size:clamp(50px,6.4vw,82px);line-height:1.04;letter-spacing:-.075em;margin:22px 0 20px;font-weight:720}h1 em{font-style:normal;color:var(--teal)}.lead{font-size:17px;line-height:1.75;color:#a6b9c5;max-width:550px}
-.buttons{display:flex;flex-wrap:wrap;gap:12px;margin:28px 0 0}.button{display:inline-flex;align-items:center;justify-content:center;padding:14px 23px;border-radius:8px;background:var(--teal);color:#092329;font-size:13px;font-weight:800;border:1px solid var(--teal);min-height:48px}.button:hover{background:#9cffe0}.button.secondary{background:transparent;color:var(--white);border:1px solid #56717b}.button.secondary:hover{background:#112d36}
-.hint{margin-top:17px;font-size:12px;color:#7f9ba5}
-.terminal{background:#0b1b26;border:1px solid #385664;border-radius:14px;padding:23px;box-shadow:0 32px 100px #0007;overflow:hidden}.termhead{display:flex;justify-content:space-between;color:#94acb7;font:11px ui-monospace,monospace;border-bottom:1px solid #294552;padding-bottom:15px}.dot{color:var(--teal)}.chart{height:190px;position:relative;overflow:hidden;margin:20px 0 14px;border-radius:7px;background:linear-gradient(#ffffff08 1px,transparent 1px) 0 0/100% 38px,linear-gradient(90deg,#ffffff08 1px,transparent 1px) 0 0/54px 100%}.chart svg{height:100%;width:100%;display:block}.sample{font:10px ui-monospace,monospace;letter-spacing:.08em;color:var(--amber)}.statrow{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat{border:1px solid #2b4a57;padding:13px;border-radius:8px;background:#132b35}.stat small{display:block;font:10px ui-monospace,monospace;color:#89a0ac;margin-bottom:10px}.stat strong{display:block;color:#d9fff1;font-size:14px}
-.strip{background:#0d2630;border-block:1px solid var(--stroke);padding:22px 0}.strip .wrap{display:flex;gap:30px;justify-content:space-between;align-items:center}.strip p{color:#9bb2bc;font-size:12px;max-width:660px;margin:0}
-section.mainsection{padding:85px 0;border-bottom:1px solid #213b46}.heading{font-size:clamp(34px,4.4vw,57px);font-weight:650;letter-spacing:-.055em;line-height:1.1;margin:17px 0 32px;max-width:760px}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.card{background:#10232e;border:1px solid #2d4756;border-radius:11px;padding:31px}.card h3{font-size:19px;letter-spacing:-.04em;margin:17px 0}.card p{font-size:14px;color:#9fb2bf;line-height:1.7}.card .num{font:11px ui-monospace,monospace;color:var(--teal)}
-.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.flow article{padding:22px 19px;border-top:2px solid #5fd7b6;background:#102531;border-radius:5px}.flow span{font:11px ui-monospace,monospace;color:#81bcb4}.flow h3{font-size:16px;margin:13px 0 8px}.flow p{font-size:12px;color:#9fb2bf}
-.ctasection{padding:90px 0;background:linear-gradient(135deg,#123b3f,#0a222b)}.ctasection .heading{max-width:800px}.ctasection p{max-width:730px;color:#acc5c5;line-height:1.75}
-footer{padding:38px 0;color:#8097a5;font-size:12px}footer .wrap{display:flex;justify-content:space-between;gap:15px}footer a{color:#9ebac5;text-decoration:underline}
-@media(max-width:900px){.hero-grid{grid-template-columns:1fr}.cards{grid-template-columns:1fr 1fr}.flow{grid-template-columns:1fr 1fr}}@media(max-width:600px){.hero{padding:70px 0}.cards,.flow{grid-template-columns:1fr}.navright a:not(.cta){display:none}.strip .wrap,footer .wrap{display:block}}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-</style></head>
-<body><div class="wrap"><nav aria-label="Main"><a class="brand" href="/welcome"><span class="mark" aria-hidden="true">S</span>SIGNALFORGE</a><div class="navright"><a href="/radar">Token Radar</a><a href="#features">Features</a><a href="#how">How it works</a><a class="cta" href="/app">Open terminal →</a></div></nav></div>
-<main><section class="hero"><div class="wrap hero-grid"><div>
-<p class="tag">Solana Token Radar / Source-linked market intelligence</p><h1>Research the token.<br><em>Track what changes.</em></h1>
-<p class="lead">Paste a Solana contract address to inspect available DEX liquidity, trading activity and timestamped source observations. Save what matters and return to see meaningful changes. Start free—no wallet connection required.</p>
-<div class="buttons"><a class="button" href="/radar">Research a Solana token ↗</a><a class="button secondary" href="/app">Open research terminal</a></div>
-<p class="hint">Free token reports without an account. Sign in only to save a personal research watchlist; premium plans are optional.</p>
-</div><div class="terminal" role="img" aria-label="Illustrative market research interface with sample chart and signal validation">
-<div class="termhead"><span>SIGNALFORGE / RESEARCH</span><span><span class="dot">●</span> SAMPLE INTERFACE / NOT LIVE QUOTES</span></div>
-<div class="chart"><svg viewBox="0 0 450 190" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="g" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#6befcb" stop-opacity=".24"/><stop offset="1" stop-color="#6befcb" stop-opacity="0"/></linearGradient></defs><path d="M0 156L30 148 62 151 87 130 120 138 150 112 184 126 211 92 248 106 281 69 312 82 342 51 374 70 414 36 450 29V190H0Z" fill="url(#g)"/><polyline points="0,156 30,148 62,151 87,130 120,138 150,112 184,126 211,92 248,106 281,69 312,82 342,51 374,70 414,36 450,29" fill="none" stroke="#6befcb" stroke-width="3"/></svg></div>
-<p class="sample">ILLUSTRATIVE SIGNAL · VALUES NOT REAL MARKET DATA</p><div class="statrow"><div class="stat"><small>FRAME</small><strong>Research</strong></div><div class="stat"><small>METHOD</small><strong>Explainable</strong></div><div class="stat"><small>EXECUTION</small><strong>Read-only</strong></div></div></div></div></section>
-<div class="strip"><div class="wrap"><strong>Your research should have a memory.</strong><p>Price dashboards show the latest moment. SignalForge preserves source-linked observations so you can compare what changed, when, and where the data came from.</p></div></div>
-<section id="features" class="mainsection"><div class="wrap"><p class="tag">Why researchers use SignalForge</p><h2 class="heading">Go beyond a one-time price lookup.</h2>
-<div class="cards"><article class="card"><span class="num">01 / FREE DISCOVERY</span><h3>Contract-first Token Radar</h3><p>Paste a Solana mint to inspect observable pools, market liquidity, trading activity and supporting source links without mandatory signup.</p></article><article class="card"><span class="num">02 / RESEARCH CONTINUITY</span><h3>What changed since last time?</h3><p>Compare saved source observations, review meaningful change events and preserve a personal token watchlist. On-demand, not a promise of nonstop monitoring.</p></article><article class="card"><span class="num">03 / RESEARCH WORKSPACE</span><h3>Signals, strategies & Signal Rooms</h3><p>Use the existing market terminal, historical backtests and community discussions to organize research with clearly labeled data sources.</p></article></div></div></section>
-<section id="how" class="mainsection"><div class="wrap"><p class="tag">Your first 60 seconds</p><h2 class="heading">A useful answer before signup.</h2><div class="flow"><article><span>01 / PASTE</span><h3>Enter the mint</h3><p>Paste any valid Solana token contract address into Token Radar.</p></article><article><span>02 / INSPECT</span><h3>Read the evidence</h3><p>Review observed pool liquidity, activity, reported data freshness and source links.</p></article><article><span>03 / COMPARE</span><h3>See what changed</h3><p>Compare stored observations when enough history exists. Unknowns stay clearly labeled.</p></article><article><span>04 / SAVE</span><h3>Build your research desk</h3><p>Sign in to save tokens and receive available in-app change-event history.</p></article></div></div></section>
-<section class="ctasection"><div class="wrap"><p class="tag">Access</p><h2 class="heading">Research free. Upgrade for your workflow.</h2><p>Token Radar is free to use without an account. The research terminal also offers optional Pro (CAD $29/month) and Quant (CAD $99/month) subscriptions for delivered member capabilities. Payment is voluntary; your 30-day no-card trial does not create an automatic charge.</p><div class="buttons"><a class="button" href="/radar">Research a token free →</a><a class="button secondary" href="/app">Explore Pro & Quant plans</a><a class="button secondary" href="/api/health">Service status</a></div></div></section>
-</main><footer><div class="wrap"><span>© 2026 SignalForge · Market intelligence and research</span><span>Not financial advice · No custody · No broker execution</span></div></footer></body></html>
+:root{color-scheme:dark;--bg:#090d12;--bg2:#0e141a;--panel:#121a21;--panel2:#172129;--ink:#f0f4f1;--muted:#a0adb3;--subtle:#677a83;--mint:#b6f0da;--mint2:#6ccfb5;--border:#26343b;--cream:#e9ede7;--night:#0b1114}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:100px}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 "DM Sans",system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+body::before{content:"";pointer-events:none;position:absolute;top:70px;left:0;width:100%;height:900px;background:radial-gradient(ellipse at 72% 18%,rgba(46,112,104,.21),transparent 39%),radial-gradient(ellipse at 52% 48%,rgba(61,75,104,.08),transparent 62%);z-index:-1}
+a{color:inherit;text-decoration:none}button{font:inherit}a:focus-visible,button:focus-visible{outline:2px solid var(--mint);outline-offset:5px}
+::selection{background:var(--mint);color:var(--night)}
+.container{width:min(1296px,calc(100% - 88px));margin:auto}
+.skip{position:absolute;top:-80px;left:15px;background:var(--mint);color:#071512;padding:12px 16px;z-index:1000}.skip:focus{top:15px}
+header{position:relative;z-index:20;border-bottom:1px solid rgba(176,216,215,.11);background:rgba(8,12,17,.9);backdrop-filter:blur(18px)}
+.topbar{min-height:78px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.logo{display:inline-flex;align-items:center;gap:11px;white-space:nowrap}
+.brand-icon{width:31px;height:31px;display:grid;place-items:center;border:1px solid #648f86;background:linear-gradient(145deg,#1e3737,#122025);border-radius:7px;box-shadow:inset 0 0 24px #2a62504d}
+.brand-icon svg{width:21px;height:21px}
+.brand-word{font-family:"Space Grotesk",sans-serif;font-size:19px;font-weight:700;line-height:1;letter-spacing:-.055em}
+.brand-word span{font-weight:400;color:#a6c6c2}
+.toplinks{display:flex;align-items:center;gap:35px;color:#b9c6c9;font-size:12px;font-weight:700}
+.toplinks a:hover,.footlinks a:hover{color:var(--mint)}
+.toplinks .nav-action{color:#061711;border:1px solid #b6f0da;background:var(--mint);padding:11px 18px;border-radius:5px}
+.toplinks .nav-action:hover{background:#d3fae9;color:#061711}
+.announcement{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:14px 0;border-bottom:1px solid #25313988;color:#9cacb4;font-size:11px;letter-spacing:.01em}
+.announcement strong{color:#d9ece5;font-weight:600}.announcement .signal-led{width:6px;height:6px;display:inline-block;border-radius:50%;background:var(--mint2);box-shadow:0 0 12px #75dab78c;margin-right:9px}
+.announcement a{color:var(--mint);font-weight:700;white-space:nowrap}
+.hero{padding:91px 0 106px;overflow:hidden;position:relative}
+.hero::after{content:"";position:absolute;top:0;left:52%;width:1px;height:100%;background:linear-gradient(transparent,#d6fcf00c 30%,transparent);pointer-events:none}
+.hero-grid{display:grid;grid-template-columns:1fr 1.06fr;gap:clamp(28px,4.4vw,70px);align-items:center}
+.eyebrow,.kicker{display:flex;align-items:center;gap:12px;color:var(--mint2);font:600 10px/1.3 "DM Sans",sans-serif;letter-spacing:.17em;text-transform:uppercase}
+.eyebrow:before,.kicker:before{content:"";width:25px;height:1px;background:var(--mint2)}
+.hero h1,h2{font-family:"Space Grotesk",system-ui,sans-serif;letter-spacing:-.067em}
+.hero h1{font-size:clamp(51px,5.3vw,79px);font-weight:500;line-height:1.055;margin:29px 0 25px;max-width:730px}
+.hero h1 em{font-style:normal;color:var(--mint);display:block}
+.hero .lead{font-size:16px;line-height:1.85;color:#a9b6bd;max-width:550px;margin:0}
+.hero-actions,.action-row{display:flex;flex-wrap:wrap;align-items:center;gap:13px;margin-top:32px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:20px;min-height:49px;padding:13px 22px;border:1px solid #b6f0da;border-radius:5px;font-size:12px;font-weight:700;letter-spacing:.015em;background:var(--mint);color:#091813;transition:transform .18s,background .18s,border-color .18s}
+.btn:hover{transform:translateY(-2px);background:#d7ffe9}
+.btn.outline{background:transparent;border-color:#41545b;color:#e6eeeb}
+.btn.outline:hover{border-color:#a8dccc;background:#18242a}
+.btn .arrow{font-size:17px;line-height:1}
+.hero-notes{display:flex;gap:15px 25px;flex-wrap:wrap;margin-top:28px;color:#80939b;font-size:11px}
+.hero-notes span:before{content:"✓";color:#8bcfb8;margin-right:7px}
+.visual-wrap{position:relative;min-width:0}
+.visual-wrap::before{content:"";position:absolute;inset:-65px -70px;background:radial-gradient(ellipse at 60% 42%,#317b633e,transparent 58%);filter:blur(24px);pointer-events:none}
+.orbit{position:absolute;width:520px;height:520px;border:1px solid #579a8433;border-radius:50%;top:-87px;right:-95px;pointer-events:none}
+.orbit::before,.orbit::after{content:"";position:absolute;inset:35px;border-radius:50%;border:1px dashed #579a842c}.orbit::after{inset:90px;border-style:solid}
+.desk{position:relative;z-index:1;overflow:hidden;border-radius:10px;border:1px solid #4b716b82;background:linear-gradient(145deg,#17242c,#0d151b 65%);box-shadow:0 35px 95px #000a,0 1px 0 #90dac122 inset;transform:perspective(1200px) rotateY(-3deg) rotateX(1deg)}
+.desk-top{display:flex;justify-content:space-between;gap:15px;align-items:center;padding:16px 20px;border-bottom:1px solid #2a3b42;background:#12202780}
+.desk-top .desk-title{font:700 10px/1.2 "Space Grotesk",sans-serif;letter-spacing:.14em;color:#d7ece6}
+.desk-version{font:500 9px/1.2 "DM Sans",sans-serif;color:#90ada9;letter-spacing:.14em}
+.terminal-tools{display:flex;gap:5px}.terminal-tools span{width:7px;height:7px;border-radius:50%;background:#4a605f}.terminal-tools span:first-child{background:#95c5b7}
+.desk-body{padding:23px}
+.desk-heading{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.desk-heading .desk-label{font:600 9px "DM Sans",sans-serif;letter-spacing:.17em;color:#88a59e}
+.markets{display:flex;gap:6px}.market{cursor:pointer;color:#879ca2;background:transparent;padding:6px 9px;border:1px solid #30434a;border-radius:4px;font:600 10px "DM Sans",sans-serif}.market[aria-pressed="true"]{color:var(--mint);background:#b6f0da0d;border-color:#739f93}
+.price-row{display:flex;justify-content:space-between;align-items:end;gap:10px;margin-top:24px}
+.asset-title{font-size:12px;color:#d5e4e1;font-weight:700}.asset-title span{color:#79929a;font-size:10px;font-weight:500}
+.price-num{font:500 36px/.99 "Space Grotesk",sans-serif;letter-spacing:-.06em;margin-top:8px;color:#f1f9f3;font-variant-numeric:tabular-nums}
+.source-label{font-size:9px;letter-spacing:.04em;color:#7b999b;text-align:right;max-width:185px}
+.source-label.live{color:#8cdec3}
+.chart-box{position:relative;height:214px;margin-top:22px;border-top:1px solid #2a3b42;border-bottom:1px solid #2a3b42;background:linear-gradient(0deg,transparent 49px,#8ea9b110 50px,transparent 51px) 0 0 /100% 52px,linear-gradient(90deg,transparent 73px,#8ea9b10b 74px,transparent 75px) 0 0 /75px 100%}
+.chart-box:after{content:"";position:absolute;top:0;bottom:0;left:62%;width:1px;border-left:1px dashed #96b7b03b;pointer-events:none}
+.chart-box svg{display:block;width:100%;height:100%}
+.chart-caption{position:absolute;left:9px;bottom:9px;color:#7e979b;background:#0e1921bb;padding:4px 7px;font:600 9px "DM Sans",sans-serif;letter-spacing:.11em}
+.metric-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:14px}
+.metric{background:#192830a3;border:1px solid #32454a;padding:13px;border-radius:5px;min-width:0}
+.metric .meta{font:600 9px/1.5 "DM Sans",sans-serif;color:#78969b;letter-spacing:.11em}
+.metric .val{font:600 12px/1.5 "Space Grotesk",sans-serif;color:#d6eee3;margin-top:7px}
+.desk-foot{padding:13px 20px;border-top:1px solid #2e4349;background:#101b22;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:9px;letter-spacing:.09em;color:#739197}
+.desk-foot span:first-child:before{content:"";display:inline-block;background:#6dbca8;width:5px;height:5px;border-radius:50%;margin-right:7px}
+.corner-id{position:absolute;right:-23px;bottom:-26px;z-index:2;border:1px solid #42675d;background:#142729;color:#b5e8d5;padding:15px 24px;border-radius:6px;box-shadow:0 12px 40px #0007;font:600 10px "DM Sans",sans-serif;letter-spacing:.1em}
+.corner-id strong{display:block;font:500 22px "Space Grotesk",sans-serif;letter-spacing:-.05em}
+.trust{border-top:1px solid #223139;border-bottom:1px solid #223139;background:#0b1116}
+.trust-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+.trust-item{padding:26px 23px 25px;border-right:1px solid #223139}
+.trust-item:first-child{padding-left:0}.trust-item:last-child{border-right:0}
+.trust-item b{display:block;font:600 13px "Space Grotesk",sans-serif;color:#e4eee9}
+.trust-item small{display:block;font-size:10px;color:#8699a1;margin-top:5px}
+.trust-item .index{font:600 10px "DM Sans",sans-serif;letter-spacing:.1em;color:#7fbaaa;margin-right:10px}
+.section{padding:115px 0;border-bottom:1px solid #223139}
+.section-top{display:flex;justify-content:space-between;align-items:end;gap:50px;margin-bottom:38px}
+.section h2{font-size:clamp(35px,4.3vw,57px);font-weight:500;line-height:1.13;margin:20px 0 0;max-width:800px}
+.section-top p{font-size:13px;line-height:1.85;color:#98a9af;max-width:330px;margin:0}
+.feature-grid{display:grid;grid-template-columns:1.16fr 1fr 1fr;gap:14px}
+.feature{min-height:405px;border:1px solid #2c3b42;border-radius:8px;overflow:hidden;background:linear-gradient(155deg,#17232b,#10171d 70%);padding:29px;position:relative;display:flex;flex-direction:column}
+.feature:hover{border-color:#659889;transform:translateY(-2px);transition:transform .2s,border-color .2s}
+.feature-head{display:flex;justify-content:space-between;align-items:center;color:#83ad9e;font:600 10px "DM Sans",sans-serif;letter-spacing:.13em}
+.feature-number{color:#7a939b}
+.feature h3{font:500 24px/1.18 "Space Grotesk",sans-serif;letter-spacing:-.05em;margin:21px 0 11px}
+.feature p{color:#9baeb3;font-size:12px;line-height:1.8;margin:0;max-width:320px}
+.feature-visual{margin-top:auto;padding-top:30px}
+.research-preview{border:1px solid #3c5357;background:#0c161c;border-radius:6px;padding:17px}
+.research-preview .mint{color:#b9f1dd;font:600 12px "Space Grotesk",sans-serif}
+.preview-row{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #2c4247;font-size:10px;color:#7e99a1}
+.preview-row:last-child{border-bottom:0;padding-bottom:0}.preview-row strong{font-weight:600;color:#d1e2db}
+.preview-dots{display:flex;align-items:end;gap:5px;height:78px;padding:15px 3px 0}
+.preview-dots i{flex:1;height:var(--h);background:linear-gradient(#80bcae,#314e51);border-radius:2px 2px 0 0;opacity:.83}
+.signal-stack{display:grid;gap:9px}
+.signal-line{padding:12px 13px;border:1px solid #3e5156;border-radius:4px;background:#0f1b21;display:flex;gap:13px;align-items:center}
+.signal-line i{display:grid;place-items:center;border-radius:4px;font-style:normal;color:#b3ebd2;background:#1a3635;font-size:10px;width:26px;height:25px}
+.signal-line b{font:600 11px "DM Sans",sans-serif;color:#e0e8e4}.signal-line small{display:block;font-size:9px;color:#77939b}
+.note-preview{border-left:2px solid #7ec6af;background:#0d1920;padding:13px 16px;border-radius:0 5px 5px 0;font-size:10px;color:#9eb2b5;margin-bottom:8px}
+.note-preview b{display:block;font-size:11px;color:#e5efea;margin-bottom:4px}
+.darkline{height:1px;background:#293942;margin:14px 0}
+.section-cta{display:inline-flex;align-items:center;gap:14px;color:#b8e9d4;font:700 11px "DM Sans",sans-serif;letter-spacing:.03em;margin-top:24px}
+.section-cta:hover{color:white}
+.evidence-band{background:var(--cream);color:#132021;position:relative;overflow:hidden}
+.evidence-band::after{content:"";position:absolute;right:-220px;top:-200px;width:660px;height:660px;border:1px solid #71968750;border-radius:50%;box-shadow:0 0 0 90px #7196870c,0 0 0 180px #71968709;pointer-events:none}
+.evidence-layout{display:grid;grid-template-columns:.9fr 1.1fr;gap:10%;align-items:center;padding:110px 0;position:relative;z-index:1}
+.evidence-band .kicker{color:#387869}.evidence-band .kicker::before{background:#387869}
+.evidence-band h2{font:500 clamp(39px,4.45vw,61px)/1.08 "Space Grotesk",sans-serif;letter-spacing:-.07em;margin:25px 0}
+.evidence-band p{font-size:14px;line-height:1.85;color:#4d6160;max-width:530px}
+.evidence-list{border-top:1px solid #9aaea8}
+.evidence-list article{display:grid;grid-template-columns:45px 1fr auto;gap:15px;align-items:start;padding:22px 0;border-bottom:1px solid #a0b3ad}
+.evidence-list .ev-index{font:600 11px "DM Sans",sans-serif;color:#4e8877}.evidence-list h3{font:600 17px/1.4 "Space Grotesk",sans-serif;letter-spacing:-.03em;margin:0}.evidence-list p{font-size:12px;margin:5px 0 0;color:#647777}
+.evidence-list .ev-arrow{color:#4e8877;font-size:20px}
+.workflow{display:grid;grid-template-columns:repeat(4,1fr);gap:11px}
+.step{padding:24px;border-top:2px solid #75a994;background:#121d24;border-radius:3px;min-height:195px}
+.step .step-id{color:#7fb5a6;font:700 10px "DM Sans",sans-serif;letter-spacing:.1em}
+.step h3{font:600 17px "Space Grotesk",sans-serif;letter-spacing:-.03em;margin:20px 0 8px}
+.step p{font-size:12px;color:#96a9b0;line-height:1.75;margin:0}
+.developer{background:linear-gradient(135deg,#101b20,#0a1116);border:1px solid #2e454a;border-radius:9px;padding:38px;display:grid;grid-template-columns:.95fr 1.05fr;gap:48px;align-items:center}
+.developer h2{font-size:clamp(32px,3.6vw,46px);margin:17px 0}
+.developer p{color:#9caeb2;font-size:13px;max-width:450px;line-height:1.8}
+.code-card{background:#080f14;border:1px solid #30464d;border-radius:7px;padding:0;overflow:hidden;min-width:0}
+.code-head{padding:14px 20px;background:#142128;border-bottom:1px solid #2a3e44;font:700 10px "DM Sans",sans-serif;letter-spacing:.13em;color:#9fc1b5}
+.code-lines{padding:20px 24px;font:11px/2.05 ui-monospace,SFMono-Regular,Consolas,monospace;color:#a2b3b7;overflow-wrap:anywhere}
+.code-lines .key{color:#94dfc5}.code-lines .str{color:#e1ebce}.code-lines .comment{color:#69838c}
+.price-section{padding:110px 0;background:radial-gradient(ellipse at 75% 70%,#294d4233,transparent 42%),#0c1217}
+.price-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:70px;align-items:center}
+.price-section h2{font-size:clamp(39px,4.3vw,58px);font-weight:500;line-height:1.08;letter-spacing:-.07em;margin:24px 0}
+.price-section .lead{font-size:13px;line-height:1.85;color:#9db0b4;max-width:525px}
+.prices{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid #33464c;border-radius:6px;overflow:hidden}
+.price{padding:22px 16px;background:#152127;border-right:1px solid #33464c}
+.price:last-child{border-right:0}.price:nth-child(2){background:#1b2b2e}
+.price small{display:block;color:#9eb4b4;font:700 10px "DM Sans",sans-serif;letter-spacing:.1em}
+.price strong{font:500 26px "Space Grotesk",sans-serif;display:block;letter-spacing:-.05em;margin:12px 0 8px}
+.price span{font-size:10px;color:#95a9ac}.price span:last-child{display:block;margin-top:5px}
+.foot{border-top:1px solid #2b383d;background:#090d12;padding:34px 0 25px}
+.foot-top{display:flex;justify-content:space-between;align-items:start;gap:40px}
+.foot .small{font-size:11px;color:#7f969d;max-width:460px;margin:18px 0}
+.footlinks{display:flex;gap:25px;flex-wrap:wrap;font-size:11px;color:#adc0c1}
+.foot-bottom{border-top:1px solid #25363d;margin-top:26px;padding-top:19px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:10px;color:#72888e}
+@media(max-width:1100px){.hero-grid{grid-template-columns:1fr 1fr;gap:30px}.hero h1{font-size:57px}.container{width:min(1296px,calc(100% - 54px))}.desk-body{padding:18px}.feature{padding:22px}.feature-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.feature h3{font-size:21px}.corner-id{right:-10px}}
+@media(max-width:900px){.hero{padding:64px 0 75px}.hero-grid{grid-template-columns:1fr}.hero h1{max-width:750px;font-size:clamp(49px,8vw,78px)}.hero .lead{max-width:710px}.visual-wrap{max-width:680px;width:100%;margin:18px auto 0}.hero::after{display:none}.trust-grid{grid-template-columns:repeat(2,1fr)}.trust-item:nth-child(2){border-right:0}.trust-item:nth-child(-n+2){border-bottom:1px solid #223139}.trust-item:nth-child(3){padding-left:0}.feature-grid{grid-template-columns:1fr 1fr}.feature:first-child{grid-column:1/-1}.feature{min-height:345px}.feature:first-child{display:grid;grid-template-columns:1fr 1fr;gap:20px}.feature:first-child .feature-visual{grid-column:2;grid-row:1/5;margin-top:0;padding-top:0}.feature:first-child h3,.feature:first-child p,.feature:first-child .section-cta{grid-column:1}.evidence-layout{grid-template-columns:1fr;gap:32px}.workflow{grid-template-columns:1fr 1fr}.developer,.price-grid{grid-template-columns:1fr;gap:30px}.prices{max-width:650px}}
+@media(max-width:650px){.container{width:calc(100% - 34px)}.topbar{min-height:65px}.brand-word{font-size:18px}.toplinks{gap:10px}.toplinks a:not(.nav-action){display:none}.toplinks .nav-action{padding:10px 12px;font-size:11px}.announcement{align-items:flex-start;font-size:10px}.announcement span{max-width:260px}.hero{padding:61px 0 70px}.hero h1{font-size:clamp(47px,12vw,66px);margin:21px 0}.hero .lead{font-size:14px;line-height:1.75}.hero-notes{gap:9px 18px}.desk{transform:none}.desk-top{padding:12px 13px}.desk-body{padding:14px}.price-num{font-size:29px}.chart-box{height:185px}.market{padding:4px 7px}.metric{padding:10px 8px}.metric .meta{font-size:8px}.metric .val{font-size:10px}.desk-foot{padding:12px}.corner-id{display:none}.orbit{right:-180px}.trust-item{padding:21px 12px}.trust-item b{font-size:11px}.section{padding:77px 0}.section-top{display:block}.section-top p{margin-top:18px}.feature-grid{grid-template-columns:1fr}.feature:first-child{display:flex;grid-column:auto}.feature:first-child .feature-visual{margin-top:auto;padding-top:28px}.feature{min-height:370px}.section h2{font-size:clamp(34px,9.6vw,48px)}.evidence-layout{padding:80px 0}.evidence-band h2{font-size:clamp(38px,10vw,53px)}.evidence-list article{grid-template-columns:23px 1fr 14px;gap:10px}.evidence-list h3{font-size:15px}.workflow{grid-template-columns:1fr}.step{min-height:0}.developer{padding:24px 17px}.code-lines{padding:15px;font-size:10px}.price-section{padding:81px 0}.prices{grid-template-columns:1fr}.price{border-right:0;border-bottom:1px solid #33464c;padding:20px}.price:last-child{border-bottom:0}.price strong{margin:4px 0}.foot-top{display:block}.footlinks{margin-top:18px}.foot-bottom{display:block}.foot-bottom span{display:block;margin-top:8px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<a href="#content" class="skip">Skip to content</a>
+<header>
+  <div class="container topbar">
+    <a href="/" class="logo" aria-label="SignalForge home">
+      <span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 28 28" fill="none"><path d="M5 20.5 12 8l5.4 9.3L22.8 8" stroke="#B6F0DA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 24h18" stroke="#729F93" stroke-width="1.5"/></svg></span>
+      <span class="brand-word">SIGNAL<span>FORGE</span></span>
+    </a>
+    <nav class="toplinks" aria-label="Main navigation">
+      <a href="#platform">Platform</a><a href="/radar">Token Radar</a><a href="#approach">Method</a><a href="#access">Access</a>
+      <a class="nav-action" href="/app">Launch terminal &nbsp;↗</a>
+    </nav>
+  </div>
+</header>
+<main id="content">
+  <div class="container announcement"><span><i class="signal-led" aria-hidden="true"></i><strong>Digital asset research, without the noise.</strong> &nbsp;Source-aware tools for independent analysis.</span><a href="/radar">Explore Token Radar &nbsp;↗</a></div>
+  <section class="hero" aria-labelledby="hero-title"><div class="container hero-grid">
+    <div class="hero-content">
+      <div class="eyebrow">The digital asset intelligence desk</div>
+      <h1 id="hero-title">The market moves.<em>Know what matters.</em></h1>
+      <p class="lead">A sharper way to read crypto. Research the token. Trace liquidity across reported DEX pools, examine explainable signals, and build a source-linked view of what changed — without connecting a wallet.</p>
+      <div class="hero-actions"><a class="btn" href="/radar">Start researching free <span class="arrow" aria-hidden="true">↗</span></a><a class="btn outline" href="/app">Explore the terminal <span class="arrow" aria-hidden="true">→</span></a></div>
+      <div class="hero-notes"><span>Source-linked observations</span><span>Read-only research</span><span>No wallet required</span></div>
+    </div>
+    <div class="visual-wrap">
+      <div class="orbit" aria-hidden="true"></div>
+      <div class="desk" aria-label="Interactive SignalForge market overview">
+        <div class="desk-top"><span class="desk-title">◈ &nbsp; SIGNALFORGE / MARKET DESK</span><span class="desk-version">RESEARCH TERMINAL &nbsp;·&nbsp; 01</span><span class="terminal-tools" aria-hidden="true"><span></span><span></span><span></span></span></div>
+        <div class="desk-body">
+          <div class="desk-heading"><span class="desk-label">MARKET OBSERVATION</span><div class="markets" role="group" aria-label="Market selection"><button type="button" class="market" data-market="BTCUSD" aria-pressed="true">BTC</button><button type="button" class="market" data-market="ETHUSD" aria-pressed="false">ETH</button><button type="button" class="market" data-market="SOLUSD" aria-pressed="false">SOL</button></div></div>
+          <div class="price-row"><div><div class="asset-title" id="assetName">Bitcoin <span>/ USD</span></div><div class="price-num" id="livePrice">—</div></div><div class="source-label" id="sourceStatus" role="status" aria-live="polite">Checking source availability…</div></div>
+          <div class="chart-box">
+            <svg id="priceChart" viewBox="0 0 720 210" preserveAspectRatio="none" role="img" aria-label="Illustrative chart until validated public market candles load">
+              <defs><linearGradient id="chartGradient" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#7BD7B9" stop-opacity=".27"/><stop offset="1" stop-color="#7BD7B9" stop-opacity="0"/></linearGradient></defs>
+              <path id="chartFill" d="M0 155L40 147 83 161 127 128 166 134 203 110 252 131 298 83 339 104 383 81 423 97 470 49 516 68 562 35 605 53 662 26 720 30V210H0Z" fill="url(#chartGradient)"/>
+              <path id="chartStroke" d="M0 155L40 147 83 161 127 128 166 134 203 110 252 131 298 83 339 104 383 81 423 97 470 49 516 68 562 35 605 53 662 26 720 30" fill="none" stroke="#97E5C7" stroke-width="2.7" vector-effect="non-scaling-stroke"/>
+            </svg>
+            <span class="chart-caption" id="chartCaption">ILLUSTRATIVE INTERFACE / NOT A LIVE PRICE</span>
+          </div>
+          <div class="metric-grid">
+            <div class="metric"><div class="meta">RESEARCH</div><div class="val">Source-aware</div></div>
+            <div class="metric"><div class="meta">SIGNALS</div><div class="val">Explainable</div></div>
+            <div class="metric"><div class="meta">EXECUTION</div><div class="val">Read-only</div></div>
+          </div>
+        </div>
+        <div class="desk-foot"><span>DATA MODE SHOWN EXPLICITLY</span><span>OBSERVE &nbsp;·&nbsp; ANALYZE &nbsp;·&nbsp; COMPARE</span></div>
+      </div>
+      <div class="corner-id">DESIGNED FOR<strong>CLARITY.</strong></div>
+    </div>
+  </div></section>
+  <div class="trust"><div class="container trust-grid">
+    <div class="trust-item"><b><span class="index">01</span>Token intelligence</b><small>DEX pool and liquidity research</small></div>
+    <div class="trust-item"><b><span class="index">02</span>Signal context</b><small>Transparent strategy conditions</small></div>
+    <div class="trust-item"><b><span class="index">03</span>Research continuity</b><small>Timestamped saved observations</small></div>
+    <div class="trust-item"><b><span class="index">04</span>Signal Rooms</b><small>Community research discussion</small></div>
+  </div></div>
+  <section class="section" id="platform" aria-labelledby="platform-title"><div class="container">
+    <div class="section-top"><div><div class="kicker">An integrated research workflow</div><h2 id="platform-title">Intelligence is more than<br>another price chart.</h2></div><p>Go from an initial market question to a structured, revisitable research record. Each layer is designed to make evidence easier to inspect—not to disguise uncertainty.</p></div>
+    <div class="feature-grid">
+      <article class="feature"><div class="feature-head"><span>01 / ONCHAIN DISCOVERY</span><span class="feature-number">↗</span></div><h3>Token Radar</h3><p>Paste a Solana token mint. Inspect available DEX pools, reported liquidity, activity and observation freshness, with the source made visible.</p><div class="feature-visual"><div class="research-preview"><div class="mint">POOL OBSERVATION</div><div class="preview-row"><span>Network</span><strong>Solana</strong></div><div class="preview-row"><span>Data provenance</span><strong>Source-linked</strong></div><div class="preview-row"><span>Review state</span><strong>Research only</strong></div></div></div><a href="/radar" class="section-cta">Explore Token Radar <span aria-hidden="true">↗</span></a></article>
+      <article class="feature"><div class="feature-head"><span>02 / MARKET STRUCTURE</span><span class="feature-number">↗</span></div><h3>Signals with reasons.</h3><p>Study technical strategies, confluence factors and historical test outputs with explicit data-mode and methodology labels.</p><div class="feature-visual"><div class="signal-stack"><div class="signal-line"><i>01</i><div><b>Trend structure</b><small>Directional alignment</small></div></div><div class="signal-line"><i>02</i><div><b>Volume confirmation</b><small>Participation and context</small></div></div><div class="signal-line"><i>03</i><div><b>Volatility regime</b><small>Risk and range context</small></div></div></div></div><a href="/app" class="section-cta">Open strategy desk <span aria-hidden="true">↗</span></a></article>
+      <article class="feature"><div class="feature-head"><span>03 / COMPOUNDING INSIGHT</span><span class="feature-number">↗</span></div><h3>A memory for your thesis.</h3><p>Track observations over time, save a watchlist and organize ideas in research notes and Signal Rooms.</p><div class="feature-visual"><div class="note-preview"><b>Observation history</b>Compare source snapshots when history exists.</div><div class="note-preview"><b>Research journal</b>Keep a hypothesis beside the evidence.</div><div class="note-preview"><b>Signal Rooms</b>Discuss the market with context.</div></div><a href="/app" class="section-cta">Enter research workspace <span aria-hidden="true">↗</span></a></article>
+    </div>
+  </div></section>
+  <section class="evidence-band" id="approach" aria-labelledby="approach-title"><div class="container evidence-layout">
+    <div><div class="kicker">The SignalForge principle</div><h2 id="approach-title">Know what changed.<br>Know what you know.</h2><p>A headline is not an evidence trail. SignalForge separates public data observations from inferences, backtests and simulations. Missing history is identified as missing—not quietly filled with invented confidence.</p><a class="btn" href="/radar">Inspect source-linked research <span class="arrow" aria-hidden="true">↗</span></a></div>
+    <div class="evidence-list">
+      <article><span class="ev-index">01</span><div><h3>Begin with the underlying source</h3><p>Review market observations alongside their reported origin and freshness.</p></div><span class="ev-arrow" aria-hidden="true">↗</span></article>
+      <article><span class="ev-index">02</span><div><h3>Separate observation from interpretation</h3><p>Explain what drives a signal rather than presenting a score as a prediction.</p></div><span class="ev-arrow" aria-hidden="true">↗</span></article>
+      <article><span class="ev-index">03</span><div><h3>Compare evidence across time</h3><p>Stored observations can reveal a change, subject to actual recorded history.</p></div><span class="ev-arrow" aria-hidden="true">↗</span></article>
+      <article><span class="ev-index">04</span><div><h3>Move from isolated views to research</h3><p>Bring discovery, strategy context and discussion into one workspace.</p></div><span class="ev-arrow" aria-hidden="true">↗</span></article>
+    </div>
+  </div></section>
+  <section class="section" id="how" aria-labelledby="how-title"><div class="container">
+    <div class="section-top"><div><div class="kicker">A clear first step</div><h2 id="how-title">From curiosity to context.</h2></div><p>Get a meaningful first token report without signup. Save a research history only if you want a continuing workflow.</p></div>
+    <div class="workflow">
+      <article class="step"><div class="step-id">01 / EXPLORE</div><h3>Paste a token mint.</h3><p>Use the free Solana Token Radar with an address you want to investigate.</p></article>
+      <article class="step"><div class="step-id">02 / VERIFY</div><h3>Inspect the source.</h3><p>Examine available pools, reported liquidity and observation timestamps.</p></article>
+      <article class="step"><div class="step-id">03 / INTERPRET</div><h3>Study the structure.</h3><p>Move into explainable strategy and market research tools.</p></article>
+      <article class="step"><div class="step-id">04 / CONTINUE</div><h3>Build your desk.</h3><p>Save tokens, track observed changes and exchange research in Signal Rooms.</p></article>
+    </div>
+  </div></section>
+  <section class="section" id="engineering" aria-labelledby="engineering-title"><div class="container">
+    <div class="developer"><div><div class="kicker">Engineering with an audit trail</div><h2 id="engineering-title">Built for inspection,<br>not a black box.</h2><p>Real backend workflows under the surface: TypeScript/Bun APIs, PostgreSQL-backed research history, source-aware data adapters, testable rules and a production deployment pipeline.</p><a class="section-cta" href="https://github.com/Noetfield-Systems/SignalForge" target="_blank" rel="noopener noreferrer">Review the public code on GitHub <span aria-hidden="true">↗</span></a></div>
+      <div class="code-card" aria-label="Illustrative, non-executable research workflow"><div class="code-head">SIGNALFORGE / RESEARCH PIPELINE</div><div class="code-lines"><span class="comment">// Conceptual workflow, not an API response</span><br><span class="key">ingest</span>("public market source")<br>&nbsp; .<span class="key">validate</span>("source + timestamp")<br>&nbsp; .<span class="key">normalize</span>("market observations")<br>&nbsp; .<span class="key">compare</span>("recorded history")<br>&nbsp; .<span class="key">present</span>({<br>&nbsp;&nbsp;&nbsp; mode: <span class="str">"read_only_research"</span>,<br>&nbsp;&nbsp;&nbsp; provenance: <span class="str">"visible"</span><br>&nbsp; });</div></div>
+    </div>
+  </div></section>
+  <section class="price-section" id="access" aria-labelledby="access-title"><div class="container price-grid">
+    <div><div class="kicker">Open access, deeper research</div><h2 id="access-title">Start with a question.<br>Stay for the clarity.</h2><p class="lead">Free token research is available without a wallet or account. Explore the terminal, then choose optional paid tools when your research workflow needs more.</p><div class="action-row"><a class="btn" href="/radar">Research a token free <span class="arrow" aria-hidden="true">↗</span></a><a class="btn outline" href="/app">Explore the plans <span class="arrow" aria-hidden="true">→</span></a></div></div>
+    <div class="prices" aria-label="Available access tiers"><div class="price"><small>DISCOVER</small><strong>Free</strong><span>Token Radar</span><span>No wallet required</span></div><div class="price"><small>RESEARCH</small><strong>$29</strong><span>CAD $29/month</span><span>Optional Pro plan</span></div><div class="price"><small>QUANT</small><strong>$99</strong><span>CAD $99/month</span><span>Optional Quant plan</span></div></div>
+  </div></section>
+</main>
+<footer class="foot"><div class="container">
+  <div class="foot-top"><div><a href="/" class="logo"><span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 28 28" fill="none"><path d="M5 20.5 12 8l5.4 9.3L22.8 8" stroke="#B6F0DA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 24h18" stroke="#729F93" stroke-width="1.5"/></svg></span><span class="brand-word">SIGNAL<span>FORGE</span></span></a><p class="small">Digital asset market intelligence and research. No trading, brokerage, custody or guaranteed outcomes. Source observations may be delayed or incomplete. Not financial advice.</p></div><nav class="footlinks" aria-label="Footer navigation"><a href="/radar">Token Radar</a><a href="/app">Market terminal</a><a href="https://github.com/Noetfield-Systems/SignalForge" target="_blank" rel="noopener noreferrer">GitHub</a><a href="/api/health">System status</a></nav></div>
+  <div class="foot-bottom"><span>© 2026 SignalForge. Research with evidence.</span><span>Read-only intelligence &nbsp;/&nbsp; Source-aware by design</span></div>
+</div></footer>
+<script>
+(function(){
+  "use strict";
+  var choices = document.querySelectorAll("[data-market]");
+  var status = document.getElementById("sourceStatus");
+  var label = document.getElementById("assetName");
+  var price = document.getElementById("livePrice");
+  var caption = document.getElementById("chartCaption");
+  var chart = document.getElementById("priceChart");
+  var fill = document.getElementById("chartFill");
+  var stroke = document.getElementById("chartStroke");
+  var originals = { fill: fill.getAttribute("d"), stroke: stroke.getAttribute("d") };
+  var names = {BTCUSD:"Bitcoin",ETHUSD:"Ethereum",SOLUSD:"Solana"};
+  var current = "BTCUSD";
+  var active = 0;
+  var controller = null;
+  function fallback(message){
+    price.textContent="—";status.className="source-label";status.textContent=message;
+    fill.setAttribute("d", originals.fill);stroke.setAttribute("d", originals.stroke);
+    chart.setAttribute("aria-label", "Illustrative research chart, not live quotes");
+    caption.textContent="ILLUSTRATIVE INTERFACE / NOT A LIVE PRICE";
+  }
+  function renderCandles(candles){
+    var points = candles.slice(-60).map(function(x){return Number(x.close)}).filter(Number.isFinite);
+    if(points.length<12)return false;
+    var lo=Math.min.apply(null,points),hi=Math.max.apply(null,points);
+    if(!Number.isFinite(lo)||!Number.isFinite(hi))return false;
+    var pad=(hi-lo)*.12||1;lo-=pad;hi+=pad;
+    var d=points.map(function(p,i){return (i?"L":"M")+(i*720/(points.length-1)).toFixed(1)+" "+(196-(p-lo)*170/(hi-lo)).toFixed(1)}).join(" ");
+    stroke.setAttribute("d",d);fill.setAttribute("d",d+" L720 210 L0 210 Z");
+    return true;
+  }
+  async function choose(symbol){
+    current=symbol;var seq=++active;
+    if(controller)controller.abort();controller=new AbortController();
+    choices.forEach(function(btn){btn.setAttribute("aria-pressed",String(btn.getAttribute("data-market")===symbol))});
+    label.innerHTML=names[symbol]+" <span>/ USD</span>";
+    fallback("Checking source availability…");
+    try{
+      var timer=setTimeout(function(){controller.abort()},8500);
+      var response=await fetch("/api/market?symbol="+encodeURIComponent(symbol),{signal:controller.signal,headers:{"accept":"application/json"},cache:"no-store"});
+      clearTimeout(timer);
+      if(seq!==active)return;
+      if(!response.ok)throw Error("market_not_ready");
+      var pack=await response.json();
+      if(seq!==active)return;
+      var candles=Array.isArray(pack.candles)?pack.candles:[];
+      if(pack.mode!=="LIVE_PUBLIC_DATA"||!renderCandles(candles)){fallback("Source unavailable · preview only");return}
+      var last=candles[candles.length-1];
+      var value=Number(last&&last.close);
+      if(!Number.isFinite(value)||value<=0){fallback("Market price unavailable");return}
+      price.textContent=new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",minimumFractionDigits:2,maximumFractionDigits:2}).format(value);
+      status.textContent="PUBLIC MARKET DATA · SOURCE-REPORTED";status.className="source-label live";
+      caption.textContent="PUBLIC MARKET CANDLES / NOT TRADING ADVICE";
+      chart.setAttribute("aria-label","Public source-reported market candles for "+names[symbol]);
+    }catch(e){if(seq===active)fallback("Market feed unavailable · preview only")}
+  }
+  choices.forEach(function(btn){btn.addEventListener("click",function(){choose(btn.getAttribute("data-market"))})});
+  choose(current);
+}());
+</script>
+</body>
+</html>
