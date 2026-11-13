@@ -7,7 +7,7 @@
   "operating_system": "EXISTING_FOUNDER_COMPANY_OS_RUNTIME",
   "number_of_companies": 1,
   "number_of_product_platforms": 1,
-  "objective": "Build and grow one credible, revenue-producing Web3/Ethereum research and community product, with explainable signals, paper-trading, token due diligence, paid research, and validated retention; no unverified revenue or live trade.",
+  "objective": "Operate and grow SignalForge as a premium AI-powered crypto MARKET INTELLIGENCE business: real-source candlestick charts, scanner, explainable signals, historical backtests, source-linked Solana Token Radar, retained research, authentic community and paid memberships. Company OS is internal operations only, not the consumer product.",
   "operating_continuity": {
     "scheduler_owner": "SINA_NATIVE_WORKFORCE_RESIDENT_HEARTBEAT",
     "event_ingress": "https://signalforge-web-production.up.railway.app/api/company-os/snapshot",
@@ -19,7 +19,9 @@
     "local_scheduler_creation": false,
     "model_team_provisioning": "REGISTER_ONLY_UNTIL_EXISTING_FABRIC_BOUND",
     "max_parallel_internal_drafts": 8,
-    "staffing_claim": "100_DECLARED_ROLE_CONTRACTS_NOT_100_LIVE_AGENTS"
+    "staffing_claim": "100_DECLARED_ROLE_CONTRACTS_NOT_100_LIVE_AGENTS",
+    "product_identity_mandatory": true,
+    "product_goal_guard": "FOUNDER_INTENT_DRIFT_REJECT_PUBLIC_AGENT_COUNT_POSITIONING"
   },
   "product_family": [
     {
@@ -208,7 +210,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "chief_of_staff",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-MANAGING-DIRECTOR"
+        "task_template_id": "SF-JOB-MANAGING-DIRECTOR",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Select the highest-value market research and commercial outcomes; make accountable assignments",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "sina_founder_os",
       "permission_contract": {
@@ -256,7 +262,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "researcher",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-HEAD-RESEARCH"
+        "task_template_id": "SF-JOB-HEAD-RESEARCH",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Validate actual OHLC, indicators, token research evidence and explanation quality",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -304,7 +314,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-HEAD-ENGINEERING"
+        "task_template_id": "SF-JOB-HEAD-ENGINEERING",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Build and test candlestick charts, scanner, strategies, backtest, watchlists and memberships",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -352,7 +366,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "researcher",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-HEAD-GROWTH"
+        "task_template_id": "SF-JOB-HEAD-GROWTH",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Acquire genuine crypto market researchers and measure their first useful research and returns",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -400,7 +418,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "revenue",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-HEAD-COMMERCIAL"
+        "task_template_id": "SF-JOB-HEAD-COMMERCIAL",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Verify optional paid subscriptions and actual collected cash",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -448,7 +470,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "operator",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-HEAD-TRUST"
+        "task_template_id": "SF-JOB-HEAD-TRUST",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Protect customer data and prevent fake signals, fraudulent claims and manipulative content",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -496,7 +522,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-HEAD-OPERATIONS"
+        "task_template_id": "SF-JOB-HEAD-OPERATIONS",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Keep market research services and existing Railway/Postgres reliable at efficient cost",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -546,7 +576,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "researcher",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-ETHEREUM-ANALYST"
+        "task_template_id": "SF-JOB-ETHEREUM-ANALYST",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Validate actual OHLC, indicators, token research evidence and explanation quality",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_research",
       "permission_contract": {
@@ -595,7 +629,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "researcher",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-ONCHAIN-ANALYST"
+        "task_template_id": "SF-JOB-ONCHAIN-ANALYST",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Validate actual OHLC, indicators, token research evidence and explanation quality",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_research",
       "permission_contract": {
@@ -645,7 +683,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "researcher",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-TOKENOMICS-ANALYST"
+        "task_template_id": "SF-JOB-TOKENOMICS-ANALYST",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Validate actual OHLC, indicators, token research evidence and explanation quality",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_research",
       "permission_contract": {
@@ -694,7 +736,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "researcher",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-QUANT-RESEARCHER"
+        "task_template_id": "SF-JOB-QUANT-RESEARCHER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Validate actual OHLC, indicators, token research evidence and explanation quality",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_research",
       "permission_contract": {
@@ -743,7 +789,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-MARKET-DATA-ENGINEER"
+        "task_template_id": "SF-JOB-MARKET-DATA-ENGINEER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Build and test candlestick charts, scanner, strategies, backtest, watchlists and memberships",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_engineering",
       "permission_contract": {
@@ -791,7 +841,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-BACKEND-ENGINEER"
+        "task_template_id": "SF-JOB-BACKEND-ENGINEER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Build and test candlestick charts, scanner, strategies, backtest, watchlists and memberships",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_engineering",
       "permission_contract": {
@@ -840,7 +894,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-FRONTEND-ENGINEER"
+        "task_template_id": "SF-JOB-FRONTEND-ENGINEER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Build and test candlestick charts, scanner, strategies, backtest, watchlists and memberships",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_engineering",
       "permission_contract": {
@@ -889,7 +947,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-PAPER-TRADING-ENGINEER"
+        "task_template_id": "SF-JOB-PAPER-TRADING-ENGINEER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Build and test candlestick charts, scanner, strategies, backtest, watchlists and memberships",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_engineering",
       "permission_contract": {
@@ -938,7 +1000,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-QA-ENGINEER"
+        "task_template_id": "SF-JOB-QA-ENGINEER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Build and test candlestick charts, scanner, strategies, backtest, watchlists and memberships",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_engineering",
       "permission_contract": {
@@ -986,7 +1052,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "researcher",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-COMMUNITY-LEAD"
+        "task_template_id": "SF-JOB-COMMUNITY-LEAD",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Acquire genuine crypto market researchers and measure their first useful research and returns",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_growth",
       "permission_contract": {
@@ -1034,7 +1104,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "researcher",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-SEO-CONTENT-LEAD"
+        "task_template_id": "SF-JOB-SEO-CONTENT-LEAD",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Acquire genuine crypto market researchers and measure their first useful research and returns",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_growth",
       "permission_contract": {
@@ -1082,7 +1156,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "researcher",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-LIFECYCLE-GROWTH"
+        "task_template_id": "SF-JOB-LIFECYCLE-GROWTH",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Acquire genuine crypto market researchers and measure their first useful research and returns",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_growth",
       "permission_contract": {
@@ -1130,7 +1208,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "revenue",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-BILLING-OPERATOR"
+        "task_template_id": "SF-JOB-BILLING-OPERATOR",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Verify optional paid subscriptions and actual collected cash",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_commercial",
       "permission_contract": {
@@ -1178,7 +1260,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "revenue",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-CUSTOMER-SUCCESS"
+        "task_template_id": "SF-JOB-CUSTOMER-SUCCESS",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Verify optional paid subscriptions and actual collected cash",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_commercial",
       "permission_contract": {
@@ -1227,7 +1313,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "operator",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-SECURITY-AUDITOR"
+        "task_template_id": "SF-JOB-SECURITY-AUDITOR",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Protect customer data and prevent fake signals, fraudulent claims and manipulative content",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_trust",
       "permission_contract": {
@@ -1275,7 +1365,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "operator",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-MODERATION-RISK"
+        "task_template_id": "SF-JOB-MODERATION-RISK",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Protect customer data and prevent fake signals, fraudulent claims and manipulative content",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_trust",
       "permission_contract": {
@@ -1324,7 +1418,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-SRE-OPERATOR"
+        "task_template_id": "SF-JOB-SRE-OPERATOR",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Keep market research services and existing Railway/Postgres reliable at efficient cost",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_operations",
       "permission_contract": {
@@ -1373,7 +1471,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-FINANCE-ANALYST"
+        "task_template_id": "SF-JOB-FINANCE-ANALYST",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Keep market research services and existing Railway/Postgres reliable at efficient cost",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_operations",
       "permission_contract": {
@@ -1422,7 +1524,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": null,
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-INDEPENDENT-VERIFIER"
+        "task_template_id": "SF-JOB-INDEPENDENT-VERIFIER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Independently substantiate build/CI/deploy/user outcome/revenue, never self-verify",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "sina_founder_os",
       "permission_contract": {
@@ -1468,7 +1574,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "chief_of_staff",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-CHIEF-OF-STAFF"
+        "task_template_id": "SF-JOB-CHIEF-OF-STAFF",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Select the highest-value market research and commercial outcomes; make accountable assignments",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -1514,7 +1624,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "chief_of_staff",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-OPERATING-ANALYST"
+        "task_template_id": "SF-JOB-OPERATING-ANALYST",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Select the highest-value market research and commercial outcomes; make accountable assignments",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -1560,7 +1674,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "researcher",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-EVM-GAS-RESEARCHER"
+        "task_template_id": "SF-JOB-EVM-GAS-RESEARCHER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Validate actual OHLC, indicators, token research evidence and explanation quality",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_research",
       "permission_contract": {
@@ -1606,7 +1724,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "researcher",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-STABLECOIN-ANALYST"
+        "task_template_id": "SF-JOB-STABLECOIN-ANALYST",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Validate actual OHLC, indicators, token research evidence and explanation quality",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_research",
       "permission_contract": {
@@ -1652,7 +1774,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "researcher",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-MARKET-MICROSTRUCTURE-ANALYST"
+        "task_template_id": "SF-JOB-MARKET-MICROSTRUCTURE-ANALYST",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Validate actual OHLC, indicators, token research evidence and explanation quality",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_research",
       "permission_contract": {
@@ -1698,7 +1824,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "researcher",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-CHAIN-LIQUIDITY-ANALYST"
+        "task_template_id": "SF-JOB-CHAIN-LIQUIDITY-ANALYST",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Validate actual OHLC, indicators, token research evidence and explanation quality",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_research",
       "permission_contract": {
@@ -1744,7 +1874,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "researcher",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-PROTOCOL-DUE-DILIGENCE"
+        "task_template_id": "SF-JOB-PROTOCOL-DUE-DILIGENCE",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Validate actual OHLC, indicators, token research evidence and explanation quality",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_research",
       "permission_contract": {
@@ -1790,7 +1924,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "researcher",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-TOKEN-HOLDER-RESEARCHER"
+        "task_template_id": "SF-JOB-TOKEN-HOLDER-RESEARCHER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Validate actual OHLC, indicators, token research evidence and explanation quality",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_research",
       "permission_contract": {
@@ -1836,7 +1974,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "researcher",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-COMPETITOR-INTELLIGENCE"
+        "task_template_id": "SF-JOB-COMPETITOR-INTELLIGENCE",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Validate actual OHLC, indicators, token research evidence and explanation quality",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_research",
       "permission_contract": {
@@ -1882,7 +2024,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-HEAD-PRODUCT"
+        "task_template_id": "SF-JOB-HEAD-PRODUCT",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Ship a premium fast market-to-research-to-retention journey",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -1928,7 +2074,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-PRODUCT-DISCOVERY"
+        "task_template_id": "SF-JOB-PRODUCT-DISCOVERY",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Ship a premium fast market-to-research-to-retention journey",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -1974,7 +2124,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-PRODUCT-ANALYTICS"
+        "task_template_id": "SF-JOB-PRODUCT-ANALYTICS",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Ship a premium fast market-to-research-to-retention journey",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -2020,7 +2174,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-USER-JOURNEY-DESIGNER"
+        "task_template_id": "SF-JOB-USER-JOURNEY-DESIGNER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Ship a premium fast market-to-research-to-retention journey",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -2066,7 +2224,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-ACCESSIBILITY-DESIGNER"
+        "task_template_id": "SF-JOB-ACCESSIBILITY-DESIGNER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Ship a premium fast market-to-research-to-retention journey",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -2112,7 +2274,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-RESEARCH-WORKFLOW-PM"
+        "task_template_id": "SF-JOB-RESEARCH-WORKFLOW-PM",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Ship a premium fast market-to-research-to-retention journey",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -2158,7 +2324,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-TOKEN-RADAR-PM"
+        "task_template_id": "SF-JOB-TOKEN-RADAR-PM",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Ship a premium fast market-to-research-to-retention journey",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -2204,7 +2374,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-PRICING-PM"
+        "task_template_id": "SF-JOB-PRICING-PM",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Ship a premium fast market-to-research-to-retention journey",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -2250,7 +2424,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-EXPERIMENTATION-PM"
+        "task_template_id": "SF-JOB-EXPERIMENTATION-PM",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Ship a premium fast market-to-research-to-retention journey",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -2296,7 +2474,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-TECHNICAL-WRITER"
+        "task_template_id": "SF-JOB-TECHNICAL-WRITER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Ship a premium fast market-to-research-to-retention journey",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -2342,7 +2524,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-API-ARCHITECT"
+        "task_template_id": "SF-JOB-API-ARCHITECT",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Build and test candlestick charts, scanner, strategies, backtest, watchlists and memberships",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_engineering",
       "permission_contract": {
@@ -2388,7 +2574,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-SOLANA-ADAPTER-ENGINEER"
+        "task_template_id": "SF-JOB-SOLANA-ADAPTER-ENGINEER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Build and test candlestick charts, scanner, strategies, backtest, watchlists and memberships",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_engineering",
       "permission_contract": {
@@ -2434,7 +2624,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-EVM-RPC-ENGINEER"
+        "task_template_id": "SF-JOB-EVM-RPC-ENGINEER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Build and test candlestick charts, scanner, strategies, backtest, watchlists and memberships",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_engineering",
       "permission_contract": {
@@ -2480,7 +2674,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-RISK-ENGINEER"
+        "task_template_id": "SF-JOB-RISK-ENGINEER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Build and test candlestick charts, scanner, strategies, backtest, watchlists and memberships",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_engineering",
       "permission_contract": {
@@ -2526,7 +2724,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-AUTH-ENGINEER"
+        "task_template_id": "SF-JOB-AUTH-ENGINEER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Build and test candlestick charts, scanner, strategies, backtest, watchlists and memberships",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_engineering",
       "permission_contract": {
@@ -2572,7 +2774,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-UX-SYSTEMS-ENGINEER"
+        "task_template_id": "SF-JOB-UX-SYSTEMS-ENGINEER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Build and test candlestick charts, scanner, strategies, backtest, watchlists and memberships",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_engineering",
       "permission_contract": {
@@ -2618,7 +2824,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-PERFORMANCE-ENGINEER"
+        "task_template_id": "SF-JOB-PERFORMANCE-ENGINEER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Build and test candlestick charts, scanner, strategies, backtest, watchlists and memberships",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_engineering",
       "permission_contract": {
@@ -2664,7 +2874,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-ACCESSIBILITY-ENGINEER"
+        "task_template_id": "SF-JOB-ACCESSIBILITY-ENGINEER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Build and test candlestick charts, scanner, strategies, backtest, watchlists and memberships",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_engineering",
       "permission_contract": {
@@ -2710,7 +2924,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-PAYMENTS-ENGINEER"
+        "task_template_id": "SF-JOB-PAYMENTS-ENGINEER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Build and test candlestick charts, scanner, strategies, backtest, watchlists and memberships",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_engineering",
       "permission_contract": {
@@ -2756,7 +2974,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-RELEASE-ENGINEER"
+        "task_template_id": "SF-JOB-RELEASE-ENGINEER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Build and test candlestick charts, scanner, strategies, backtest, watchlists and memberships",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_engineering",
       "permission_contract": {
@@ -2802,7 +3024,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-MIGRATIONS-ENGINEER"
+        "task_template_id": "SF-JOB-MIGRATIONS-ENGINEER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Build and test candlestick charts, scanner, strategies, backtest, watchlists and memberships",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_engineering",
       "permission_contract": {
@@ -2848,7 +3074,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-QA-AUTOMATION"
+        "task_template_id": "SF-JOB-QA-AUTOMATION",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Build and test candlestick charts, scanner, strategies, backtest, watchlists and memberships",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_engineering",
       "permission_contract": {
@@ -2894,7 +3124,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-DEVELOPER-EXPERIENCE-ENGINEER"
+        "task_template_id": "SF-JOB-DEVELOPER-EXPERIENCE-ENGINEER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Build and test candlestick charts, scanner, strategies, backtest, watchlists and memberships",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_engineering",
       "permission_contract": {
@@ -2940,7 +3174,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-INCIDENT-ENGINEER"
+        "task_template_id": "SF-JOB-INCIDENT-ENGINEER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Build and test candlestick charts, scanner, strategies, backtest, watchlists and memberships",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_engineering",
       "permission_contract": {
@@ -2986,7 +3224,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-HEAD-DATA"
+        "task_template_id": "SF-JOB-HEAD-DATA",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Ensure actual price/pool source provenance, freshness, data integrity, cohort truth",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -3032,7 +3274,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-PIPELINE-ENGINEER"
+        "task_template_id": "SF-JOB-PIPELINE-ENGINEER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Ensure actual price/pool source provenance, freshness, data integrity, cohort truth",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -3078,7 +3324,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-INDEXER-ENGINEER"
+        "task_template_id": "SF-JOB-INDEXER-ENGINEER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Ensure actual price/pool source provenance, freshness, data integrity, cohort truth",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -3124,7 +3374,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-SOURCE-RELIABILITY-ENGINEER"
+        "task_template_id": "SF-JOB-SOURCE-RELIABILITY-ENGINEER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Ensure actual price/pool source provenance, freshness, data integrity, cohort truth",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -3170,7 +3424,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-DATA-QUALITY-ENGINEER"
+        "task_template_id": "SF-JOB-DATA-QUALITY-ENGINEER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Ensure actual price/pool source provenance, freshness, data integrity, cohort truth",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -3216,7 +3474,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-METRICS-ENGINEER"
+        "task_template_id": "SF-JOB-METRICS-ENGINEER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Ensure actual price/pool source provenance, freshness, data integrity, cohort truth",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -3262,7 +3524,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-EXPERIMENTATION-ANALYST"
+        "task_template_id": "SF-JOB-EXPERIMENTATION-ANALYST",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Ensure actual price/pool source provenance, freshness, data integrity, cohort truth",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -3308,7 +3574,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-COHORT-ANALYST"
+        "task_template_id": "SF-JOB-COHORT-ANALYST",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Ensure actual price/pool source provenance, freshness, data integrity, cohort truth",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -3354,7 +3624,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-MARKET-DATA-VALIDATOR"
+        "task_template_id": "SF-JOB-MARKET-DATA-VALIDATOR",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Ensure actual price/pool source provenance, freshness, data integrity, cohort truth",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -3400,7 +3674,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-MODEL-EVALUATION-ENGINEER"
+        "task_template_id": "SF-JOB-MODEL-EVALUATION-ENGINEER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Ensure actual price/pool source provenance, freshness, data integrity, cohort truth",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -3446,7 +3724,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-KNOWLEDGE-CURATOR"
+        "task_template_id": "SF-JOB-KNOWLEDGE-CURATOR",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Ensure actual price/pool source provenance, freshness, data integrity, cohort truth",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -3492,7 +3774,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-DATA-RETENTION-ENGINEER"
+        "task_template_id": "SF-JOB-DATA-RETENTION-ENGINEER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Ensure actual price/pool source provenance, freshness, data integrity, cohort truth",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -3538,7 +3824,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "researcher",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-ORGANIC-DISTRIBUTION-LEAD"
+        "task_template_id": "SF-JOB-ORGANIC-DISTRIBUTION-LEAD",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Acquire genuine crypto market researchers and measure their first useful research and returns",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_growth",
       "permission_contract": {
@@ -3584,7 +3874,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "researcher",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-GROWTH-ANALYST"
+        "task_template_id": "SF-JOB-GROWTH-ANALYST",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Acquire genuine crypto market researchers and measure their first useful research and returns",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_growth",
       "permission_contract": {
@@ -3630,7 +3924,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "researcher",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-GROWTH-EXPERIMENTER"
+        "task_template_id": "SF-JOB-GROWTH-EXPERIMENTER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Acquire genuine crypto market researchers and measure their first useful research and returns",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_growth",
       "permission_contract": {
@@ -3676,7 +3974,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "researcher",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-ONBOARDING-GROWTH"
+        "task_template_id": "SF-JOB-ONBOARDING-GROWTH",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Acquire genuine crypto market researchers and measure their first useful research and returns",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_growth",
       "permission_contract": {
@@ -3722,7 +4024,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "researcher",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-COMMUNITY-PROGRAMS"
+        "task_template_id": "SF-JOB-COMMUNITY-PROGRAMS",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Acquire genuine crypto market researchers and measure their first useful research and returns",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_growth",
       "permission_contract": {
@@ -3768,7 +4074,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "researcher",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-DEVELOPER-EDUCATION"
+        "task_template_id": "SF-JOB-DEVELOPER-EDUCATION",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Acquire genuine crypto market researchers and measure their first useful research and returns",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_growth",
       "permission_contract": {
@@ -3814,7 +4124,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "researcher",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-REFERRAL-ANALYST"
+        "task_template_id": "SF-JOB-REFERRAL-ANALYST",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Acquire genuine crypto market researchers and measure their first useful research and returns",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_growth",
       "permission_contract": {
@@ -3860,7 +4174,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "researcher",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-PARTNERSHIPS-GROWTH"
+        "task_template_id": "SF-JOB-PARTNERSHIPS-GROWTH",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Acquire genuine crypto market researchers and measure their first useful research and returns",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_growth",
       "permission_contract": {
@@ -3906,7 +4224,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "revenue",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-SUBSCRIPTION-GROWTH"
+        "task_template_id": "SF-JOB-SUBSCRIPTION-GROWTH",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Verify optional paid subscriptions and actual collected cash",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_commercial",
       "permission_contract": {
@@ -3952,7 +4274,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "revenue",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-CHECKOUT-QUALITY"
+        "task_template_id": "SF-JOB-CHECKOUT-QUALITY",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Verify optional paid subscriptions and actual collected cash",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_commercial",
       "permission_contract": {
@@ -3998,7 +4324,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "revenue",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-ACCOUNT-EXECUTIVE"
+        "task_template_id": "SF-JOB-ACCOUNT-EXECUTIVE",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Verify optional paid subscriptions and actual collected cash",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_commercial",
       "permission_contract": {
@@ -4044,7 +4374,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "revenue",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-B2B-SALES"
+        "task_template_id": "SF-JOB-B2B-SALES",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Verify optional paid subscriptions and actual collected cash",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_commercial",
       "permission_contract": {
@@ -4090,7 +4424,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "revenue",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-PAID-CONVERSION-ANALYST"
+        "task_template_id": "SF-JOB-PAID-CONVERSION-ANALYST",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Verify optional paid subscriptions and actual collected cash",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_commercial",
       "permission_contract": {
@@ -4136,7 +4474,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "revenue",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-AFFILIATE-BUSINESS-DEVELOPMENT"
+        "task_template_id": "SF-JOB-AFFILIATE-BUSINESS-DEVELOPMENT",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Verify optional paid subscriptions and actual collected cash",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_commercial",
       "permission_contract": {
@@ -4182,7 +4524,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "operator",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-HEAD-CUSTOMER"
+        "task_template_id": "SF-JOB-HEAD-CUSTOMER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Resolve authentic onboarding/support questions and feed issues to product",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -4228,7 +4574,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "operator",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-SUPPORT-TRIAGE"
+        "task_template_id": "SF-JOB-SUPPORT-TRIAGE",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Resolve authentic onboarding/support questions and feed issues to product",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -4274,7 +4624,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "operator",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-SUPPORT-KNOWLEDGE"
+        "task_template_id": "SF-JOB-SUPPORT-KNOWLEDGE",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Resolve authentic onboarding/support questions and feed issues to product",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -4320,7 +4674,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "operator",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-CUSTOMER-ONBOARDING"
+        "task_template_id": "SF-JOB-CUSTOMER-ONBOARDING",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Resolve authentic onboarding/support questions and feed issues to product",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -4366,7 +4724,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "operator",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-SUCCESS-ANALYTICS"
+        "task_template_id": "SF-JOB-SUCCESS-ANALYTICS",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Resolve authentic onboarding/support questions and feed issues to product",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -4412,7 +4774,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "operator",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-FEEDBACK-OPS"
+        "task_template_id": "SF-JOB-FEEDBACK-OPS",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Resolve authentic onboarding/support questions and feed issues to product",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -4458,7 +4824,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "operator",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-CUSTOMER-TRAINING"
+        "task_template_id": "SF-JOB-CUSTOMER-TRAINING",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Resolve authentic onboarding/support questions and feed issues to product",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "managing_director",
       "permission_contract": {
@@ -4504,7 +4874,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "operator",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-APPSEC-SPECIALIST"
+        "task_template_id": "SF-JOB-APPSEC-SPECIALIST",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Protect customer data and prevent fake signals, fraudulent claims and manipulative content",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_trust",
       "permission_contract": {
@@ -4550,7 +4924,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "operator",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-DATA-PRIVACY-OFFICER"
+        "task_template_id": "SF-JOB-DATA-PRIVACY-OFFICER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Protect customer data and prevent fake signals, fraudulent claims and manipulative content",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_trust",
       "permission_contract": {
@@ -4596,7 +4974,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "operator",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-RESEARCH-INTEGRITY"
+        "task_template_id": "SF-JOB-RESEARCH-INTEGRITY",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Protect customer data and prevent fake signals, fraudulent claims and manipulative content",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_trust",
       "permission_contract": {
@@ -4642,7 +5024,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "operator",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-FRAUD-ANALYST"
+        "task_template_id": "SF-JOB-FRAUD-ANALYST",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Protect customer data and prevent fake signals, fraudulent claims and manipulative content",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_trust",
       "permission_contract": {
@@ -4688,7 +5074,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-INCIDENT-COMMANDER"
+        "task_template_id": "SF-JOB-INCIDENT-COMMANDER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Keep market research services and existing Railway/Postgres reliable at efficient cost",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_operations",
       "permission_contract": {
@@ -4734,7 +5124,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-PLATFORM-COST-OPS"
+        "task_template_id": "SF-JOB-PLATFORM-COST-OPS",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Keep market research services and existing Railway/Postgres reliable at efficient cost",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_operations",
       "permission_contract": {
@@ -4780,7 +5174,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": "engineer",
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-VENDOR-OPS"
+        "task_template_id": "SF-JOB-VENDOR-OPS",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Keep market research services and existing Railway/Postgres reliable at efficient cost",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "head_operations",
       "permission_contract": {
@@ -4826,7 +5224,11 @@
         "current_binding": "NOT_VERIFIED",
         "fabric_role": null,
         "activation": "EVENT_DRIVEN_EXISTING_COMPANY_OS_ONLY",
-        "task_template_id": "SF-JOB-RELEASE-VERIFIER"
+        "task_template_id": "SF-JOB-RELEASE-VERIFIER",
+        "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+        "primary_business": "CRYPTO_MARKET_RESEARCH",
+        "business_value_alignment": "Independently substantiate build/CI/deploy/user outcome/revenue, never self-verify",
+        "public_marketing_headcount_authorized": false
       },
       "escalation_role": "sina_founder_os",
       "permission_contract": {
@@ -4868,57 +5270,82 @@
     {
       "id": "executive",
       "role_count": 3,
-      "division_outcome": "FOUNDATION"
+      "division_outcome": "FOUNDATION",
+      "consumer_research_outcome": "Select the highest-value market research and commercial outcomes; make accountable assignments",
+      "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json"
     },
     {
       "id": "research",
       "role_count": 12,
-      "division_outcome": "RESEARCH"
+      "division_outcome": "RESEARCH",
+      "consumer_research_outcome": "Validate actual OHLC, indicators, token research evidence and explanation quality",
+      "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json"
     },
     {
       "id": "product",
       "role_count": 10,
-      "division_outcome": "PRODUCT"
+      "division_outcome": "PRODUCT",
+      "consumer_research_outcome": "Ship a premium fast market-to-research-to-retention journey",
+      "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json"
     },
     {
       "id": "engineering",
       "role_count": 20,
-      "division_outcome": "ENGINEERING"
+      "division_outcome": "ENGINEERING",
+      "consumer_research_outcome": "Build and test candlestick charts, scanner, strategies, backtest, watchlists and memberships",
+      "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json"
     },
     {
       "id": "data",
       "role_count": 12,
-      "division_outcome": "DATA"
+      "division_outcome": "DATA",
+      "consumer_research_outcome": "Ensure actual price/pool source provenance, freshness, data integrity, cohort truth",
+      "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json"
     },
     {
       "id": "growth",
       "role_count": 12,
-      "division_outcome": "GROWTH"
+      "division_outcome": "GROWTH",
+      "consumer_research_outcome": "Acquire genuine crypto market researchers and measure their first useful research and returns",
+      "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json"
     },
     {
       "id": "commercial",
       "role_count": 9,
-      "division_outcome": "REVENUE"
+      "division_outcome": "REVENUE",
+      "consumer_research_outcome": "Verify optional paid subscriptions and actual collected cash",
+      "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json"
     },
     {
       "id": "customer",
       "role_count": 7,
-      "division_outcome": "CUSTOMER"
+      "division_outcome": "CUSTOMER",
+      "consumer_research_outcome": "Resolve authentic onboarding/support questions and feed issues to product",
+      "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json"
     },
     {
       "id": "trust",
       "role_count": 7,
-      "division_outcome": "TRUST"
+      "division_outcome": "TRUST",
+      "consumer_research_outcome": "Protect customer data and prevent fake signals, fraudulent claims and manipulative content",
+      "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json"
     },
     {
       "id": "operations",
       "role_count": 6,
-      "division_outcome": "OPS"
+      "division_outcome": "OPS",
+      "consumer_research_outcome": "Keep market research services and existing Railway/Postgres reliable at efficient cost",
+      "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json"
     },
     {
       "id": "verification",
       "role_count": 2,
-      "division_outcome": "EVIDENCE"
+      "division_outcome": "EVIDENCE",
+      "consumer_research_outcome": "Independently substantiate build/CI/deploy/user outcome/revenue, never self-verify",
+      "product_identity_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json"
     }
-  ]
+  ],
+  "founder_product_contract": "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+  "consumer_product_positioning": "CRYPTO_MARKET_INTELLIGENCE_NOT_AUTONOMOUS_AGENT_ORGANIZATION_SALES",
+  "consumer_homepage_policy": "MARKET_CHARTS_SIGNALS_TOKEN_RESEARCH_PRIMARY_COMPANY_OS_INTERNAL"
 }

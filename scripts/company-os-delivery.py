@@ -130,9 +130,26 @@ def main():
         raise RuntimeError("INVALID_BASE_COMMIT")
     stage="CLAIMED"
     try:
-        context="".join(
-            f"\nFILE {path}\n"+(ROOT/path).read_text(encoding="utf8")[:3700]
-            for path in ("src/server.ts","company-os/operating-engine.ts"))
+        # Market-first Founder product identity is mandatory for EVERY M20 agent plan.
+        identity_path = ROOT / "strategy/PRODUCT-IDENTITY-SSOT-v3.json"
+        identity = json.loads(identity_path.read_text(encoding="utf8"))
+        if (identity.get("schema") != "signalforge.product-identity.v3" or
+                identity.get("project_id") != "signalforge-market-intelligence" or
+                identity.get("company_os", {}).get("non_customer_facing_by_default") is not True):
+            raise RuntimeError("FOUNDER_PRODUCT_IDENTITY_LOCK_INVALID")
+        contract = {
+            "business": identity["primary_business"],
+            "customer_segments": identity["target_segments"],
+            "company_os": identity["company_os"]["role"],
+            "public_marketing": identity["market_ui_rules"][:5],
+            "release_evidence": identity["proof_definition"],
+            "benchmarks": [b["name"] + ": " + b["adapt"] for b in identity["reference_benchmarks"][:3]],
+            "drift_rule": "Do not promote 100 AI agent organization as primary public SignalForge product."
+        }
+        context = "\nFOUNDER PRODUCT CONTRACT (CANONICAL; DO NOT OVERRIDE)\n" + json.dumps(contract, sort_keys=True)[:3300]
+        context += "".join(
+            f"\nFILE {path}\n"+(ROOT/path).read_text(encoding="utf8")[:2000]
+            for path in ("src/server.ts", "company-os/operating-engine.ts"))
         plan=send("/plan",{"workstream_id":workstream,
                 "source_sha":source_sha,"context":context[:7800]},token)
         module,test=write_candidate(plan,workstream,source_sha)

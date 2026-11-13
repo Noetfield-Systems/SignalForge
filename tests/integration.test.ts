@@ -61,7 +61,7 @@ test("real database community lifecycle, security boundaries and Company OS cont
   let publicHome=await fetch(BASE+"/");
   expect(publicHome.status).toBe(200);
   const landingHtml = await publicHome.text();
-  expect(landingHtml).toContain("The market moves.");
+  expect(landingHtml).toContain("Research every move.");
   expect(landingHtml).toContain("SignalForge");
   expect(landingHtml).toContain("href=\"/radar\"");
   expect(landingHtml).toContain("href=\"/app\"");
@@ -71,7 +71,7 @@ test("real database community lifecycle, security boundaries and Company OS cont
   const welcomeHtml = await welcome.text();
   expect(welcomeHtml).toContain("SignalForge");
   expect(welcomeHtml).toContain("Research the token.");
-  expect(welcomeHtml).toContain("CAD $29/month");
+  expect(welcomeHtml).toContain("CAD $29");
 
   let empty=await request("/api/community/posts");
   expect(empty.response.status).toBe(200);

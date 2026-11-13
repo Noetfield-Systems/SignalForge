@@ -1,3 +1,5 @@
+> **Founder product identity override (2026-11-13):** SignalForge's PRIMARY CUSTOMER BUSINESS is crypto market intelligence: OHLC candlestick charts, Market Scanner, Solana Token Radar, explainable signals, historical backtesting, saved research, authentic Signal Rooms and optional paid subscriptions. The 100-role Company OS is only the INTERNAL MANAGEMENT AND DELIVERY LAYER for that product. The Noetfield/Sina Company OS may itself be a separate reusable parent-portfolio technology, but its organizational architecture must never replace SignalForge's customer-facing trading research market positioning. Read [product identity lock](../strategy/PRODUCT-IDENTITY-SSOT-v3.json) and [departmental delivery contract](../docs/FOUNDER-PRODUCT-UX-OPERATING-CONTRACT-v3.md). If an execution plan or UI promotes agent/headcount/org structure in place of candles and market research, classify FOUNDER_INTENT_DRIFT and repair the product path.
+
 > **2026-11-13 workforce expansion:** SignalForge now has **100 defined work-role contracts across 11 departments** in [organization.v2.json](./organization.v2.json) and a typed [workforce-floor.ts](./workforce-floor.ts) workstream decomposition. This does **not** mean 100 AI processes, paid employees, authorized executions or verified completed tasks. The existing Sina M20, Agent Fabric, Governor, verifier and scheduler remain authoritative. The admin-only `/admin/company-floor` renders this private projection; real activity requires authenticated canonical dispatch/readback. v1 is historical.
 
 # SIGNALFORGE COMPANY OS — ONE PLATFORM, ONE EXECUTIVE BRAIN
@@ -9,7 +11,7 @@
 ## 0. A single firm, not a portfolio
 
 Parent: Sina OS (human founder goals, constitutional budget/authority, escalations).
-**Exactly one Company OS:** SignalForge: Web3 / Ethereum research, explainable signals, paper trading, token research, communities and premium subscriptions.
+**Exactly one scoped SignalForge operating unit in the existing Company OS:** crypto market intelligence, explainable signals, token research, saved research, community, honest subscriptions and their maintenance. Paper trading and additional EVM intelligence are feature roadmap work until independently verified; they are not the present homepage's main claim.
 Six product desks are **feature domains**, not separate legal companies, directors with independent authority, databases or schedulers. SignalForge's only product repository is `Noetfield-Systems/SignalForge`.
 
 Current real source: GitHub-backed Bun web app in Railway `signalforge-ai`, durable PostgreSQL, existing independent growth/lifecycle services and the Sina Founder OS M20 mission. Source is not proof of a paid customer, real trade, chain-indexer or live token.

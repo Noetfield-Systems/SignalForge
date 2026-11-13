@@ -4,6 +4,7 @@ import { persistTokenObservation, getTokenHistory, getSavedTokenList, saveToken,
 import {assessCompanyOutcome} from "../company-os/shared-evidence-gate.mjs";
 import { compileOperatingBoard, verifySingleCompanyHierarchy } from "../company-os/operating-engine.ts";
 import { compileWorkforceFloor } from "../company-os/workforce-floor.ts";
+import productIdentity from "../strategy/PRODUCT-IDENTITY-SSOT-v3.json";
 const COMPANY_FLOOR_HTML = await Bun.file(new URL("../public/company-floor.html", import.meta.url)).text();
 import { evaluateCompanyPolicy } from "./company-os-policy";
 import { stripeCheckoutUrlKey } from "./billing-keys";
@@ -432,6 +433,22 @@ if(path==="/api/company-os/evidence-gate"&&method==="POST"){
  let evidence:any;
  try{evidence=JSON.parse(raw)}catch{return json({error:"Malformed JSON"},400)}
  return json(assessCompanyOutcome(evidence));
+}
+if(path==="/api/company-os/product-identity"&&method==="GET"){
+ if(!Bun.env.SIGNALFORGE_COMPANY_OS_KEY || !await safeToken(req))
+  return json({error:"Company OS workload identity required"},401);
+ return json({
+  schema:productIdentity.schema,
+  project_id:productIdentity.project_id,
+  primary_business:productIdentity.primary_business,
+  north_star:productIdentity.north_star,
+  product_surfaces:productIdentity.product_surfaces,
+  market_ui_rules:productIdentity.market_ui_rules,
+  reference_benchmarks:productIdentity.reference_benchmarks,
+  company_os:productIdentity.company_os,
+  proof_definition:productIdentity.proof_definition,
+  read_only:true,external_effects_authorized:false
+ },200,{"cache-control":"no-store"});
 }
 if(path==="/api/company-os/snapshot"&&method==="GET")return companySnapshot(req);
 if(path==="/api/company-os/operations"&&method==="GET"){

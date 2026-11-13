@@ -1,5 +1,7 @@
+> **FOUNDER PRODUCT LOCK — 2026-11-13:** SignalForge is a premium crypto MARKET-INTELLIGENCE and research platform first: candlestick/OHLC terminal, explainable signals, market scanner, token research, backtests, watchlists, Signal Rooms and voluntary memberships. Company OS with 100 defined roles is an **internal operating layer**, not the customer product or a claim of 100 live agents. Read [AGENTS.md](AGENTS.md), [machine-readable product lock](strategy/PRODUCT-IDENTITY-SSOT-v3.json) and [operating master](docs/FOUNDER-PRODUCT-UX-OPERATING-CONTRACT-v3.md) before shipping.
+
 # SignalForge
-### Market intelligence terminal · explainable research · Signal Rooms
+### Crypto market intelligence · candlestick research · explainable signals · Token Radar · strategy backtesting
 
 [Production application](https://signalforge-web-production.up.railway.app/) · [SignalForge GitHub](https://github.com/Noetfield-Systems/SignalForge)
 
@@ -29,7 +31,7 @@ This repository is now the **canonical SignalForge product source**. It is inten
 | --- | --- | --- |
 | Web server, research API, authentication, Signal Rooms, Postgres schema, Company OS snapshot | `src/server.ts` | Railway service `signalforge-web` |
 | Premium market terminal + Signal Rooms UI | `public/index.html` | served by web app |
-| Public SEO/launch landing | `public/welcome.html` | served by web app |
+| Premium source-aware candlestick landing | `public/welcome.html` | served at `/`, `/welcome` and `/start` |
 | Growth and Stripe webhook worker | `services/growth-assets/railway-function.ts` | existing independent Railway Function, source imported |
 | Lifecycle email worker | `services/lifecycle-worker/railway-function.ts` | existing independent Railway Function, source imported |
 | Portfolio mission, business-priority Goalkeeper, governance and execution | `Noetfield-Systems/sina_founder_os` | Sina Founder OS, not reimplemented here |
