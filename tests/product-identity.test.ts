@@ -70,3 +70,51 @@ test("premium landing inline javascript parses and tablet navigation has a keybo
  expect(landing).toContain('aria-expanded="false"');
  expect(landing).toContain('id="mainNav"');
 });
+
+test("v4 editorial hierarchy gives the working market chart priority on landing and terminal",()=>{
+ expect(landing).toContain("SIGNALFORGE / EDITORIAL MARKET INTELLIGENCE");
+ expect(landing).toContain('class="hero-artline"');
+ expect(landing).toContain('class="hero-summary"');
+ expect(landing).toContain('class="stage-heading"');
+ expect(landing).toContain('class="stage-foot"');
+ expect(landing).toContain("grid-template-columns:repeat(12,minmax(0,1fr))");
+ expect(landing).toContain(".feature:first-child{grid-column:span 7");
+ expect(landing).toContain("background:#e8e6dd");
+ expect(landing).toContain("font-family");
+ expect(landing).toContain("IBM+Plex+Mono");
+ expect(landing).toContain("Instrument+Sans");
+ expect(landing).toContain("max-width:460px");
+ expect(landing).toContain("@media(max-width:460px)");
+ expect(terminal).toContain("SIGNALFORGE V4");
+ const chart=terminal.indexOf('class="grid contentgrid"');
+ const stats=terminal.indexOf('class="grid stats"');
+ const guide=terminal.indexOf('class="sf-research-path"');
+ expect(chart).toBeGreaterThan(0);
+ expect(stats).toBeGreaterThan(chart);
+ expect(guide).toBeGreaterThan(stats);
+ expect(terminal).toContain("height:460px");
+});
+test("v4 delivery source uses actual API and prevents a decorative fake-live market",()=>{
+ expect(landing).toContain('data.mode!=="LIVE_PUBLIC_DATA"');
+ expect(landing).toContain("sourceUnavailable");
+ expect(landing).toContain("No verified live public candles available");
+ expect(landing).toContain("Only verified public OHLC is plotted as live");
+ expect(landing).toContain('id="candleChart"');
+ expect(landing).toContain('aria-live="polite"');
+ for(const href of ["/app?view=dashboard","/app?view=backtest","/radar"]){
+  expect(landing).toContain('href="'+href+'"');
+ }
+});
+
+test("responsive first viewport prioritizes actual chart and preserves conversion",()=>{
+ expect(landing).toContain('class="mobile-title"');
+ expect(landing).toContain("Read the market.");
+ expect(landing).toContain('class="mobile-lead"');
+ expect(landing).toContain("@media(max-width:760px)");
+ expect(landing).toContain(".hero-artline,.hero-notation,.hero-summary-top,.hero-caption{display:none}");
+ expect(landing).toContain(".hero-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)");
+ expect(terminal).toContain('research.insertAdjacentElement("afterend",banner)');
+ expect(terminal).toContain('const observer=new MutationObserver');
+ expect(terminal).toContain('id="priceChart"');
+ expect(terminal).toContain("launch.js");
+});

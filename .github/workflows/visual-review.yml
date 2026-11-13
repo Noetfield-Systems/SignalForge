@@ -1,0 +1,63 @@
+name: SignalForge visual composition review
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - public/welcome.html
+      - public/index.html
+      - public/token-radar.html
+      - .github/workflows/visual-review.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  screenshot-market-surfaces:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.2.23
+      - name: Install web runtime dependencies
+        run: bun install
+      - name: Boot actual SignalForge server
+        run: |
+          PORT=18180 NODE_ENV=production bun run src/server.ts > /tmp/signalforge-visual-server.log 2>&1 &
+          echo $! > /tmp/signalforge-visual-server.pid
+          for i in $(seq 1 30); do
+            if curl --fail --silent --max-time 3 http://127.0.0.1:18180/api/health >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/signalforge-visual-server.log
+          exit 1
+      - name: Capture actual responsive browser renders
+        run: |
+          mkdir -p artifacts/visual
+          CHROME=$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)
+          test -n "$CHROME"
+          "$CHROME" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --hide-scrollbars --virtual-time-budget=4500 --window-size=1512,982 --screenshot=artifacts/visual/landing-desktop.png http://127.0.0.1:18180/ >/tmp/signalforge-chrome.log 2>&1
+          "$CHROME" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --hide-scrollbars --virtual-time-budget=4500 --window-size=390,844 --screenshot=artifacts/visual/landing-mobile.png http://127.0.0.1:18180/ >>/tmp/signalforge-chrome.log 2>&1
+          "$CHROME" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --hide-scrollbars --virtual-time-budget=3500 --window-size=1512,982 --screenshot=artifacts/visual/terminal-desktop.png http://127.0.0.1:18180/app >>/tmp/signalforge-chrome.log 2>&1
+          "$CHROME" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --hide-scrollbars --virtual-time-budget=3500 --window-size=390,844 --screenshot=artifacts/visual/radar-mobile.png http://127.0.0.1:18180/radar >>/tmp/signalforge-chrome.log 2>&1
+          python3 - <<'PY'
+          from pathlib import Path
+          import struct
+          for p in sorted(Path("artifacts/visual").glob("*.png")):
+              header = p.read_bytes()[:24]
+              assert header[:8] == b"\x89PNG\r\n\x1a\n", p
+              width,height = struct.unpack(">II",header[16:24])
+              assert width >= 380 and height >= 700,(p,width,height)
+              print(f"{p}: {width}x{height}, {p.stat().st_size} bytes")
+          assert len(list(Path("artifacts/visual").glob("*.png")))==4
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: signalforge-art-direction-v4
+          path: artifacts/visual/*.png
+          retention-days: 14
+      - name: Check static page source accessibility and product links
+        run: |
+          curl -fsS http://127.0.0.1:18180/ | grep -q "Research every move"
+          curl -fsS http://127.0.0.1:18180/app | grep -q 'id="priceChart"'
+          curl -fsS http://127.0.0.1:18180/radar | grep -q "Token Radar"
