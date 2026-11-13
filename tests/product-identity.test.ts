@@ -61,3 +61,12 @@ test("Internal code-delivery context loads Founder product lock; consumers never
  expect(policy).toContain("Company OS is the INTERNAL operating staff");
  expect(company.operating_continuity.local_scheduler_creation).toBe(false);
 });
+
+test("premium landing inline javascript parses and tablet navigation has a keyboard-sized breakpoint",()=>{
+ const inline=landing.match(/<script>([\s\S]*?)<\/script>/);
+ expect(inline).not.toBeNull();
+ expect(()=>new Function(inline![1])).not.toThrow();
+ expect(landing).toContain("@media(min-width:721px) and (max-width:950px)");
+ expect(landing).toContain('aria-expanded="false"');
+ expect(landing).toContain('id="mainNav"');
+});
