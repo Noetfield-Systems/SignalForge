@@ -6,7 +6,7 @@
  * from authenticated, freshly observed product aggregates for one platform.
  * A proposal is never a trading order, a payment, a permit, or proof.
  */
-import organization from "./organization.v1.json";
+import organization from "./organization.v2.json";
 import {evaluateCompanyPolicy, type CompanyMetrics} from "../src/company-os-policy.ts";
 
 export type Snapshot = {
@@ -264,9 +264,9 @@ export function compileOperatingBoard(raw:unknown, at:Date=new Date()){
    independent_verification_required:true,
    no_new_scheduler:true,no_live_trading:true,no_token_issuance:true
   },
-  capacity:{max_proposals_returned:10,max_in_flight_strategic_workpackets:1},
+  capacity:{max_proposals_returned:16,max_in_flight_strategic_workpackets:4,max_parallel_internal_drafts:8},
   candidate_count:proposals.length,
-  workpackets:proposals.slice(0,10),
+  workpackets:proposals.slice(0,16),
   daily_plan_id:GOAL+":"+date,
   epistemic_status:"DATA_OBSERVED_FROM_PRODUCT_BUT_OUTCOME_UNVERIFIED"
  };
