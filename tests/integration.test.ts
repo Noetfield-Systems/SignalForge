@@ -190,6 +190,12 @@ test("real database community lifecycle, security boundaries and Company OS cont
   expect(snap.data.product.events7d).toBe(0);
   expect(snap.data.moderation.open).toBe(0);
   expect(snap.data.privacy.identifiersIncluded).toBe(false);
+  expect(snap.data.organizationContract.schema).toBe("signalforge.company-os.organization-link.v2");
+  expect(snap.data.organizationContract.projectId).toBe("signalforge-market-intelligence");
+  expect(snap.data.organizationContract.definedRoles).toBe(100);
+  expect(snap.data.organizationContract.departmentCount).toBe(11);
+  expect(snap.data.organizationContract.actualWorkerBindings).toBeNull();
+  expect(snap.data.organizationContract.independentRoleCompletionEvidence).toBeNull();
   expect(JSON.stringify(snap.data)).not.toContain(email);
   expect(JSON.stringify(snap.data)).not.toContain("falsifiable invalidation");
   const ops=await request("/api/company-os/operations",{headers:{authorization:"Bearer "+SECRET}});
