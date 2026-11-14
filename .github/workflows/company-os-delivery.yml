@@ -246,7 +246,7 @@ jobs:
   verify-existing-candidate:
     # Recovery only: real earlier candidate + independent readback were already
     # completed. This is NOT a second scheduler or a way to forge a receipt.
-    if: ${{ github.event_name == 'issues' && github.event.issue.title == 'SINA: Verify Existing Company OS Delivery' && github.event.issue.user.login == 'kazemnezhadsina144-dot' }}
+    if: "${{ github.event_name == 'issues' && github.event.issue.title == 'SINA: Verify Existing Company OS Delivery' && github.event.issue.user.login == 'kazemnezhadsina144-dot' }}"
     runs-on: ubuntu-latest
     timeout-minutes: 12
     permissions:

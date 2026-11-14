@@ -36,6 +36,12 @@ jobs:
           bun-version: 1.2.23
       - name: Install exact production dependency
         run: bun install
+      - name: Validate GitHub Actions syntax before autonomous Company OS scheduling
+        run: |
+          curl -fsSL --retry 2 https://github.com/rhysd/actionlint/releases/download/v1.7.7/actionlint_1.7.7_linux_amd64.tar.gz -o /tmp/actionlint.tgz
+          mkdir -p /tmp/signalforge-actionlint
+          tar -xzf /tmp/actionlint.tgz -C /tmp/signalforge-actionlint actionlint
+          /tmp/signalforge-actionlint/actionlint -oneline .github/workflows/company-os-delivery.yml
       - name: Validate scoped Company OS GitHub Runner Python syntax
         run: python3 -m py_compile scripts/company-os-delivery.py scripts/company-os-readback.py
       - name: Prove coding agent generated source enters real SignalForge market runtime
