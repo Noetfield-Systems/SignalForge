@@ -190,7 +190,7 @@ jobs:
 
   closeout:
     needs: [candidate, independent-readback]
-    if: ${{ always() && needs.candidate.result == 'success' && (needs.independent-readback.result == 'success' || needs.independent-readback.result == 'skipped') }}
+    if: ${{ always() && needs.candidate.result == 'success' && (needs.candidate.outputs.state == 'OPENED' || needs.candidate.outputs.state == 'BRANCH_READY') && needs.independent-readback.result == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
