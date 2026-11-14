@@ -112,7 +112,7 @@ test("v4 delivery source uses actual API and prevents a decorative fake-live mar
 
 test("responsive first viewport prioritizes actual chart and preserves conversion",()=>{
  expect(landing).toContain('class="mobile-title"');
- expect(landing).toContain("Read the market.");
+ expect(landing).toContain("Forge your edge.");
  expect(landing).toContain('class="mobile-lead"');
  expect(landing).toContain("@media(max-width:760px)");
  expect(landing).toContain(".hero-artline,.hero-notation,.hero-summary-top,.hero-caption{display:none}");
