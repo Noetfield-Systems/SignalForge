@@ -2,6 +2,7 @@
 """Close a tested candidate through the existing isolated verifier and Fabric queue."""
 import json
 import os
+import re
 from pathlib import Path
 import urllib.request
 import urllib.error
@@ -45,9 +46,18 @@ def main():
     try:
         receipt=post(VERIFIER,evidence,token)
     except urllib.error.HTTPError as exc:
-        # An isolated verifier's 409 is a real source-level conflict, not a
-        # successful independent receipt. Do not silently re-issue or advance.
+        # Real isolated verifier conflicts include bounded machine-readable
+        # reasons. Only allow safe enum-like codes; never log raw HTTP bodies,
+        # tokens, headers, evidence, or model-authored untrusted strings.
+        try:
+            details=json.loads(exc.read(512))
+            reason=details.get("reason","") if isinstance(details,dict) else ""
+        except (ValueError, TypeError, OSError):
+            reason=""
+        if not isinstance(reason,str) or not re.fullmatch(r"[A-Za-z0-9_]{3,100}",reason):
+            reason="UPSTREAM_CONFLICT"
         diagnostic={"stage":"ISOLATED_VERIFIER","http_status":exc.code,
+                    "reason_code":reason,
                     "verified":False,"next_workpacket_dispatched":False}
         Path("company-delivery-closeout-diagnostics.json").write_text(
             json.dumps(diagnostic,sort_keys=True))
