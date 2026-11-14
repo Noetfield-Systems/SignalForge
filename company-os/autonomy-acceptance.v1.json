@@ -1,0 +1,245 @@
+{
+  "schema": "venture.company-autonomy.acceptance.v1",
+  "version": "2026-11-13.2",
+  "company": "SignalForge",
+  "project_id": "signalforge-market-intelligence",
+  "mission": "M20-SIGNALFORGE-COMMUNITY",
+  "founder_goal": "Premium crypto research, authentic activation, retained paying researchers, verified collected memberships",
+  "canonical_ref": "Noetfield-Systems/sina_founder_os/portfolio/AUTONOMY_OPERATING_CONTRACT_v1.json",
+  "original_roadmap": "portfolio/SIGNALFORGE_ARQANT_PARALLEL_EXECUTION_ROADMAP-v1.json",
+  "steps": [
+    {
+      "id": "A0",
+      "objective": "Owned AgentOS authenticated owner and healthy native runtime",
+      "owner": "Founder OS / Owned AgentOS",
+      "depends_on": [],
+      "acceptance": "Authenticated owner session + existing company UUID + status readback",
+      "contingency": "If Owner not bound, continue parallel zero-effect product work on existing Fabric/GitHub; never bypass owner auth",
+      "state": "PENDING_INDEPENDENT_EVIDENCE"
+    },
+    {
+      "id": "A1",
+      "objective": "Native ventures and qualified worker IDs",
+      "owner": "Owned AgentOS People Office",
+      "depends_on": [
+        "A0"
+      ],
+      "acceptance": "Exact company/project/agent UUIDs; roles, budgets, provider routes, heartbeats measured",
+      "contingency": "Keep role contracts defined, not reported as running, until native readback",
+      "state": "PENDING_INDEPENDENT_EVIDENCE"
+    },
+    {
+      "id": "A2",
+      "objective": "Canonical Governor WorkPacket to one native Issue and Fabric lease",
+      "owner": "Company OS / Fabric",
+      "depends_on": [
+        "A1"
+      ],
+      "acceptance": "Same project+workstream+correlation key across decision, issue, task; one effect owner",
+      "contingency": "When native bridge lacks scope/token, hold mirror only; operate bounded Fabric canonical jobs",
+      "state": "PENDING_INDEPENDENT_EVIDENCE"
+    },
+    {
+      "id": "A3",
+      "objective": "Actual bounded model and tool invocation",
+      "owner": "Fabric / Existing Runway",
+      "depends_on": [
+        "A2"
+      ],
+      "acceptance": "Provider invocation ID + tool action + budget evidence + actual artifact",
+      "contingency": "Quota wait and provider fallbacks preserve task identity; no bypass of limit",
+      "state": "PENDING_INDEPENDENT_EVIDENCE"
+    },
+    {
+      "id": "A4",
+      "objective": "First reproducible product code effect",
+      "owner": "Venture Engineering",
+      "depends_on": [
+        "A3"
+      ],
+      "acceptance": "GitHub commit+CI and targeted real customer runtime behavior",
+      "contingency": "Code draft/PR stays candidate until independent checks",
+      "state": "PENDING_INDEPENDENT_EVIDENCE"
+    },
+    {
+      "id": "A5",
+      "objective": "Ship and independently verify",
+      "owner": "Release / Independent Verifier",
+      "depends_on": [
+        "A4"
+      ],
+      "acceptance": "Live deployed SHA + browser/API proof + verifier distinct from builder",
+      "contingency": "Fail/rollback product scope only, repair same original workstream",
+      "state": "PENDING_INDEPENDENT_EVIDENCE"
+    },
+    {
+      "id": "A6",
+      "objective": "Three original evidence-based autonomous continuations",
+      "owner": "Venture GM",
+      "depends_on": [
+        "A5"
+      ],
+      "acceptance": "Three distinct consecutive work packets; two dynamic next decisions; no new Founder instruction",
+      "contingency": "If continuation missing, inspect decision and dispatch callbacks; do not fabricate next tasks",
+      "state": "PENDING_INDEPENDENT_EVIDENCE"
+    },
+    {
+      "id": "A7",
+      "objective": "Restart, retry, isolation and work-concurrency war games",
+      "owner": "Operations / QA",
+      "depends_on": [
+        "A6"
+      ],
+      "acceptance": "16 war-game passes, zero duplicate effects, recoverable leases, per-company isolation",
+      "contingency": "Independent company and reversible work continue when one lane is blocked",
+      "state": "PENDING_INDEPENDENT_EVIDENCE"
+    },
+    {
+      "id": "A8",
+      "objective": "Two venture-specific commercial feedback loops",
+      "owner": "SignalForge Revenue / ARQANT Token+Community",
+      "depends_on": [
+        "A6"
+      ],
+      "acceptance": "Real user/product event, provider-settled payment where present; token/LP separately reconciled",
+      "contingency": "Acquisition, Genesis, testing and outreach continue independently from checkout and TGE",
+      "state": "PENDING_INDEPENDENT_EVIDENCE"
+    },
+    {
+      "id": "A9",
+      "objective": "Always-on owner-governed portfolio continuation",
+      "owner": "Sina Founder OS / Venture CEOs",
+      "depends_on": [
+        "A7",
+        "A8"
+      ],
+      "acceptance": "Repeated source-backed GM decisions, bounded cost, human reserved effects, verifier receipts and next jobs",
+      "contingency": "On provider outages use bounded delays, handoff and evidence-based recovery",
+      "state": "PENDING_INDEPENDENT_EVIDENCE"
+    }
+  ],
+  "war_games": [
+    {
+      "id": "WG-01",
+      "scenario": "concurrent_issue_claim",
+      "acceptance": "one_effect_owner",
+      "state": "NOT_RUN"
+    },
+    {
+      "id": "WG-02",
+      "scenario": "duplicate_workpacket",
+      "acceptance": "one_task_and_no_duplicate_effect",
+      "state": "NOT_RUN"
+    },
+    {
+      "id": "WG-03",
+      "scenario": "worker_crash",
+      "acceptance": "lease_recovery",
+      "state": "NOT_RUN"
+    },
+    {
+      "id": "WG-04",
+      "scenario": "malformed_model_output",
+      "acceptance": "reject_and_repair",
+      "state": "NOT_RUN"
+    },
+    {
+      "id": "WG-05",
+      "scenario": "provider_outage",
+      "acceptance": "bounded_fallback",
+      "state": "NOT_RUN"
+    },
+    {
+      "id": "WG-06",
+      "scenario": "ci_failed",
+      "acceptance": "no_release",
+      "state": "NOT_RUN"
+    },
+    {
+      "id": "WG-07",
+      "scenario": "unhealthy_deploy",
+      "acceptance": "rollback",
+      "state": "NOT_RUN"
+    },
+    {
+      "id": "WG-08",
+      "scenario": "cross_tenant_request",
+      "acceptance": "access_denied",
+      "state": "NOT_RUN"
+    },
+    {
+      "id": "WG-09",
+      "scenario": "budget_hit",
+      "acceptance": "scoped_pause",
+      "state": "NOT_RUN"
+    },
+    {
+      "id": "WG-10",
+      "scenario": "builder_verifier_disagree",
+      "acceptance": "not_verified",
+      "state": "NOT_RUN"
+    },
+    {
+      "id": "WG-11",
+      "scenario": "duplicate_payment_event",
+      "acceptance": "single_settlement",
+      "state": "NOT_RUN"
+    },
+    {
+      "id": "WG-12",
+      "scenario": "founder_silent",
+      "acceptance": "authorized_continuation",
+      "state": "NOT_RUN"
+    },
+    {
+      "id": "WG-13",
+      "scenario": "prompt_injection",
+      "acceptance": "goal_and_permissions_unchanged",
+      "state": "NOT_RUN"
+    },
+    {
+      "id": "WG-14",
+      "scenario": "service_restart",
+      "acceptance": "durable_queue_and_workstream",
+      "state": "NOT_RUN"
+    },
+    {
+      "id": "WG-15",
+      "scenario": "one_venture_down",
+      "acceptance": "other_venture_continues",
+      "state": "NOT_RUN"
+    },
+    {
+      "id": "WG-16",
+      "scenario": "next_task_reasoning",
+      "acceptance": "new_source_linked_workpacket",
+      "state": "NOT_RUN"
+    }
+  ],
+  "first_missions": [
+    "SF-ROAD-01",
+    "SF-ROAD-02",
+    "SF-ROAD-09",
+    "SF-ROAD-10",
+    "SF-ROAD-11"
+  ],
+  "runtime": {
+    "founder": "sina_founder_os",
+    "company": "existing Company OS",
+    "workforce": "Noetfield-owned full-source AgentOS",
+    "executor": "existing Agent Fabric / Runway / GitHub Actions",
+    "verifier": "existing independent Ed25519 delivery verifier",
+    "forbidden_duplication": [
+      "scheduler",
+      "agent_registry",
+      "task_queue",
+      "treasury",
+      "business_identity"
+    ],
+    "no_vendor_cloud_key": true
+  },
+  "execution_mode": "EXISTING_COMPANY_OS_ONLY",
+  "all_workstreams_parallel_unless_real_dependency": true,
+  "actual_native_workers_verified": false,
+  "paid_or_token_claim_verified": false
+}
