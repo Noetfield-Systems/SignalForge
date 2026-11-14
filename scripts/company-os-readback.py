@@ -52,6 +52,25 @@ def main():
         path=ROOT/evidence[kind+"_path"]
         if not path.is_file() or path.is_symlink() or codehash(path)!=evidence[kind+"_sha256"]:
             raise RuntimeError("INDEPENDENT_CONTENT_HASH_MISMATCH")
+    # This reviewer must see an actual product-consumed import, not merely
+    # an isolated generated test file. The market endpoint imports the
+    # registry through src/market-source-integrity.ts.
+    registry=ROOT/"company-os/generated/runtime-registry.ts"
+    if (evidence.get("runtime_registry_path")!="company-os/generated/runtime-registry.ts"
+            or not registry.is_file() or registry.is_symlink()
+            or codehash(registry)!=evidence.get("runtime_registry_sha256")
+            or evidence.get("real_product_consumer")!="src/market-source-integrity.ts -> /api/market"):
+        raise RuntimeError("PRODUCT_INTEGRATION_EVIDENCE_MISSING")
+    runtime=registry.read_text(encoding="utf8")
+    if (f"./feature_{suffix}.mjs" not in runtime
+            or f'workstreamId:"{evidence["workstream_id"]}"' not in runtime):
+        raise RuntimeError("FEATURE_NOT_REFERENCED_BY_PRODUCT_RUNTIME")
+    market=(ROOT/"src/market-source-integrity.ts").read_text(encoding="utf8")
+    server=(ROOT/"src/server.ts").read_text(encoding="utf8")
+    if ('GENERATED_MARKET_RULES' not in market
+            or 'rule.evaluate(passed)' not in market
+            or 'researchIntegrity:assessMarketSourceIntegrity(pack)' not in server):
+        raise RuntimeError("GENERATED_FEATURE_NOT_CONSUMED_BY_PRODUCT")
     shell("bun","run","test")
     if shell("git","status","--porcelain"):
         raise RuntimeError("READBACK_DIRTY_CHECKOUT")

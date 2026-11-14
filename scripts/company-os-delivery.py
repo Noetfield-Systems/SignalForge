@@ -85,6 +85,26 @@ def write_candidate(plan, workstream, base_sha):
             raise RuntimeError("NO_OVERWRITING_EXISTING_CODE")
         dest.parent.mkdir(parents=True,exist_ok=True)
         dest.write_text(contents,encoding="utf8")
+    # A stand-alone generated ESM file is NOT a shipped customer feature.
+    # Register a statically imported, bounded market-quality rule in the
+    # actual production /api/market source-evaluation chain.
+    registry=ROOT/"company-os/generated/runtime-registry.ts"
+    current=registry.read_text(encoding="utf8")
+    if ("// SINA_GENERATED_IMPORTS" not in current or
+            "// SINA_GENERATED_RULES" not in current):
+        raise RuntimeError("PRODUCT_RUNTIME_REGISTRY_NOT_AVAILABLE")
+    if not re.search(r"\bexport\s+function\s+assessMarketSourceQuality\s*\(", source):
+        raise RuntimeError("MODEL_FEATURE_NOT_A_PRODUCT_MARKET_RULE")
+    source_alias="sf_market_rule_"+suffix
+    import_line=f'import {{ assessMarketSourceQuality as {source_alias} }} from "./feature_{suffix}.mjs";'
+    entry=f'{{workstreamId:"{workstream}",evaluate:{source_alias}}},'
+    if import_line in current or entry in current:
+        raise RuntimeError("DUPLICATE_RUNTIME_FEATURE")
+    updated=current.replace("// SINA_GENERATED_IMPORTS",
+        import_line+"\n// SINA_GENERATED_IMPORTS")
+    updated=updated.replace("// SINA_GENERATED_RULES",
+        "  "+entry+"\n  // SINA_GENERATED_RULES")
+    registry.write_text(updated,encoding="utf8")
     return module,tests
 
 
@@ -162,7 +182,7 @@ def main():
         shell("git","config","user.name","noetfield-company-os[bot]")
         shell("git","config","user.email","41898282+github-actions[bot]@users.noreply.github.com")
         shell("git","switch","-c",branch)
-        shell("git","add","--",module,test)
+        shell("git","add","--",module,test,"company-os/generated/runtime-registry.ts")
         shell("git","commit","-m","feat(signalforge): governed company-os workstream "+workstream[:12])
         head_sha=shell("git","rev-parse","HEAD")
         if not SHA.fullmatch(head_sha):
@@ -205,6 +225,9 @@ def main():
                   "module_path":module,"test_path":test,
                   "module_sha256":digest((ROOT/module).read_text()),
                   "test_sha256":digest((ROOT/test).read_text()),
+                  "runtime_registry_path":"company-os/generated/runtime-registry.ts",
+                  "runtime_registry_sha256":digest((ROOT/"company-os/generated/runtime-registry.ts").read_text()),
+                  "real_product_consumer":"src/market-source-integrity.ts -> /api/market",
                   "test_command":"bun run test","test_result":"PASS",
                   "independently_verified":False,"deployed":False}
         (ROOT/"company-delivery-evidence.json").write_text(json.dumps(evidence,indent=2)+"\n")

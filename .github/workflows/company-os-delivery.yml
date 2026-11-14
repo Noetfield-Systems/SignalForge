@@ -10,6 +10,9 @@ on:
       - "scripts/company-os-closeout.py"
       - "company-os/organization.v2.json"
       - "company-os/workforce-floor.ts"
+      - "src/market-source-integrity.ts"
+      - "company-os/generated/runtime-registry.ts"
+      - "tests/test_company_os_delivery_registry.py"
       - "AGENTS.md"
       - "strategy/PRODUCT-IDENTITY-SSOT-v3.json"
       - "docs/FOUNDER-PRODUCT-UX-OPERATING-CONTRACT-v3.md"
@@ -77,6 +80,8 @@ jobs:
         run: bun install
       - name: Syntax-check authenticated Company OS delivery scripts
         run: python3 -m py_compile scripts/company-os-delivery.py scripts/company-os-readback.py
+      - name: Prove generated market rules are consumable in the actual SignalForge runtime
+        run: python3 tests/test_company_os_delivery_registry.py
       - name: Claim canonical scoped WorkPacket and build one bounded PR candidate
         id: deliver
         env:

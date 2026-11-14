@@ -38,6 +38,8 @@ jobs:
         run: bun install
       - name: Validate scoped Company OS GitHub Runner Python syntax
         run: python3 -m py_compile scripts/company-os-delivery.py scripts/company-os-readback.py
+      - name: Prove coding agent generated source enters real SignalForge market runtime
+        run: python3 tests/test_company_os_delivery_registry.py
       - name: Compile runtime
         run: bun run check
       - name: Compile live Railway Growth Function source
