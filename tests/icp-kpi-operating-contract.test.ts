@@ -3,7 +3,7 @@ import contract from "../strategy/ICP_KPI_OPERATING_CONTRACT_v1.json";
 import identity from "../strategy/PRODUCT-IDENTITY-SSOT-v3.json";
 import atlas from "../strategy/WEB3_NATIVE_MARKET_ATLAS_v1.json";
 import {compileOperatingBoard} from "../company-os/operating-engine.ts";
-import {compileSignalForgeCompany} from "../company-os/signalforge-autonomy.ts";
+import {compileSignalForgeCompany,signalForgeReferenceFreshness} from "../company-os/signalforge-autonomy.ts";
 test("SignalForge Web3 three ICPs, source truth and measured targets do not drift",()=>{
  expect(contract.project_id).toBe(identity.project_id);
  expect(contract.mission_id).toBe(atlas.mission_id);
@@ -27,4 +27,9 @@ test("promised Web3 lane CTAs lead to actual anchors",async()=>{
  const b=await Bun.file(new URL("../public/web3-market-pulse.html",import.meta.url)).text();
  for(const route of ["/web3#prediction","/web3#perps","/radar"])expect(a).toContain('href="'+route+'"');
  for(const id of ["prediction","perps","trenches"])expect(b).toContain('id="'+id+'"');
+});
+
+test("stale reference checks become explicit action, never fake source freshness",()=>{
+ expect(signalForgeReferenceFreshness("2026-11-16T00:00:00Z").state).toBe("SOURCE_REVIEW_CURRENT_AS_OF_RECORD");
+ expect(signalForgeReferenceFreshness("2026-12-01T00:00:00Z").state).toBe("SOURCE_REVIEW_OVERDUE");
 });
