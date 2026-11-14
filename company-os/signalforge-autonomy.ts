@@ -8,6 +8,7 @@
 import org from "./organization.v2.json";
 import identity from "../strategy/PRODUCT-IDENTITY-SSOT-v3.json";
 import ventureRoadmap from "./venture-roadmap.v1.json";
+import autonomyAcceptance from "./autonomy-acceptance.v1.json";
 import { compileWorkforceFloor } from "./workforce-floor.ts";
 
 const PROJECT="signalforge-market-intelligence";
@@ -62,7 +63,10 @@ export function verifySignalForgeOnly(){
     ventureRoadmap.project!=="SignalForge"||
     ventureRoadmap.company.project_id!==PROJECT||
     ventureRoadmap.company.missions.length!==12||
-    ventureRoadmap.workstreams.length!==14)
+    ventureRoadmap.workstreams.length!==14||
+    autonomyAcceptance.project_id!==PROJECT||
+    autonomyAcceptance.steps.length!==10||
+    autonomyAcceptance.war_games.length!==16)
    throw Error("SIGNALFORGE_SCOPE_OR_ORGANIZATION_DRIFT");
  for(const [dept,head] of Object.entries(DEPARTMENT_HEADS)){
   const role=roleById.get(head);
@@ -186,6 +190,17 @@ export function compileSignalForgeCompany(board:Board){
    initial_parallelism:ventureRoadmap.initial_parallelism,
    status:"PLANNED_UNDISPATCHED_EXISTING_GOVERNOR_REQUIRED",
    owns_scheduler:false,external_effects_authorized:false
+  },
+  autonomy_acceptance:{
+   schema:autonomyAcceptance.schema,
+   canonical_ref:autonomyAcceptance.canonical_ref,
+   phases:autonomyAcceptance.steps,
+   failure_scenarios:autonomyAcceptance.war_games,
+   primary_missions:autonomyAcceptance.first_missions,
+   status:"NOT_INDEPENDENTLY_VERIFIED",
+   source_of_worker_identity:"EXISTING_OWNED_AGENTOS_ONLY",
+   dispatch_performed:false,
+   created_separate_scheduler:false
   },
   department_workstreams:departments,
   role_assignments:role_prompts,
