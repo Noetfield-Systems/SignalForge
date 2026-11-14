@@ -235,8 +235,16 @@ def main():
         print(json.dumps({"state":delivery_state,"pr_url":pr,"branch_ref":branch,"workstream_id":workstream,
                           "head_sha":head_sha,"independently_verified":False}))
     except Exception as exc:
-        print(json.dumps({"state":"FAILED","stage":stage,"error_type":type(exc).__name__,
-                          "workstream_id":workstream}))
+        diagnostic={"schema":"signalforge.company-delivery.diagnostic.v1",
+                    "state":"FAILED","stage":stage,
+                    "error_type":type(exc).__name__,
+                    "workstream_prefix":workstream[:12],
+                    "product_project":"signalforge-market-intelligence",
+                    "no_artifact_or_release_claimed":True}
+        (ROOT/"company-delivery-diagnostics.json").write_text(
+            json.dumps(diagnostic,sort_keys=True)+"\n",encoding="utf8")
+        step_output(state="FAILED")
+        print(json.dumps(diagnostic,sort_keys=True))
         try:
             send("/report",{"workstream_id":workstream,"status":"FAILED",
                   "source_sha":source_sha},token)
