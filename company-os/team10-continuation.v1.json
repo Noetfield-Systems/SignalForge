@@ -1,6 +1,6 @@
 {
   "schema": "signalforge.company-os.venture-team-continuation.v1",
-  "version": "2026-11-13.2",
+  "version": "2026-11-14.1",
   "company": "SignalForge",
   "project_id": "signalforge-market-intelligence",
   "mission_id": "M20-SIGNALFORGE-COMMUNITY",
@@ -10,7 +10,8 @@
     "company-os/venture-roadmap.v1.json",
     "company-os/autonomy-acceptance.v1.json",
     "company-os/OPERATING-MANUAL.md",
-    "strategy/WEB3_NATIVE_MARKET_ATLAS_v1.json"
+    "strategy/WEB3_NATIVE_MARKET_ATLAS_v1.json",
+    "strategy/ICP_KPI_OPERATING_CONTRACT_v1.json"
   ],
   "parent_controller": "Sina Founder OS / canonical M20 Governor",
   "local_company_os": "SignalForge Company OS",
@@ -174,15 +175,15 @@
       "acceptance": "Responsive tested source-to-market-to-note navigation and accessible failure/loading paths with real deployed UI readback"
     },
     "SF-ROAD-07": {
-      "objective": "Instrument real first-use activation for Web3-native research cohorts (event / perp / meme) and legitimate return to a saved market hypothesis.",
+      "objective": "Instrument event_researcher, perp_researcher and solana_token_researcher qualified source-backed first research plus second UTC-day return; measure WQRR with honest eligible cohorts.",
       "acceptance": "Actual eligible cohort events and no invented user, daily active, conversion or retention numbers"
     },
     "SF-ROAD-08": {
-      "objective": "Study Polymarket/Hyperliquid/Lighter/GMGN public builder and trader communities; contribute authentic value and organize consent-based SignalForge Signal Rooms discussions.",
+      "objective": "Contribute genuinely useful source-checked event/perp/token research to permitted native communities, record actual published URL and feedback, not draft activity.",
       "acceptance": "Official-source community link, relevant helpful research contribution, and separately verified publication/feedback if any; no fabricated joins or posts"
     },
     "SF-ROAD-09": {
-      "objective": "Acquire actual SignalForge Web3 trader/researcher users via prediction market, perp DEX and meme trenches communities with distinct source-backed educational artifacts and opt-in invitations.",
+      "objective": "Create and genuinely publish source-linked ICP-specific Web3 research artifacts, measure attributable first research, qualified feedback, verified external contribution and WQRR; no fictional posting.",
       "acceptance": "One real public artifact/link and measured source visit or independently verified genuine outreach; unsent drafts never marked sent"
     }
   },
@@ -199,5 +200,6 @@
   ],
   "customer_product": "Web3-native market intelligence for prediction market, perp DEX, and meme trenches participants; authentic research and community with evidence-grounded subscriptions. General chart software is component inspiration, not primary market benchmark.",
   "definition_of_done": "No DONE until GitHub code SHA + CI + active Railway deployment + customer route + distinct verifier receipt, or separately verified real user/revenue outcome",
-  "market_atlas": "strategy/WEB3_NATIVE_MARKET_ATLAS_v1.json"
+  "market_atlas": "strategy/WEB3_NATIVE_MARKET_ATLAS_v1.json",
+  "icp_kpi_contract": "strategy/ICP_KPI_OPERATING_CONTRACT_v1.json"
 }
