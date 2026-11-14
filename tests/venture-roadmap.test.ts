@@ -1,5 +1,6 @@
 import {expect,test} from "bun:test";
 import roadmap from "../company-os/venture-roadmap.v1.json";
+import org from "../company-os/organization.v2.json";
 import {compileOperatingBoard} from "../company-os/operating-engine.ts";
 import {compileSignalForgeCompany,verifySignalForgeOnly} from "../company-os/signalforge-autonomy.ts";
 
@@ -12,7 +13,7 @@ test("founder roadmap remains scoped, multi-phase, parallel and never a dispatch
  expect(roadmap.company.missions.every(m=>m.delivery_status==="PLANNED_UNDISPATCHED")).toBe(true);
  expect(roadmap.workstreams.some(x=>x.id==="W09")).toBe(false);
  expect(roadmap.workstreams.some(x=>x.id==="W10")).toBe(false);
- const owners=new Set((await import("../company-os/organization.v2.json")).default.agents.map(x=>x.id));
+ const owners=new Set(org.agents.map(x=>x.id));
  for(const mission of roadmap.company.missions){
   expect(owners.has(mission.owner_role_id)).toBe(true);
   expect(roadmap.workstreams.some(x=>x.id===mission.workstream_id)).toBe(true);
