@@ -19,5 +19,5 @@ test("independent SignalForge culture and monetization are not token/LP plans",a
  const doc=await Bun.file(new URL("../docs/SIGNALFORGE_COMMUNITY_REACHOUT_REVENUE_MASTER_v1.md",import.meta.url)).text();
  for(const lane of ["event researchers","perp analysts","Solana token investigators"])expect(doc).toContain(lane);
  expect(doc).toContain("not SignalForge's token");
- expect(doc).toContain("independently settled cash");
+ expect(doc).toContain("independent processor settlement");
 });
