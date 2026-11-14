@@ -191,8 +191,13 @@ jobs:
           python3 scripts/company-os-readback.py
 
   closeout:
+    # Use the SAME scheduled Company OS runner for both freshly readback
+    # candidates and already proven historical receipts. A run with IDLE
+    # candidate must STILL process /pending-verification using original
+    # OIDC+source evidence, rather than parking genuine review forever.
+    # Never invoke verifier on a FAILED candidate or forged source.
     needs: [candidate, independent-readback]
-    if: ${{ always() && needs.candidate.result == 'success' && (needs.candidate.outputs.state == 'OPENED' || needs.candidate.outputs.state == 'BRANCH_READY') && needs.independent-readback.result == 'success' }}
+    if: ${{ always() && needs.candidate.result == 'success' && ((needs.candidate.outputs.state == 'OPENED' || needs.candidate.outputs.state == 'BRANCH_READY') && needs.independent-readback.result == 'success' || needs.candidate.outputs.state == 'IDLE') }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
