@@ -283,6 +283,25 @@ jobs:
           run-id: ${{ steps.source.outputs.run_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path: /tmp/sina-company-evidence
+      - name: Bind old immutable artifact to its verified originating GitHub run
+        env:
+          ORIGINAL_RUN_ID: ${{ steps.source.outputs.run_id }}
+        run: |
+          python3 - <<'PY'
+          import json,os,re
+          from pathlib import Path
+          path=Path('/tmp/sina-company-evidence/company-delivery-evidence.json')
+          data=json.loads(path.read_text())
+          if (data.get('schema')!='sina.company-delivery.builder-evidence.v1'
+                  or data.get('repo')!='Noetfield-Systems/SignalForge'
+                  or data.get('project_id')!='signalforge-market-intelligence'
+                  or data.get('independently_verified') is not False
+                  or not re.fullmatch(r'[a-f0-9]{32}',str(data.get('workstream_id','')))
+                  or not re.fullmatch(r'[a-f0-9]{40}',str(data.get('head_sha','')))):
+              raise SystemExit('RECOVERY_ARTIFACT_NOT_ORIGINAL_COMPANY_SCOPE')
+          data['delivery_run_id']=os.environ['ORIGINAL_RUN_ID']
+          path.write_text(json.dumps(data,sort_keys=True))
+          PY
       - name: Check independent verifier closeout contract
         run: python3 tests/test_company_os_closeout.py
       - name: Verify actual earlier candidate with original run/source provenance
