@@ -40,6 +40,8 @@ jobs:
         run: python3 -m py_compile scripts/company-os-delivery.py scripts/company-os-readback.py
       - name: Prove coding agent generated source enters real SignalForge market runtime
         run: python3 tests/test_company_os_delivery_registry.py
+      - name: Verify isolated Company OS closeout and three-stage continuation
+        run: python3 tests/test_company_os_closeout.py
       - name: Verify isolated verifier failure reasons are safe and actionable
         run: python3 tests/test_company_os_closeout_errors.py
       - name: Compile runtime
