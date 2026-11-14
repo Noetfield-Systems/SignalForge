@@ -18,7 +18,8 @@ export function assessMarketSourceIntegrity(input:ResearchMarketInput, nowMs=Dat
  if(input.source!=="Kraken public OHLC")
   return {state:"UNRECOGNIZED_PUBLIC_SOURCE",ageSeconds:null,sourceTimestamp:null,...denied};
  const last=input.candles.at(-1),seconds=last?.time;
- if(!Number.isSafeInteger(seconds)||seconds!<=0||!Number.isFinite(last?.close)||last!.close!<=0)
+ if(!Number.isSafeInteger(seconds)||typeof seconds!=="number"||seconds<=0||
+    !last||typeof last.close!=="number"||!Number.isFinite(last.close)||last.close<=0)
   return {state:"INVALID_CANDLE",ageSeconds:null,sourceTimestamp:null,...denied};
  const ageSeconds=Math.floor(nowMs/1000-seconds);
  if(ageSeconds<0||ageSeconds>30*86400)
