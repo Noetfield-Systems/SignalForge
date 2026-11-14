@@ -79,6 +79,6 @@ export async function getWeb3NativePulse(fetcher:typeof fetch=fetch,now=()=>new 
   perps:{venue:"Hyperliquid",state:perps===null?"SOURCE_UNAVAILABLE":"SOURCE_OBSERVED",sourceUrl:"https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/info-endpoint/perpetuals",items:perps??[]},
   trenches:{state:"EXISTING_SOLANA_TOKEN_RADAR",path:"/radar",note:"Token Radar offers address-based source evidence. No native meme-trending provider claimed."},
   otherVenues:{state:"RESEARCH_NOT_LIVE",names:["Kalshi","Lighter","Aster","Variational"]},
-  limitations:["Venue data is source-reported, not independently verified","No probability predictions, leverage trading or financial execution","Unavailable source is shown explicitly; no simulated venue observations"]}
+  limitations:["Venue data is source-reported, not independently verified","No probability predictions, leverage trading or financial execution","Unavailable source is shown explicitly; no simulated venue observations"]
  };
 }
