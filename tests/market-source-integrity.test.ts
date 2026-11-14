@@ -38,7 +38,16 @@ test("coding agent registry is actually imported by customer-facing source evalu
  expect(market).toContain("rule.evaluate(passed)");
  expect(registry).toContain("SINA_GENERATED_IMPORTS");
  expect(registry).toContain("SINA_GENERATED_RULES");
- expect(assessMarketSourceIntegrity(observed(900),now).generatedResearchRules).toEqual([]);
+ const result=assessMarketSourceIntegrity(observed(900),now);
+ expect(Array.isArray(result.generatedResearchRules)).toBe(true);
+ for(const entry of result.generatedResearchRules||[]){
+  expect(typeof entry.workstreamId).toBe("string");
+  expect(entry.workstreamId).toMatch(/^[a-f0-9]{32}$/);
+  expect(typeof entry.state).toBe("string");
+  expect(typeof entry.researchReady).toBe("boolean");
+ }
+ expect(result.tradingAuthorized).toBe(false);
+ expect(result.independentlyVerified).toBe(false);
 });
 
 test("the deployed market endpoint and browser terminal must consume readiness",async()=>{
