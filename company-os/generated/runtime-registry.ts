@@ -14,8 +14,10 @@ export type SourceRule={
   workstreamId:string; evaluate:(input:SourceReviewInput)=>SourceReviewResult;
 };
 import { assessMarketSourceQuality as sf_market_rule_d5a6576c5244 } from "./feature_d5a6576c5244.mjs";
+import { assessMarketSourceQuality as sf_market_rule_d2d3e4faaf00 } from "./feature_d2d3e4faaf00.mjs";
 // SINA_GENERATED_IMPORTS
 export const GENERATED_MARKET_RULES:SourceRule[]=[
     {workstreamId:"d5a6576c52442298a31c115da3bcf1af",evaluate:sf_market_rule_d5a6576c5244},
+    {workstreamId:"d2d3e4faaf00f69a6c1f5c01c2c5e2ac",evaluate:sf_market_rule_d2d3e4faaf00},
   // SINA_GENERATED_RULES
 ];
