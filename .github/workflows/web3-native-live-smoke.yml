@@ -1,0 +1,52 @@
+name: SignalForge Web3-native real-market source smoke
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/web3-native-pulse.ts"
+      - "src/server.ts"
+      - "public/web3-market-pulse.html"
+      - ".github/workflows/web3-native-live-smoke.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  independent-web3-sources:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      BASE: https://signalforge-web-production.up.railway.app
+    steps:
+      - name: Verify deployed Web3 premium UI and public data schema
+        run: |
+          set -euo pipefail
+          for i in 1 2 3 4; do
+            curl -fsS --max-time 20 "$BASE/web3" -o /tmp/sf-web3.html || true
+            curl -fsS --max-time 35 "$BASE/api/web3/pulse" -o /tmp/sf-web3.json || true
+            if grep -q 'Polymarket · event flow' /tmp/sf-web3.html 2>/dev/null; then
+              if python3 - <<'PY'
+import json
+x=json.load(open("/tmp/sf-web3.json"))
+assert x["schema"]=="signalforge.web3-native-pulse.v1"
+assert x["project_id"]=="signalforge-market-intelligence"
+assert x["independentlyVerified"] is False
+assert x["executionAuthorized"] is False
+assert x["prediction"]["state"] in ("SOURCE_UNAVAILABLE","SOURCE_OBSERVED")
+assert x["perps"]["state"] in ("SOURCE_UNAVAILABLE","SOURCE_OBSERVED")
+assert x["trenches"]["path"]=="/radar"
+assert len(x["prediction"]["items"])<=12 and len(x["perps"]["items"])<=12
+for y in x["prediction"]["items"]:
+ assert y["venue"]=="Polymarket" and y["publicUrl"].startswith("https://polymarket.com/event/")
+ assert y["independentlyVerified"] is False
+for y in x["perps"]["items"]:
+ assert y["venue"]=="Hyperliquid" and y["publicUrl"].startswith("https://app.hyperliquid.xyz/trade/")
+ assert y["independentlyVerified"] is False
+if x["prediction"]["state"]!="SOURCE_OBSERVED" and x["perps"]["state"]!="SOURCE_OBSERVED":
+ raise SystemExit("NO_LIVE_WEB3_PROVIDER_OBSERVATION")
+print("WEB3_LIVE_PROVIDER_VERIFIED Polymarket",len(x["prediction"]["items"]),"Hyperliquid",len(x["perps"]["items"]))
+PY
+              then exit 0; fi
+            fi
+            sleep 6
+          done
+          echo "WEB3_LIVE_SMOKE_NOT_VERIFIED";exit 1
