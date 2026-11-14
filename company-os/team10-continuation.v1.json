@@ -1,0 +1,201 @@
+{
+  "schema": "signalforge.company-os.venture-team-continuation.v1",
+  "version": "2026-11-13.1",
+  "company": "SignalForge",
+  "project_id": "signalforge-market-intelligence",
+  "mission_id": "M20-SIGNALFORGE-COMMUNITY",
+  "canonical_product_sources": [
+    "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+    "company-os/organization.v2.json",
+    "company-os/venture-roadmap.v1.json",
+    "company-os/autonomy-acceptance.v1.json",
+    "company-os/OPERATING-MANUAL.md"
+  ],
+  "parent_controller": "Sina Founder OS / canonical M20 Governor",
+  "local_company_os": "SignalForge Company OS",
+  "execution_runtime": "existing shared Agent Fabric single persisted SQL task queue; agents ag_sf_*; project_id+workstream scoped",
+  "independent_verifier": "separate existing Company OS verifier",
+  "schedule": {
+    "time_zone": "America/Vancouver",
+    "local_start": "08:00",
+    "local_end_exclusive": "23:00",
+    "heartbeat_owner": "existing Agent Fabric bridge-owner resident worker (45 seconds)",
+    "off_hours": "read-only health and queued-state recovery; no new model prompts",
+    "per_role_max_new_iterations_per_local_day": 3,
+    "do_not_create_new_scheduler": true
+  },
+  "progression": {
+    "cadence": "authenticated Founder WorkPacket -> specialist real provider output -> department manager real provider review -> source-hashed next job -> independent source/CI/product verification -> next canonical WorkPacket",
+    "upstream_requirement": "original SignalForge M20 workstream, valid scoped decision_ref, owner remains authorized, exact prior provider Run and output SHA",
+    "replay_key": "project_id+workstream_id+role_id+iteration",
+    "stop_conditions": [
+      "Founder WorkPacket closed or revoked",
+      "no real source output",
+      "manager review pending",
+      "independent verification disagreement requiring repair",
+      "genuine provider budget ceiling or unavailable route",
+      "local end of shift"
+    ],
+    "runtime_boundaries": [
+      "no second queue or cron",
+      "no role mass activation beyond 10",
+      "no invented user count/payment/source/deployment",
+      "no trades or irreversible token effects",
+      "managers are peers, not independent external verifier",
+      "shared execution infrastructure does not make venture a general Noetfield customer offering"
+    ]
+  },
+  "roles": [
+    {
+      "role_id": "head_research",
+      "department": "research",
+      "reports_to": "managing_director",
+      "mission_ids": [
+        "SF-ROAD-02",
+        "SF-ROAD-04",
+        "SF-ROAD-05"
+      ]
+    },
+    {
+      "role_id": "quant_researcher",
+      "department": "research",
+      "reports_to": "head_research",
+      "mission_ids": [
+        "SF-ROAD-05",
+        "SF-ROAD-02",
+        "SF-ROAD-04"
+      ]
+    },
+    {
+      "role_id": "onchain_analyst",
+      "department": "research",
+      "reports_to": "head_research",
+      "mission_ids": [
+        "SF-ROAD-04",
+        "SF-ROAD-02",
+        "SF-ROAD-05"
+      ]
+    },
+    {
+      "role_id": "head_engineering",
+      "department": "engineering",
+      "reports_to": "managing_director",
+      "mission_ids": [
+        "SF-ROAD-03",
+        "SF-ROAD-01",
+        "SF-ROAD-06"
+      ]
+    },
+    {
+      "role_id": "backend_engineer",
+      "department": "engineering",
+      "reports_to": "head_engineering",
+      "mission_ids": [
+        "SF-ROAD-03",
+        "SF-ROAD-02",
+        "SF-ROAD-07"
+      ]
+    },
+    {
+      "role_id": "frontend_engineer",
+      "department": "engineering",
+      "reports_to": "head_engineering",
+      "mission_ids": [
+        "SF-ROAD-06",
+        "SF-ROAD-01",
+        "SF-ROAD-07"
+      ]
+    },
+    {
+      "role_id": "qa_engineer",
+      "department": "engineering",
+      "reports_to": "head_engineering",
+      "mission_ids": [
+        "SF-ROAD-01",
+        "SF-ROAD-03",
+        "SF-ROAD-06"
+      ]
+    },
+    {
+      "role_id": "head_growth",
+      "department": "growth",
+      "reports_to": "managing_director",
+      "mission_ids": [
+        "SF-ROAD-09",
+        "SF-ROAD-07",
+        "SF-ROAD-08"
+      ]
+    },
+    {
+      "role_id": "community_lead",
+      "department": "growth",
+      "reports_to": "head_growth",
+      "mission_ids": [
+        "SF-ROAD-09",
+        "SF-ROAD-08",
+        "SF-ROAD-07"
+      ]
+    },
+    {
+      "role_id": "lifecycle_growth",
+      "department": "growth",
+      "reports_to": "head_growth",
+      "mission_ids": [
+        "SF-ROAD-07",
+        "SF-ROAD-09",
+        "SF-ROAD-08"
+      ]
+    }
+  ],
+  "missions": {
+    "SF-ROAD-01": {
+      "objective": "Signup to authentic Kraken OHLC research to saved note and return: browser-first journey",
+      "acceptance": "Working browser E2E and source-linked defect/test evidence"
+    },
+    "SF-ROAD-02": {
+      "objective": "Validate actual candle data source, freshness, sample delays and labeled demo fallback",
+      "acceptance": "Reproducible source comparison and negative-path checks"
+    },
+    "SF-ROAD-03": {
+      "objective": "Improve real scanner filtering, current API failure paths and researcher workflow",
+      "acceptance": "Code/test/PR candidate mapped to active source and CI"
+    },
+    "SF-ROAD-04": {
+      "objective": "Explainable signal research with explicit data source timestamps, assumptions and risk",
+      "acceptance": "Timestamped falsifiable hypothesis and reference source evidence"
+    },
+    "SF-ROAD-05": {
+      "objective": "Historical backtest controls, lookahead prevention, out-of-sample replay",
+      "acceptance": "Deterministic methodology and test vectors, not claimed forward alpha"
+    },
+    "SF-ROAD-06": {
+      "objective": "Premium accessible mobile and desktop research UX and useful error states",
+      "acceptance": "Real route, responsive behavior and reproducible defects"
+    },
+    "SF-ROAD-07": {
+      "objective": "Real researcher first-use activation and saved research returning-user instrumentation",
+      "acceptance": "Privacy-safe instrumentation, actual source event query or proposed exact test"
+    },
+    "SF-ROAD-08": {
+      "objective": "Genuine Signal Rooms onboarding, authentic discussions and moderation paths",
+      "acceptance": "Opt-in community experiments with traceable real feedback and no invented users"
+    },
+    "SF-ROAD-09": {
+      "objective": "Public source-linked acquisition and researcher landing journeys",
+      "acceptance": "Genuine published URL and observed traffic only after authorized publishing"
+    }
+  },
+  "team_size": 10,
+  "departments": [
+    "research",
+    "engineering",
+    "growth"
+  ],
+  "benchmarks": [
+    "TradingView: historical candles and overlays",
+    "DEX Screener: discovery/filtering and source freshness",
+    "Nansen: onchain provenance depth"
+  ],
+  "customer_product": "Premium source-aware crypto market research and researcher retention, not an AI-agent marketplace",
+  "definition_of_done": "No DONE until GitHub code SHA + CI + active Railway deployment + customer route + distinct verifier receipt, or separately verified real user/revenue outcome"
+}
