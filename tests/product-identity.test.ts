@@ -13,7 +13,11 @@ test("Founder business identity is market intelligence, not an agent organizatio
  expect(identity.primary_business).toContain("crypto market intelligence");
  expect(identity.company_os.non_customer_facing_by_default).toBe(true);
  expect(identity.company_os.defined_roles).toBe(100);
- expect(identity.reference_benchmarks.map(x=>x.name)).toEqual(["TradingView","DEX Screener","Nansen","Arkham","Bubblemaps"]);
+ expect(identity.benchmark_kind).toBe("WEB3_NATIVE_MARKETS_COMMUNITIES");
+ expect(identity.web3_market_atlas).toBe("strategy/WEB3_NATIVE_MARKET_ATLAS_v1.json");
+ expect(identity.reference_benchmarks.filter(x=>x.user_reference).map(x=>x.name)).toEqual(["Polymarket","Kalshi","Hyperliquid","Lighter","Aster","Variational"]);
+ expect(identity.reference_benchmarks.map(x=>x.market).slice(0,6)).toEqual(["PREDICTION_MARKETS","PREDICTION_MARKETS","PERPETUAL_DEX","PERPETUAL_DEX","PERPETUAL_DEX","PERPETUAL_DEX"]);
+ expect(identity.technical_tool_references).toContain("TradingView");
  expect(identity.market_ui_rules.some(x=>x.includes("Company OS"))).toBe(true);
  expect(company.founder_product_contract).toBe("strategy/PRODUCT-IDENTITY-SSOT-v3.json");
  expect(company.agents).toHaveLength(100);

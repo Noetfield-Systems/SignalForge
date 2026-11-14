@@ -25,17 +25,27 @@ The user has a market question: *What is moving, why might it matter, what is th
 
 **Single core activation:** the visitor inspects one actual source-reported market or token, understands at least one specific insight/context field and can continue the research path. Secondary events: authenticated watchlist/research-note creation and meaningful member discussion. Track eligible cohorts, not button-click vanity.
 
-## 2. Competitive reference framework (capabilities, never copied trade dress)
+## 2. Founder correction: Web3-native market and community benchmarks (2026-11-13)
 
-| Reference | Product practice to learn | SignalForge implementation requirement | Current truth |
+**The core market references are NOT TradingView / DEX Screener / Nansen.** Those are secondary tooling and market data comparisons, NOT the ecosystems in which the SignalForge venture must establish authentic standing.
+
+Actual Founder-specified Web3 market categories and named venues (explicit from the supplied market research excerpt):
+
+| Core market | First-party named market references | Product opportunity | Community / distribution work |
 |---|---|---|---|
-| [TradingView](https://www.tradingview.com/features/) | High-information candlestick surface, interval controls, reusable scanner, strategy testing, deep links | Market OHLC canvas or chart with timeframes, context, strategies, explicit source status; accessible mobile interactions | Native candle/indicator/strategy baseline; not TradingView parity, Pine interpreter or live brokerage |
-| [DEX Screener](https://dexscreener.com/) | Token/pair-first discovery, liquidity and volume context, sharable token identities | Solana token mint → actual source pools/activity/age/time → saved research and next action | Public Token Radar baseline; not an unrestricted multi-chain index |
-| [Nansen](https://docs.nansen.ai/api/overview) | Source-based onchain token due diligence, flows, holders, entity and wallet context | Add source and chain ID, observations, freshness, uncertainty; extend only when actual provider data exists | Comparable research *intent*, no claimed Smart Money wallet intelligence parity |
-| [Arkham](https://platform.arkm.com/) | Wallet/entity intelligence navigation and investigations | Evidence provenance and contract graph research if supported by verified chain feeds | Future, not a shipped entity attribution service |
-| [Bubblemaps](https://bubblemaps.io/) | Token concentration and relationship visual analysis | Holder cluster views only with actual chain data, clear coverage and unknown relationships | Future, not a shipped holder visualization service |
+| Prediction markets | **Polymarket, Kalshi** | Event probability, market activity, liquidity, catalyst and resolution intelligence | Builder programs, market researchers, developer forums and event traders |
+| Perp DEX | **Hyperliquid, Lighter, Aster, Variational** | Perp open interest, funding dynamics, risk, explainable source-provenance changes | Public API builders, trader communities, educational/source-backed tools |
+| Meme coin trenches | **Founder specified category without named venues in that excerpt** | Fast Solana token discovery, attention and liquidity/holder changes | Public creator, meme trader and Telegram communities; genuine source-linked contributions |
 
-Golden product requirement: **link the evidence to the action.** Market scanner → open candlestick/signal context → evaluate rule/backtest → save thesis/watchlist → return to an observed outcome. Make that loop easier than toggling between unrelated apps. Do not pretend to reproduce every premium benchmark feature.
+**Additional researched meme terminal products (not falsely attributed as prior Founder-confirmed named benchmarks):** pump.fun, Axiom Trade, GMGN.ai, Photon, Trojan. Their market-entry and product parallels are listed in [the source-classified atlas](../strategy/WEB3_NATIVE_MARKET_ATLAS_v1.json).
+
+**The original complete market report path is NOT VERIFIED.** The Investor Memorandum dated November 11 later categorized incumbent tools; do not misstate that latter document as the original Founder Web3 market research. This correction supersedes references in this file and in historical Company OS proposals that treat general chart software as the *core* competitive ecosystems.
+
+**Product rule:** SignalForge is a Web3-native signal/research/community participant. Research the active venues and build authentic useful tools **for their traders, builders and token communities**, not generic chart replicas. Begin with existing public read APIs and operationally reusable source evidence. Event-market radar, perp OI/funding, launch/token radar, source-aware analysis, opt-in community loops are bounded product workstreams—not claims that those features already shipped. Preserve current functional Kraken charts, Solana Radar and subscriptions as baseline components until new features are genuinely delivered.
+
+Technical/UX references **only**, subordinate to the real market: TradingView (candle UI), DEX Screener (pair lookup/data discovery), Nansen/Arkham/Bubblemaps (provenance/holder UI examples). They can inform component design but must NEVER outrank Polymarket/Kalshi/Hyperliquid/Lighter/Aster/Variational/trenches in the SignalForge M20 planner, Company OS prompt compiler or outreach backlog.
+
+**Operating loop:** actual Web3 source/community observation → usable free research artifact → legitimate participation/feedback → product code+tests → independent CI/deploy readback → user return/paid conversion if real → next role-owned WorkPacket. No fictional partners, traction, outgoing messages or financial results.
 
 ## 3. UI design and interaction invariants
 

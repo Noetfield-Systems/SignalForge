@@ -1,0 +1,237 @@
+{
+  "schema": "signalforge.web3-native-market-atlas.v1",
+  "as_of": "2026-11-13",
+  "project_id": "signalforge-market-intelligence",
+  "mission_id": "M20-SIGNALFORGE-COMMUNITY",
+  "owner": "SignalForge Research/Growth/Engineering Company OS",
+  "intent_boundary": "WEB3_NATIVE_USER_COMMUNITIES_AND_MARKET_BENCHMARKS_NOT_GENERIC_CHARTING_TOOL_COMPETITORS",
+  "source_classification": {
+    "explicit_user_names": [
+      "Polymarket",
+      "Kalshi",
+      "Hyperliquid",
+      "Lighter",
+      "Aster",
+      "Variational"
+    ],
+    "explicit_user_categories": [
+      "PREDICTION_MARKETS",
+      "PERPETUAL_DEX",
+      "MEME_COIN_TRENCHES"
+    ],
+    "research_added_trenches": [
+      "pump.fun",
+      "Axiom Trade",
+      "GMGN.ai",
+      "Photon",
+      "Trojan"
+    ],
+    "historical_original_full_report_location": "NOT_VERIFIED_IN_RETRIEVED_FILES",
+    "previously_misattributed_primary_benchmarks": [
+      "TradingView",
+      "DEX Screener",
+      "Nansen",
+      "Arkham",
+      "Bubblemaps"
+    ],
+    "note": "Original Web3-market report exact path was not located; only explicit Founder excerpt is authoritative for these 3 user-stated categories and 6 named venues. Secondary meme terminal entries come from separately researched market sources."
+  },
+  "markets": [
+    {
+      "id": "PREDICTION_MARKETS",
+      "title": "Prediction markets",
+      "user_names": [
+        "Polymarket",
+        "Kalshi"
+      ],
+      "product_jobs": [
+        "Event radar with public source odds change, liquidity and event outcome conditions",
+        "Evidence-backed catalyst explainers and watchlists",
+        "Shareable event intelligence and informed community discussion"
+      ],
+      "community_entry": [
+        "https://builders.polymarket.com/",
+        "https://help.kalshi.com/en/articles/13823854-kalshi-api"
+      ],
+      "next_real_artifact": "Public event market research dataset backed by documented Gamma/market endpoints; no claim of production integration without live readback"
+    },
+    {
+      "id": "PERPETUAL_DEX",
+      "title": "Perpetual DEX communities",
+      "user_names": [
+        "Hyperliquid",
+        "Lighter",
+        "Aster",
+        "Variational"
+      ],
+      "product_jobs": [
+        "Source-stamped perp OI and funding/risk monitor",
+        "High-signal market structure and explainable change alerts",
+        "Compare public market observability by venue and explain limits"
+      ],
+      "community_entry": [
+        "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api",
+        "https://discord.gg/hyperliquid",
+        "https://t.me/s/lighter_api_updates",
+        "https://docs.lighter.xyz/"
+      ],
+      "next_real_artifact": "Read-only Hyperliquid public-market intelligence connector with tests and source timestamp"
+    },
+    {
+      "id": "MEME_COIN_TRENCHES",
+      "title": "Meme coin trenches",
+      "user_names": [],
+      "research_names": [
+        "pump.fun",
+        "Axiom Trade",
+        "GMGN.ai",
+        "Photon",
+        "Trojan"
+      ],
+      "product_jobs": [
+        "Fresh token/launch/pool and attention radar, source-labeled rather than performance claims",
+        "Token investigation and reproducible researcher notes",
+        "Earn genuine trust inside token community by publishing useful source-linked research"
+      ],
+      "community_entry": [
+        "https://docs.gmgn.ai/index/quick-start",
+        "https://gmgn.ai/trend?chain=sol",
+        "https://docs.pump.fun/"
+      ],
+      "next_real_artifact": "Solana token radar high-signal trend cohorts with authentic public-source readbacks; no seeded fake posts/users"
+    }
+  ],
+  "platforms": [
+    {
+      "name": "Polymarket",
+      "market": "PREDICTION_MARKETS",
+      "reference": "https://polymarket.com/",
+      "adapt": "Event-market discovery, price-implied probabilities, volume/liquidity changes, real researcher discussions and builder distribution",
+      "priority": "P0",
+      "user_reference": true,
+      "signalforge_goal": "Event odds-monitoring and source-linked market research; no exchange/order matching parity claimed"
+    },
+    {
+      "name": "Kalshi",
+      "market": "PREDICTION_MARKETS",
+      "reference": "https://kalshi.com/",
+      "adapt": "Event market taxonomy, public orderbook/market-data discipline, catalyst calendars, developer community",
+      "priority": "P0",
+      "user_reference": true,
+      "signalforge_goal": "Event market intelligence and change alerts; no regulated exchange operation claimed"
+    },
+    {
+      "name": "Hyperliquid",
+      "market": "PERPETUAL_DEX",
+      "reference": "https://hyperliquid.xyz/",
+      "adapt": "Trader-first product, market depth, open interest, funding, ecosystem tools, developer/user communities",
+      "priority": "P0",
+      "user_reference": true,
+      "signalforge_goal": "Evidence-led funding/OI insights, analytics, source-timestamped signal content; no leveraged orders"
+    },
+    {
+      "name": "Lighter",
+      "market": "PERPETUAL_DEX",
+      "reference": "https://lighter.xyz/",
+      "adapt": "Perp UX, market-data/API surfaces, trader research and builder distribution",
+      "priority": "P0",
+      "user_reference": true,
+      "signalforge_goal": "Cross-venue risk/context dashboards, public-source freshness and community participation"
+    },
+    {
+      "name": "Aster",
+      "market": "PERPETUAL_DEX",
+      "reference": "https://www.asterdex.com/",
+      "adapt": "Cross-chain perps discovery, incentives/rewards communication, creator and builder distribution",
+      "priority": "P0",
+      "user_reference": true,
+      "signalforge_goal": "Onchain market scanning and incentives research, no synthetic token rewards"
+    },
+    {
+      "name": "Variational",
+      "market": "PERPETUAL_DEX",
+      "reference": "https://variational.io/",
+      "adapt": "RFQ-style derivatives market design, diverse market coverage, evidence-informed trading community",
+      "priority": "P0",
+      "user_reference": true,
+      "signalforge_goal": "Compare funding and market structure where real public-source fields are available"
+    },
+    {
+      "name": "pump.fun",
+      "market": "MEME_COIN_TRENCHES",
+      "reference": "https://pump.fun/",
+      "adapt": "Launch discovery, social velocity, token community and trader attention",
+      "priority": "P0",
+      "user_reference": false,
+      "signalforge_goal": "Source-linked early market observation and opt-in community research"
+    },
+    {
+      "name": "Axiom Trade",
+      "market": "MEME_COIN_TRENCHES",
+      "reference": "https://axiom.trade/",
+      "adapt": "High-density Solana trader terminal, discovery, wallet observations and rapid workflows",
+      "priority": "P0",
+      "user_reference": false,
+      "signalforge_goal": "Speed/utility of token discovery and research UX; no copied trade dress"
+    },
+    {
+      "name": "GMGN.ai",
+      "market": "MEME_COIN_TRENCHES",
+      "reference": "https://gmgn.ai/",
+      "adapt": "Meme token trend scanning, market wallets and Telegram-community workflows",
+      "priority": "P0",
+      "user_reference": false,
+      "signalforge_goal": "Actionable source-linked wallet and liquidity context if observable"
+    },
+    {
+      "name": "Photon",
+      "market": "MEME_COIN_TRENCHES",
+      "reference": null,
+      "adapt": "Fast token discovery, chart-to-token workflow and Solana trader habits",
+      "priority": "P1",
+      "user_reference": false,
+      "signalforge_goal": "Research terminal speed and community expectations; verify current official URLs before linking"
+    },
+    {
+      "name": "Trojan",
+      "market": "MEME_COIN_TRENCHES",
+      "reference": null,
+      "adapt": "Telegram-first token trading bot, distribution and research-to-action pathway",
+      "priority": "P1",
+      "user_reference": false,
+      "signalforge_goal": "Understand Telegram workflow, not replicate custody/execution or perform unsanctioned outreach"
+    }
+  ],
+  "operating_loop": {
+    "scope": "Research -> source capture -> useful free market insight -> community participation -> user feedback -> Product/Engineering feature -> verified deployment -> return cohort -> repeat",
+    "roles": [
+      "head_research",
+      "quant_researcher",
+      "onchain_analyst",
+      "head_engineering",
+      "backend_engineer",
+      "frontend_engineer",
+      "qa_engineer",
+      "head_growth",
+      "community_lead",
+      "lifecycle_growth"
+    ],
+    "dispatch": "reuse existing SignalForge M20/Governor/Agent Fabric/Runway/Verifier and GitHub Company OS code delivery",
+    "outreach_truth": "Publishing, messages, joins and followers count only with native external provider evidence. No fake community membership, spamming, financial solicitation or unsent-as-sent.",
+    "tracking": [
+      "first_party_source_observations",
+      "real_community_contributions_if_authorized",
+      "real_genuine_feedback",
+      "measured_product_activation",
+      "first_party_SHA_CI_DEPLOY",
+      "confirmed_billing_evidence_if_any"
+    ]
+  },
+  "technical_tools_not_primary_market_benchmarks": [
+    "TradingView",
+    "DEX Screener",
+    "Nansen",
+    "Arkham",
+    "Bubblemaps"
+  ]
+}
