@@ -344,11 +344,11 @@ jobs:
               obj=json.loads(diagnostics.read_text())
               raw=str(obj.get("reason_code") or obj.get("stage") or "UNKNOWN")
               cause=raw[:100] if all(c.isascii() and (c.isalnum() or c=="_") for c in raw) else "UNCLASSIFIED"
-          text=("Original SignalForge Company OS candidate recovery — source readback.\\n\\n"
-                +"- Independent closeout: "+state+"\\n"
-                +"- Failure reason code: "+cause+"\\n"
-                +"- [Actual GitHub Actions run](https://github.com/Noetfield-Systems/SignalForge/actions/runs/"+os.environ["RECOVERY_RUN"]+")\\n"
-                +"No production release, users, token, money or three-chain autonomy are claimed here.\\n")
+          text=("Original SignalForge Company OS candidate recovery — source readback.\n\n"
+                +"- Independent closeout: "+state+"\n"
+                +"- Failure reason code: "+cause+"\n"
+                +"- [Actual GitHub Actions run](https://github.com/Noetfield-Systems/SignalForge/actions/runs/"+os.environ["RECOVERY_RUN"]+")\n"
+                +"No production release, users, token, money or three-chain autonomy are claimed here.\n")
           Path("/tmp/sina-recovery-status.md").write_text(text)
           PY
           gh issue comment "$RECOVERY_ISSUE" --repo Noetfield-Systems/SignalForge --body-file /tmp/sina-recovery-status.md
