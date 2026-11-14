@@ -62,6 +62,9 @@ test("Internal code-delivery context loads Founder product lock; consumers never
  expect(delivery).toContain('FOUNDER_PRODUCT_IDENTITY_LOCK_INVALID');
  expect(delivery).toContain('FOUNDER PRODUCT CONTRACT');
  expect(delivery).toContain('strategy/PRODUCT-IDENTITY-SSOT-v3.json');
+ expect(delivery).toContain("FOUNDER EXECUTION-FIRST v4");
+ expect(delivery).toContain("EXECUTE_BY_DEFAULT");
+ expect(delivery).toContain("strategy/SIGNALFORGE_EXECUTION_FIRST_NETWORK_DOCTRINE_v1.json");
  expect(policy).toContain("Company OS is the INTERNAL operating staff");
  expect(company.operating_continuity.local_scheduler_creation).toBe(false);
 });
