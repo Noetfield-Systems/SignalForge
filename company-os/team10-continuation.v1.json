@@ -17,15 +17,15 @@
   "independent_verifier": "separate existing Company OS verifier",
   "schedule": {
     "time_zone": "America/Vancouver",
-    "local_start": "08:00",
-    "local_end_exclusive": "23:00",
-    "heartbeat_owner": "existing Agent Fabric bridge-owner resident worker (45 seconds)",
-    "off_hours": "read-only health and queued-state recovery; no new model prompts",
+    "local_start": "00:00",
+    "local_end_exclusive": "24:00",
+    "heartbeat_owner": "Existing Agent Fabric bridge-owner resident worker; no new scheduler",
+    "off_hours": "No shift closure: bounded 24h company pilot; provider quota, per-role daily iteration cap, real WorkPacket scope and owner pause still apply",
     "per_role_max_new_iterations_per_local_day": 3,
     "do_not_create_new_scheduler": true
   },
   "progression": {
-    "cadence": "authenticated Founder WorkPacket -> specialist real provider output -> department manager real provider review -> source-hashed next job -> independent source/CI/product verification -> next canonical WorkPacket",
+    "cadence": "Source-bound approved M20 mission -> product-specialist provider output -> actual manager provider review -> next roadmap/competitor work -> coding pipeline/CI when independently admitted -> verified product change",
     "upstream_requirement": "original SignalForge M20 workstream, valid scoped decision_ref, owner remains authorized, exact prior provider Run and output SHA",
     "replay_key": "project_id+workstream_id+role_id+iteration",
     "stop_conditions": [
@@ -34,7 +34,8 @@
       "manager review pending",
       "independent verification disagreement requiring repair",
       "genuine provider budget ceiling or unavailable route",
-      "local end of shift"
+      "existing provider/org/role daily and monthly budget ceiling",
+      "Founder explicitly pauses this venture"
     ],
     "runtime_boundaries": [
       "no second queue or cron",
@@ -197,5 +198,25 @@
     "Nansen: onchain provenance depth"
   ],
   "customer_product": "Premium source-aware crypto market research and researcher retention, not an AI-agent marketplace",
-  "definition_of_done": "No DONE until GitHub code SHA + CI + active Railway deployment + customer route + distinct verifier receipt, or separately verified real user/revenue outcome"
+  "definition_of_done": "No DONE until GitHub code SHA + CI + active Railway deployment + customer route + distinct verifier receipt, or separately verified real user/revenue outcome",
+  "benchmark_priority": [
+    {
+      "id": "P0-TRADINGVIEW",
+      "reference": "TradingView",
+      "source": "https://www.tradingview.com/features/",
+      "product_acceptance": "Source-current OHLC, actionable searchable screener, shareable symbols, keyboard/mobile chart tools and strategy backtests"
+    },
+    {
+      "id": "P0-DEXSCREENER",
+      "reference": "DEX Screener",
+      "source": "https://dexscreener.com/",
+      "product_acceptance": "Market discovery filters plus Solana token pool liquidity/volume source transparency; no fake multi-chain index"
+    },
+    {
+      "id": "P1-NANSEN",
+      "reference": "Nansen",
+      "source": "https://docs.nansen.ai/api/overview",
+      "product_acceptance": "Source-provenance-aware holder/flow analysis only with real authorized upstream feeds"
+    }
+  ]
 }
