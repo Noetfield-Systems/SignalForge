@@ -57,6 +57,18 @@
     "pricing": {
       "path": "/app?view=pricing",
       "purpose": "Verified commercial plans, trial and voluntary checkout"
+    },
+    "web3_pulse": {
+      "path": "/web3",
+      "purpose": "Source-reported Polymarket event and Hyperliquid funding/OI research; Solana Token Radar handoff",
+      "status": "PUBLIC_READ_ONLY_CONNECTED",
+      "unconnected": [
+        "Kalshi",
+        "Lighter",
+        "Aster",
+        "Variational",
+        "pump.fun"
+      ]
     }
   },
   "current_capabilities": {
@@ -103,6 +115,13 @@
         "name": "research subscriptions",
         "route": "/app?view=pricing",
         "note": "Only signed Stripe events and independent settlement prove money"
+      },
+      {
+        "name": "Web3 Market Pulse",
+        "route": "/web3",
+        "source": "Polymarket Gamma and Hyperliquid Info",
+        "require_mode": "SOURCE_OBSERVED",
+        "note": "Current public-source read-only feature, no execution or unconnected venues"
       }
     ],
     "roadmap_not_live": [
@@ -288,5 +307,18 @@
     "Nansen",
     "Arkham",
     "Bubblemaps"
+  ],
+  "icp_kpi_contract": "strategy/ICP_KPI_OPERATING_CONTRACT_v1.json",
+  "market_entry_priority": [
+    "/web3#prediction",
+    "/web3#perps",
+    "/radar"
+  ],
+  "north_star_operational_definition": "WQRR: source-backed research on two different days by one eligible real human within seven days; NOT MEASURED until validated.",
+  "ideal_customer_profiles": [
+    "event_researcher",
+    "perp_researcher",
+    "solana_token_researcher",
+    "web3_builder_SECONDARY"
   ]
 }
