@@ -93,7 +93,7 @@ def write_candidate(plan, workstream, base_sha):
     if ("// SINA_GENERATED_IMPORTS" not in current or
             "// SINA_GENERATED_RULES" not in current):
         raise RuntimeError("PRODUCT_RUNTIME_REGISTRY_NOT_AVAILABLE")
-    if not re.search(r"\\bexport\\s+function\\s+assessMarketSourceQuality\\s*\\(", source):
+    if not re.search(r"\bexport\s+function\s+assessMarketSourceQuality\s*\(", source):
         raise RuntimeError("MODEL_FEATURE_NOT_A_PRODUCT_MARKET_RULE")
     source_alias="sf_market_rule_"+suffix
     import_line=f'import {{ assessMarketSourceQuality as {source_alias} }} from "./feature_{suffix}.mjs";'
@@ -101,9 +101,9 @@ def write_candidate(plan, workstream, base_sha):
     if import_line in current or entry in current:
         raise RuntimeError("DUPLICATE_RUNTIME_FEATURE")
     updated=current.replace("// SINA_GENERATED_IMPORTS",
-        import_line+"\\n// SINA_GENERATED_IMPORTS")
+        import_line+"\n// SINA_GENERATED_IMPORTS")
     updated=updated.replace("// SINA_GENERATED_RULES",
-        "  "+entry+"\\n  // SINA_GENERATED_RULES")
+        "  "+entry+"\n  // SINA_GENERATED_RULES")
     registry.write_text(updated,encoding="utf8")
     return module,tests
 
