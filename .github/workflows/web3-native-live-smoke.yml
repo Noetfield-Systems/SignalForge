@@ -44,7 +44,8 @@ jobs:
           if x["prediction"]["state"]!="SOURCE_OBSERVED" and x["perps"]["state"]!="SOURCE_OBSERVED":
            raise SystemExit("NO_LIVE_WEB3_PROVIDER_OBSERVATION")
           print("WEB3_LIVE_PROVIDER_VERIFIED Polymarket",len(x["prediction"]["items"]),"Hyperliquid",len(x["perps"]["items"]))
-          PY              then exit 0; fi
+          PY
+              then exit 0; fi
             fi
             sleep 6
           done
