@@ -237,3 +237,69 @@ jobs:
           path: company-delivery-verification.json
           if-no-files-found: ignore
           retention-days: 90
+
+  verify-existing-candidate:
+    # Recovery only: real earlier candidate + independent readback were already
+    # completed. This is NOT a second scheduler or a way to forge a receipt.
+    if: ${{ github.event_name == 'issues' && github.event.issue.title == 'SINA: Verify Existing Company OS Delivery' && github.event.issue.user.login == 'kazemnezhadsina144-dot' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Parse strict original run reference from owner-authored issue
+        id: source
+        env:
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+        run: |
+          python3 - <<'PY'
+          import json,os,re
+          from pathlib import Path
+          event=json.loads(Path(os.environ['GITHUB_EVENT_PATH']).read_text())
+          issue=event.get('issue',{})
+          title=issue.get('title')
+          actor=(issue.get('user') or {}).get('login')
+          body=issue.get('body') or ''
+          if title!='SINA: Verify Existing Company OS Delivery' or actor!='kazemnezhadsina144-dot':
+              raise SystemExit('RECOVERY_ISSUE_NOT_AUTHORIZED')
+          match=re.fullmatch(r'\\s*delivery_run_id:\\s*([1-9][0-9]{7,19})\\s*',body)
+          if not match:
+              raise SystemExit('ORIGINAL_DELIVERY_RUN_ID_MISSING')
+          with open(os.environ['GITHUB_OUTPUT'],'a',encoding='utf8') as output:
+              output.write('run_id='+match.group(1)+'\\n')
+          PY
+      - uses: actions/download-artifact@v4
+        with:
+          name: sina-signalforge-workpacket-${{ steps.source.outputs.run_id }}
+          run-id: ${{ steps.source.outputs.run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: /tmp/sina-company-evidence
+      - name: Check independent verifier closeout contract
+        run: python3 tests/test_company_os_closeout.py
+      - name: Verify actual earlier candidate with original run/source provenance
+        id: verified
+        env:
+          SINA_EVIDENCE_FILE: /tmp/sina-company-evidence/company-delivery-evidence.json
+        run: python3 scripts/company-os-closeout.py
+      - name: Preserve bounded upstream 409 diagnostics
+        if: ${{ always() && steps.verified.outcome == 'failure' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: sina-existing-closeout-failure-${{ github.run_id }}
+          path: company-delivery-closeout-diagnostics.json
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Resume canonical next WorkPacket after genuine independently verified DONE
+        if: ${{ steps.verified.outputs.state == 'TECHNICALLY_VERIFIED' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run company-os-delivery.yml --ref main
