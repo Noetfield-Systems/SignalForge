@@ -271,11 +271,11 @@ jobs:
           body=issue.get('body') or ''
           if title!='SINA: Verify Existing Company OS Delivery' or actor!='kazemnezhadsina144-dot':
               raise SystemExit('RECOVERY_ISSUE_NOT_AUTHORIZED')
-          match=re.fullmatch(r'\\s*delivery_run_id:\\s*([1-9][0-9]{7,19})\\s*',body)
+          match=re.fullmatch(r'\s*delivery_run_id:\s*([1-9][0-9]{7,19})\s*',body)
           if not match:
               raise SystemExit('ORIGINAL_DELIVERY_RUN_ID_MISSING')
           with open(os.environ['GITHUB_OUTPUT'],'a',encoding='utf8') as output:
-              output.write('run_id='+match.group(1)+'\\n')
+              output.write('run_id='+match.group(1)+'\n')
           PY
       - uses: actions/download-artifact@v4
         with:
