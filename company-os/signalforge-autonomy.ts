@@ -7,6 +7,7 @@
  */
 import org from "./organization.v2.json";
 import identity from "../strategy/PRODUCT-IDENTITY-SSOT-v3.json";
+import ventureRoadmap from "./venture-roadmap.v1.json";
 import { compileWorkforceFloor } from "./workforce-floor.ts";
 
 const PROJECT="signalforge-market-intelligence";
@@ -57,7 +58,11 @@ export function verifySignalForgeOnly(){
     org.agents.length!==100||org.departments.length!==11||
     new Set(org.agents.map(x=>x.id)).size!==100||
     identity.company_os.non_customer_facing_by_default!==true ||
-    org.operating_continuity.local_scheduler_creation!==false)
+    org.operating_continuity.local_scheduler_creation!==false||
+    ventureRoadmap.project!=="SignalForge"||
+    ventureRoadmap.company.project_id!==PROJECT||
+    ventureRoadmap.company.missions.length!==12||
+    ventureRoadmap.workstreams.length!==14)
    throw Error("SIGNALFORGE_SCOPE_OR_ORGANIZATION_DRIFT");
  for(const [dept,head] of Object.entries(DEPARTMENT_HEADS)){
   const role=roleById.get(head);
@@ -168,6 +173,19 @@ export function compileSignalForgeCompany(board:Board){
    maximum_internal_parallel_drafts:org.operating_continuity.max_parallel_internal_drafts,
    checkins_vancouver:["00:00","06:00","12:00","18:00"],
    no_new_scheduler:true,no_new_registry:true
+  },
+  // Founder-locked phase/workstream candidates are surfaced to the EXISTING
+  // Company OS reader. They do not mint canonical WorkPackets or dispatch agents.
+  venture_roadmap:{
+   schema:ventureRoadmap.schema,
+   canonical_ref:ventureRoadmap.canonical_ref,
+   source_commit:ventureRoadmap.source_commit,
+   phases:ventureRoadmap.phases,
+   workstreams:ventureRoadmap.workstreams,
+   mission_candidates:ventureRoadmap.company.missions,
+   initial_parallelism:ventureRoadmap.initial_parallelism,
+   status:"PLANNED_UNDISPATCHED_EXISTING_GOVERNOR_REQUIRED",
+   owns_scheduler:false,external_effects_authorized:false
   },
   department_workstreams:departments,
   role_assignments:role_prompts,
