@@ -19,6 +19,22 @@ HEXSHA = re.compile(r"^[a-f0-9]{40}$")
 def shell(*args, timeout=200):
     r = subprocess.run(args, cwd=ROOT, capture_output=True, text=True, timeout=timeout)
     if r.returncode:
+        # CI's independent runner must expose a bounded failure cause, not a
+        # fabricated success or a 90-second opaque READBACK_FAILED:bun.
+        # Show only test-status lines, never credentials, DB URLs or raw fixtures.
+        combined=(r.stdout + "\\n" + r.stderr).splitlines()
+        signals=[line.strip() for line in combined if any(marker in line.lower() for marker in (
+            "not ok", "assertionerror", "test failed", "error:", "fail ", "timed out",
+            "expect(", "failed to", "sqlstate", "timeout", "connection refused"))]
+        details=[line[:230] for line in signals[-14:]]
+        if details:
+            print("INDEPENDENT_READBACK_TEST_DIAGNOSTICS="+json.dumps({
+                "command":args[0], "return_code":r.returncode, "signals":details},sort_keys=True),flush=True)
+        else:
+            print("INDEPENDENT_READBACK_TEST_DIAGNOSTICS="+json.dumps({
+                "command":args[0], "return_code":r.returncode,
+                "stdout_line_count":len(r.stdout.splitlines()),
+                "stderr_line_count":len(r.stderr.splitlines())},sort_keys=True),flush=True)
         raise RuntimeError("READBACK_FAILED:" + args[0])
     return r.stdout.strip()
 
