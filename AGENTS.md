@@ -1,3 +1,7 @@
+## P0–P7 parallel venture roadmap (Founder-approved 2026-11-13)
+
+Read [company-os/venture-roadmap.v1.json](company-os/venture-roadmap.v1.json) before planning or executing SignalForge work; portfolio-level source is `sina_founder_os/portfolio/SIGNALFORGE_ARQANT_PARALLEL_EXECUTION_ROADMAP-v1.json`. This local artifact defines 8 phases, 14 applicable parallel workstreams and 12 owner-bound milestones, and is projected through existing authenticated `GET /api/company-os/autonomy` via `company-os/signalforge-autonomy.ts`. P0 tracking issue: [#68](https://github.com/Noetfield-Systems/SignalForge/issues/68). Use the existing Company OS Governor and Owned AgentOS/Agent Fabric for actual dispatch. Do not create a new scheduler or call static candidates completed work. Preserve M20 crypto market-research product and Pro/Quant subscription economics; no token launch or public 100-agent roster pivot. Execute independent build, research, community, growth and commercial workcells in parallel; verify each source SHA/CI/deploy/customer or financial effect independently.
+
 # AGENTS.md — SIGNALFORGE CANONICAL WORK INSTRUCTIONS (v3)
 
 Scope: repository \`Noetfield-Systems/SignalForge\`, company/product project \`signalforge-market-intelligence\`, Founder mission \`M20-SIGNALFORGE-COMMUNITY\`.
