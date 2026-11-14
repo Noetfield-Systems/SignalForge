@@ -1,0 +1,173 @@
+{
+  "schema": "signalforge.founder-product-identity.v4",
+  "version": "4.0.0",
+  "as_of": "2026-11-14",
+  "authority": "FOUNDER-DIRECTED AMENDMENT",
+  "venture_id": "signalforge-market-intelligence",
+  "mission_id": "M20-SIGNALFORGE-COMMUNITY",
+  "repository": "Noetfield-Systems/SignalForge",
+  "headline": "Markets move. Your intelligence compounds.",
+  "category": "AI-native crypto market intelligence and personal research/action agent platform",
+  "thesis": "Source-linked crypto market intelligence, continuous personal Agent research, simulated and optionally user-authorized connected actions, builder tools, community research, and a distinct optional native token economy.",
+  "one_liner": "Understand the market, test your thesis, monitor the change, and act within user-controlled authority.",
+  "strategic_precedence": {
+    "parent_doc": "docs/SIGNALFORGE_2027_FOUNDER_MASTER_AMENDMENT_v4.md",
+    "supersedes_scope_exclusions_in": [
+      "strategy/PRODUCT-IDENTITY-SSOT-v3.json",
+      "docs/FOUNDER-PRODUCT-UX-OPERATING-CONTRACT-v3.md",
+      "AGENTS.md",
+      "README.md"
+    ],
+    "override": "The previous absolute no-token/no-execution product exclusions are superseded as FUTURE SCOPE. Existing live research-only statements remain correct for current production until specific features are independently verified.",
+    "preserve": [
+      "market source integrity and freshness",
+      "current OHLC/terminal/scanner/backtest/radar and web3 pulse",
+      "existing auth and PostgreSQL",
+      "existing Stripe signed invoice and subscriptions",
+      "Company OS M20 internal operating authority",
+      "public research community and moderation",
+      "truthful live claims and independent verification"
+    ]
+  },
+  "current_production_baseline": {
+    "status": "SOURCE_REPORTED_CURRENT; VERIFY IN LIVE READBACK",
+    "components": [
+      "Kraken market OHLC with labeled fallbacks",
+      "market scanner and explainable strategies",
+      "historical backtesting and performance API",
+      "Polymarket and Hyperliquid source-reported read-only Web3 pulse",
+      "Solana Token Radar",
+      "research-oriented community/Signal Rooms",
+      "user accounts",
+      "existing Pro/Quant checkout/billing infrastructure",
+      "Company OS aggregate read-only integration"
+    ],
+    "not_yet_verified": [
+      "autonomous market agent for customers",
+      "live exchange order execution",
+      "onchain SignalForge token mint",
+      "native token public offering",
+      "onchain token airdrop claim",
+      "all 100 Company OS roles as active agents",
+      "paid customer settlement volume"
+    ]
+  },
+  "products": [
+    {
+      "id": "market-terminal",
+      "kind": "PRESERVE_AND_UPGRADE",
+      "routes": [
+        "/",
+        "/app",
+        "/web3",
+        "/radar"
+      ],
+      "value": "sourced market observation, scanner, strategy signals, backtest and watchlists"
+    },
+    {
+      "id": "market-agent",
+      "kind": "BUILD",
+      "value": "chat-to-source-linked-research; persistent private user jobs, memory, tools, artifacts and schedules"
+    },
+    {
+      "id": "forge-studio",
+      "kind": "BUILD",
+      "value": "research widgets, bounded automation recipes, research skills and optional paid API tools"
+    },
+    {
+      "id": "signal-rooms",
+      "kind": "PRESERVE_AND_UPGRADE",
+      "value": "authentic user research, source reviews, public cards, editor reputation"
+    },
+    {
+      "id": "forge-economy",
+      "kind": "BUILD_OPTIONAL",
+      "value": "seasonal nonfinancial points, quests, referrals and future independent token utility/sale/claims"
+    },
+    {
+      "id": "connect-trade",
+      "kind": "FUTURE_BOUNDED",
+      "value": "paper trading then external user-signed and eventually delegated venue actions, only with provider/region authorization"
+    }
+  ],
+  "icps": [
+    "event_researcher",
+    "perp_researcher",
+    "solana_token_researcher",
+    "strategy_builder",
+    "agent_api_developer"
+  ],
+  "markets": {
+    "initial_read_only": [
+      "Polymarket",
+      "Hyperliquid",
+      "Solana public token pools",
+      "Kraken candles"
+    ],
+    "future_research": [
+      "Kalshi",
+      "Lighter",
+      "Aster",
+      "Variational",
+      "more Solana/EVM onchain providers"
+    ]
+  },
+  "runtime_split": {
+    "internal": "existing Sina Founder OS / Company OS / Governor / Agent Fabric and independent verifier; no duplicate scheduler",
+    "customer": "new per-user separately scoped Market Agent Runtime with memory, skills and job scheduler; cannot inherit internal auth",
+    "shared_infrastructure": "may reuse Railway/PostgreSQL/LMM/model gateway libraries, never share authority, wallets or secret scopes"
+  },
+  "trading_ladder": [
+    "RESEARCH",
+    "SAVE_AND_ALERT",
+    "PAPER_SIMULATION",
+    "CONNECTED_READ_ONLY",
+    "USER_SIGNED_ORDER",
+    "REVOCABLE_BOUNDED_DELEGATION"
+  ],
+  "trade_claims_policy": "No user-visible live trading label until supported provider, exact user authority, actual order acknowledgement and reconciliation evidence",
+  "token": {
+    "status": "DESIGN_ONLY_NOT_MINTED",
+    "independence": "Not ARQANT AGC, not Cairn CRN, no commingling of user databases/wallets/treasury",
+    "points_now": "Nontransferable noncash reputation/quest ledger; no guaranteed token conversion",
+    "token_future": "Optional independently qualified SignalForge token for actual service/builder utility, distinct from corporate equity; parameters unratified",
+    "sale_future": "Not active; exact rights/issuer/region/provider/chain/pricing/legal classifications and signed onchain receipts required for sale"
+  },
+  "monetization": [
+    "existing collected Pro/Quant subscriptions",
+    "paid research automations",
+    "metered research APIs and optional x402",
+    "publisher marketplace net take rate",
+    "permitted partner referral/transaction fees",
+    "potential separately accounted token financing not counted as recurring SaaS"
+  ],
+  "metrics": {
+    "north_star": "WQRR source-qualified genuine returning researchers on two days within a seven-day period",
+    "additional": [
+      "first source-backed result TTFV",
+      "weekly agent task completions",
+      "source-linked saved thesis return",
+      "verified community qualified contributors",
+      "net settled Pro/Quant revenue and refunds",
+      "positive true contribution margin",
+      "non-owner builder product usage",
+      "quality-qualified referral activation",
+      "actual token utility consumption, only after launch"
+    ]
+  },
+  "authorization": {
+    "default": "Automatically build and release lawful independent read-only software, research, community, simulated and pricing functions within existing access",
+    "financial": "User/owner signature and real delegated authority for transfers, sale, LP, live orders; actual provider and jurisdictional applicability",
+    "anti_drift": "No venture merge, token metrics as cash, paper as real trade or plan as completed deployment"
+  },
+  "references": [
+    "docs/SIGNALFORGE_2027_FOUNDER_MASTER_AMENDMENT_v4.md",
+    "docs/SIGNALFORGE_2027_SYSTEM_ARCHITECTURE_RUNTIME_v4.md",
+    "docs/SIGNALFORGE_2027_TOKEN_GENESIS_SALE_AIRDROP_v1.md",
+    "docs/SIGNALFORGE_2027_PRODUCT_DESIGN_COMMUNITY_GTM_v1.md",
+    "docs/SIGNALFORGE_2027_BUSINESS_UNIT_ECONOMICS_INVESTMENT_v1.md",
+    "docs/SIGNALFORGE_2027_EXECUTION_WORKPACKETS_v1.md",
+    "strategy/SIGNALFORGE_2027_AMENDMENT_MANIFEST_v1.json"
+  ],
+  "implementation_status": "DESIGN_AND_BACKLOG_NOT_SHIPPED"
+}

@@ -7,6 +7,8 @@ RUN bun install --production
 COPY --chown=bun:bun src ./src
 COPY --chown=bun:bun company-os ./company-os
 COPY --chown=bun:bun strategy/PRODUCT-IDENTITY-SSOT-v3.json ./strategy/PRODUCT-IDENTITY-SSOT-v3.json
+COPY --chown=bun:bun strategy/PRODUCT-IDENTITY-SSOT-v4.json ./strategy/PRODUCT-IDENTITY-SSOT-v4.json
+COPY --chown=bun:bun strategy/SIGNALFORGE_2027_AMENDMENT_MANIFEST_v1.json ./strategy/SIGNALFORGE_2027_AMENDMENT_MANIFEST_v1.json
 COPY --chown=bun:bun strategy/ICP_KPI_OPERATING_CONTRACT_v1.json ./strategy/ICP_KPI_OPERATING_CONTRACT_v1.json
 COPY --chown=bun:bun public ./public
 USER bun

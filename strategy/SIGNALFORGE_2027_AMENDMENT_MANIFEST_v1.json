@@ -1,0 +1,176 @@
+{
+  "schema": "signalforge.2027.founder-amendment.manifest.v1",
+  "version": "1.0.0",
+  "as_of": "2026-11-14",
+  "branch": "founder/signalforge-2027-platform-amendment-v4",
+  "repo": "Noetfield-Systems/SignalForge",
+  "founder_intent": "Premium daily-use AI-native research, customer agent runtime, connected trading ladder, independent token economy, organic community, paid margin; keep existing SignalForge product and internal Company OS",
+  "canonical_identity": "strategy/PRODUCT-IDENTITY-SSOT-v4.json",
+  "source_refs": [
+    "AGENTS.md",
+    "docs/SIGNALFORGE_2027_FOUNDER_MASTER_AMENDMENT_v4.md",
+    "docs/SIGNALFORGE_2027_SYSTEM_ARCHITECTURE_RUNTIME_v4.md",
+    "docs/SIGNALFORGE_2027_TOKEN_GENESIS_SALE_AIRDROP_v1.md",
+    "docs/SIGNALFORGE_2027_PRODUCT_DESIGN_COMMUNITY_GTM_v1.md",
+    "docs/SIGNALFORGE_2027_BUSINESS_UNIT_ECONOMICS_INVESTMENT_v1.md",
+    "docs/SIGNALFORGE_2027_EXECUTION_WORKPACKETS_v1.md"
+  ],
+  "execution_runtime": "canonical existing Sina Founder OS / Company OS / Governor / Agent Fabric / existing GitHub Actions / Railway; do not instantiate parallel internal orchestrator",
+  "branch_claim_format": "feat/sf27-{workstream}-{short-job}-{issue-id}",
+  "mission_status": "SPECIFIED_NOT_DISPATCHED",
+  "product_release_status": "NOT_SHIPPED",
+  "actual_token_issued": false,
+  "actual_live_trading": false,
+  "verified_new_revenue": false,
+  "workstreams": [
+    {
+      "id": "SF27-01",
+      "objective": "Product and premium terminal UX",
+      "owner_role": "product",
+      "phase": "P0",
+      "acceptance": "functional mobile terminal + Agent IA",
+      "status": "PLANNED_UNDISPATCHED",
+      "requires_actual_execution_receipt": true,
+      "parallel_by_default": true
+    },
+    {
+      "id": "SF27-02",
+      "objective": "Market sources and normalized tools",
+      "owner_role": "data",
+      "phase": "P0",
+      "acceptance": "source-fresh tool schemas and adapters",
+      "status": "PLANNED_UNDISPATCHED",
+      "requires_actual_execution_receipt": true,
+      "parallel_by_default": true
+    },
+    {
+      "id": "SF27-03",
+      "objective": "Customer Market Agent Runtime",
+      "owner_role": "engineering",
+      "phase": "P0",
+      "acceptance": "verified three-lane read-only chat",
+      "status": "PLANNED_UNDISPATCHED",
+      "requires_actual_execution_receipt": true,
+      "parallel_by_default": true
+    },
+    {
+      "id": "SF27-04",
+      "objective": "Saved research and memory",
+      "owner_role": "engineering",
+      "phase": "P0",
+      "acceptance": "tenant-scoped artifacts persisted",
+      "status": "PLANNED_UNDISPATCHED",
+      "requires_actual_execution_receipt": true,
+      "parallel_by_default": true
+    },
+    {
+      "id": "SF27-05",
+      "objective": "Opt-in alert automations",
+      "owner_role": "engineering",
+      "phase": "P1",
+      "acceptance": "delivery and cancel receipts",
+      "status": "PLANNED_UNDISPATCHED",
+      "requires_actual_execution_receipt": true,
+      "parallel_by_default": true
+    },
+    {
+      "id": "SF27-06",
+      "objective": "Community, quests, qualified referrals",
+      "owner_role": "growth",
+      "phase": "P1",
+      "acceptance": "truthful ledger and anti-sybil verified",
+      "status": "PLANNED_UNDISPATCHED",
+      "requires_actual_execution_receipt": true,
+      "parallel_by_default": true
+    },
+    {
+      "id": "SF27-07",
+      "objective": "Forge Studio / Skills",
+      "owner_role": "engineering",
+      "phase": "P2",
+      "acceptance": "working non-owner widget install",
+      "status": "PLANNED_UNDISPATCHED",
+      "requires_actual_execution_receipt": true,
+      "parallel_by_default": true
+    },
+    {
+      "id": "SF27-08",
+      "objective": "Subscriptions and metered revenue",
+      "owner_role": "commercial",
+      "phase": "P0",
+      "acceptance": "signed settled cash and margin proof",
+      "status": "PLANNED_UNDISPATCHED",
+      "requires_actual_execution_receipt": true,
+      "parallel_by_default": true
+    },
+    {
+      "id": "SF27-09",
+      "objective": "Paper trade and order ledger",
+      "owner_role": "engineering",
+      "phase": "P2",
+      "acceptance": "simulated deterministic fill proof",
+      "status": "PLANNED_UNDISPATCHED",
+      "requires_actual_execution_receipt": true,
+      "parallel_by_default": true
+    },
+    {
+      "id": "SF27-10",
+      "objective": "Read-only and signed venue connectivity",
+      "owner_role": "engineering",
+      "phase": "P3",
+      "acceptance": "provider consent, signed ack, reconciliation",
+      "status": "PLANNED_UNDISPATCHED",
+      "requires_actual_execution_receipt": true,
+      "parallel_by_default": true
+    },
+    {
+      "id": "SF27-11",
+      "objective": "Native token economic readiness",
+      "owner_role": "research",
+      "phase": "P1",
+      "acceptance": "unratified token candidate + legal/chain plan",
+      "status": "PLANNED_UNDISPATCHED",
+      "requires_actual_execution_receipt": true,
+      "parallel_by_default": true
+    },
+    {
+      "id": "SF27-12",
+      "objective": "Independent verification and release",
+      "owner_role": "verification",
+      "phase": "EVERY",
+      "acceptance": "commit+CI+active Railway+user path readback",
+      "status": "PLANNED_UNDISPATCHED",
+      "requires_actual_execution_receipt": true,
+      "parallel_by_default": true
+    }
+  ],
+  "separate_financial_effects": [
+    "live order",
+    "token mint",
+    "token sale",
+    "token claim",
+    "LP provisioning",
+    "custodial transfer"
+  ],
+  "must_measure": [
+    "actual WQRR",
+    "real registered human cohorts",
+    "real saved thesis reopen",
+    "actual Stripe signed settled cash",
+    "actual provider and model costs",
+    "successful customer Agent job",
+    "active deploy SHA",
+    "real token/onchain receipts if any"
+  ],
+  "release_gates": [
+    "provenance and source mode",
+    "tenant ownership and secrets isolation",
+    "exact role scope",
+    "real API/UI E2E",
+    "existing Stripe compatibility",
+    "independent review",
+    "deploy readback",
+    "visible uncertainty and unsupported claims"
+  ],
+  "acceptance_rule": "No workstream completed unless exact code, CI, deployment and externally observable effects are verified; plan and PR alone are partial progress."
+}

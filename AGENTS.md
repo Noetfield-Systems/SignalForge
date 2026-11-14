@@ -1,3 +1,18 @@
+# FOUNDER AMENDMENT v4 — SIGNALFORGE 2027 (2026-11-14)
+**Highest-priority prospective product direction:** Read [machine-readable Founder identity v4](strategy/PRODUCT-IDENTITY-SSOT-v4.json), [Master Amendment](docs/SIGNALFORGE_2027_FOUNDER_MASTER_AMENDMENT_v4.md), [dual Runtime architecture](docs/SIGNALFORGE_2027_SYSTEM_ARCHITECTURE_RUNTIME_v4.md), [token/Genesis/airdrop](docs/SIGNALFORGE_2027_TOKEN_GENESIS_SALE_AIRDROP_v1.md), [premium UX/community](docs/SIGNALFORGE_2027_PRODUCT_DESIGN_COMMUNITY_GTM_v1.md), and [implementation WorkPackets](docs/SIGNALFORGE_2027_EXECUTION_WORKPACKETS_v1.md) BEFORE any future SignalForge strategy/design/build mission.
+
+**Precise supersession:** Any older rule below forbidding *future SignalForge-specific* token utility, qualified issuance/sale/airdrop or user-authorized trade connections is superseded as a ROADMAP EXCLUSION, not as a live-production claim. Preserve all actual source integrity, current research workflows, signed Stripe, privacy, finance authority, and Founder OS reuse. The new scope is **not already built or launched**: SignalForge currently remains source-linked, research-first until features pass independent production verification.
+
+**Product lock v4:** AI-native cross-venue Market Intelligence + persistent customer Research Agent Runtime + Forge Studio + Signal Rooms + voluntary paid research + independent optional SignalForge token economy + staged, user-authorized connected trading. Community and cash acquisition start immediately with existing functional source-linked features. ARQANT AGC/Cairn tokens, economics, community and wallets remain separate.
+
+**Internal vs customer runtimes:** Existing Sina Founder OS/Company OS/Governor/Agent Fabric is the only internal development/ops dispatcher. Customer Agent is a NEW per-user runtime without access to internal credentials. 100 static roles != 100 running agents. Never instantiate a duplicate internal scheduler.
+
+**Branch work law:** First claim canonical scoped WorkPacket and unique branch lease, then implement/test PR and independently read back deployed effects. Internal plan != dispatched workers; code != live execution; points != minted tokens; demo PnL != realized trade; checkout != settled money. Workstreams independent of unratified financial issuance proceed without artificial gates.
+
+**Precedence:** This v4 header and v4 SSOT govern prospective new product development; older v3 material below is retained as the actual 2026 production baseline and historical guardrails. If old text says no token/execution, read it as "not yet shipped" rather than "permanently prohibited."
+
+---
+
 ## Current 2026-11-14 Web3 community and first-cash execution source
 Read `docs/SIGNALFORGE_COMMUNITY_REACHOUT_REVENUE_MASTER_v1.md` after `strategy/ICP_KPI_OPERATING_CONTRACT_v1.json`. The original SignalForge M20 mission stays a distinct source-linked research subscription company, NOT an inherited ARQANT token, airdrop, Genesis credit, DEX or LP. Grow authentic Polymarket, Hyperliquid and Solana researcher cohorts with useful public evidence, meaningful Signal Rooms, WQRR and confirmed subscription settlement. Existing Company OS/Agent Fabric only; proposals are not claims of sent outreach, user retention or collected money.
 
