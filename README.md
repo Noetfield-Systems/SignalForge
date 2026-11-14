@@ -1,3 +1,5 @@
+> **Current market entry — 2026-11-14:** Start from actual Web3 communities, not generic charts: [prediction market research](/web3#prediction), [perp DEX research](/web3#perps), [Solana token investigation](/radar). Source-linked Polymarket + Hyperliquid read-only public observations exist; other benchmark venues are research targets. [Canonical ICP/KPI contract](strategy/ICP_KPI_OPERATING_CONTRACT_v1.json) · [growth/runbook](docs/WEB3_NATIVE_ICP_GROWTH_PLAYBOOK_v1.md). WQRR and settled subscription cash require observed evidence; these are NOT proven results.
+
 > **FOUNDER PRODUCT LOCK — 2026-11-13:** SignalForge is a premium crypto MARKET-INTELLIGENCE and research platform first: candlestick/OHLC terminal, explainable signals, market scanner, token research, backtests, watchlists, Signal Rooms and voluntary memberships. Company OS with 100 defined roles is an **internal operating layer**, not the customer product or a claim of 100 live agents. Read [AGENTS.md](AGENTS.md), [machine-readable product lock](strategy/PRODUCT-IDENTITY-SSOT-v3.json) and [operating master](docs/FOUNDER-PRODUCT-UX-OPERATING-CONTRACT-v3.md) before shipping.
 
 # SignalForge
