@@ -1,0 +1,374 @@
+{
+  "schema": "venture.parallel-execution-roadmap.v1",
+  "as_of": "2026-11-13",
+  "version": "2026-11-13.1",
+  "project": "SignalForge",
+  "canonical_ref": "Noetfield-Systems/sina_founder_os/portfolio/SIGNALFORGE_ARQANT_PARALLEL_EXECUTION_ROADMAP-v1.json",
+  "source_commit": "9c0c5ace4c5bc2838e909e6aa347a2ddabb578a4",
+  "principles": {
+    "parent_runtime": "Separate venture Company OS contexts over one existing Owned AgentOS / Company OS / Agent Fabric / Runway and independent verifier; never a second scheduler",
+    "phase_rule": "Time windows are targets, not automatic success; every workstream can move independently with evidence.",
+    "parallelism": "Never gate nondependent research, development, free Genesis, community or sales on a different track's token/payment/provider status.",
+    "authority": "L0 read; L1 build/test; L2 scoped outreach/publish; L3 bounded delegated payment only with actual grants; L4 mainnet token issuance and irreversible asset decisions require actual owner signature.",
+    "acceptance": "Exact code SHA + CI + active deployment/user path or confirmed chain/payment + independent verifier; no fake user, token, price, agent, payer, liquidity or revenue",
+    "dispatch": "These are role-bound planning candidates; existing canonical Company OS Governor must admit, assign native worker and verify before any RUNNING/DONE claim."
+  },
+  "phases": [
+    {
+      "id": "P0",
+      "label": "Foundation and first execution",
+      "start_day": 0,
+      "end_day": 7,
+      "goal": "E2E research journey; source integrity; billing test; native agent cycle"
+    },
+    {
+      "id": "P1",
+      "label": "Early Market and Genesis",
+      "start_day": 8,
+      "end_day": 30,
+      "goal": "Attributable research growth; activation/return; paid checkout"
+    },
+    {
+      "id": "P2",
+      "label": "Launch, monetize, validate",
+      "start_day": 31,
+      "end_day": 90,
+      "goal": "Pro/Quant retention, forward evidence, first collected margin"
+    },
+    {
+      "id": "P3",
+      "label": "Product-market fit",
+      "start_day": 91,
+      "end_day": 180,
+      "goal": "Recurring utility; proven backtest and forward signals; churn reduction"
+    },
+    {
+      "id": "P4",
+      "label": "Expansion",
+      "start_day": 181,
+      "end_day": 365,
+      "goal": "API, research teams, optional licensed data products"
+    },
+    {
+      "id": "P5",
+      "label": "Ecosystem",
+      "start_day": 366,
+      "end_day": 730,
+      "goal": "Multi-chain research network, teams and licensed API clients"
+    },
+    {
+      "id": "P6",
+      "label": "Scale",
+      "start_day": 731,
+      "end_day": 1095,
+      "goal": "Global research/quant platform and repeat enterprise revenue"
+    },
+    {
+      "id": "P7",
+      "label": "Continuous evolution",
+      "start_day": 1096,
+      "end_day": null,
+      "goal": "Evidence-driven expansion and unit-economics optimization"
+    }
+  ],
+  "workstreams": [
+    {
+      "id": "W01",
+      "title": "Strategy and market intelligence",
+      "owner_role_id": "executive",
+      "parallel_by_default": true
+    },
+    {
+      "id": "W02",
+      "title": "Product and UX",
+      "owner_role_id": "product",
+      "parallel_by_default": true
+    },
+    {
+      "id": "W03",
+      "title": "Core engineering",
+      "owner_role_id": "engineering",
+      "parallel_by_default": true
+    },
+    {
+      "id": "W04",
+      "title": "Data and analytics",
+      "owner_role_id": "data",
+      "parallel_by_default": true
+    },
+    {
+      "id": "W05",
+      "title": "AI and automation",
+      "owner_role_id": "research",
+      "parallel_by_default": true
+    },
+    {
+      "id": "W06",
+      "title": "Community and retention",
+      "owner_role_id": "customer",
+      "parallel_by_default": true
+    },
+    {
+      "id": "W07",
+      "title": "Growth and distribution",
+      "owner_role_id": "growth",
+      "parallel_by_default": true
+    },
+    {
+      "id": "W08",
+      "title": "Commercial and sales",
+      "owner_role_id": "commercial",
+      "parallel_by_default": true
+    },
+    {
+      "id": "W11",
+      "title": "Capital and treasury",
+      "owner_role_id": "commercial",
+      "parallel_by_default": true
+    },
+    {
+      "id": "W12",
+      "title": "Partnerships",
+      "owner_role_id": "commercial",
+      "parallel_by_default": true
+    },
+    {
+      "id": "W13",
+      "title": "Content and brand",
+      "owner_role_id": "growth",
+      "parallel_by_default": true
+    },
+    {
+      "id": "W14",
+      "title": "Trust and customer",
+      "owner_role_id": "trust",
+      "parallel_by_default": true
+    },
+    {
+      "id": "W15",
+      "title": "Operations and DevOps",
+      "owner_role_id": "operations",
+      "parallel_by_default": true
+    },
+    {
+      "id": "W16",
+      "title": "Independent verification",
+      "owner_role_id": "verification",
+      "parallel_by_default": true
+    }
+  ],
+  "company": {
+    "project_id": "signalforge-market-intelligence",
+    "mission_id": "M20-SIGNALFORGE-COMMUNITY",
+    "source_repo": "Noetfield-Systems/SignalForge",
+    "business": "Crypto market intelligence, explainable research, premium memberships and later licensed API",
+    "primary_economics": [
+      "Pro/Quant collected subscriptions",
+      "Research API/teams only on demand"
+    ],
+    "token_policy": "NO_TOKEN_ISSUANCE_IN_CURRENT_PRODUCT_LOCK",
+    "org": {
+      "departments": 11,
+      "defined_roles": 100,
+      "runtime_verification": "UNKNOWN"
+    },
+    "missions": [
+      {
+        "id": "SF-ROAD-01",
+        "phase_id": "P0",
+        "workstream_id": "W02",
+        "owner_role_id": "head_product",
+        "objective": "Complete signup -> OHLC -> research -> save -> return real browser journey",
+        "acceptance": [
+          "Browser E2E, visible defects and tested PR"
+        ],
+        "depends_on": [],
+        "delivery_status": "PLANNED_UNDISPATCHED",
+        "evidence": null,
+        "external_effects_authorized": false,
+        "parallel_by_default": true
+      },
+      {
+        "id": "SF-ROAD-02",
+        "phase_id": "P0",
+        "workstream_id": "W04",
+        "owner_role_id": "head_data",
+        "objective": "Validate live candle provenance and fallback freshness",
+        "acceptance": [
+          "Source comparison and labeled fallback acceptance"
+        ],
+        "depends_on": [],
+        "delivery_status": "PLANNED_UNDISPATCHED",
+        "evidence": null,
+        "external_effects_authorized": false,
+        "parallel_by_default": true
+      },
+      {
+        "id": "SF-ROAD-03",
+        "phase_id": "P0",
+        "workstream_id": "W03",
+        "owner_role_id": "head_engineering",
+        "objective": "Improve market scanner for actual researcher workflows",
+        "acceptance": [
+          "Working filters, smoke test and active source SHA"
+        ],
+        "depends_on": [],
+        "delivery_status": "PLANNED_UNDISPATCHED",
+        "evidence": null,
+        "external_effects_authorized": false,
+        "parallel_by_default": true
+      },
+      {
+        "id": "SF-ROAD-04",
+        "phase_id": "P0",
+        "workstream_id": "W05",
+        "owner_role_id": "head_research",
+        "objective": "Publish explainable signal evidence and assumptions",
+        "acceptance": [
+          "Timestamped research evidence and falsifiable hypotheses"
+        ],
+        "depends_on": [],
+        "delivery_status": "PLANNED_UNDISPATCHED",
+        "evidence": null,
+        "external_effects_authorized": false,
+        "parallel_by_default": true
+      },
+      {
+        "id": "SF-ROAD-05",
+        "phase_id": "P0",
+        "workstream_id": "W05",
+        "owner_role_id": "head_research",
+        "objective": "Reproduce backtest without lookahead or hidden sample errors",
+        "acceptance": [
+          "Deterministic out-of-sample methodology"
+        ],
+        "depends_on": [],
+        "delivery_status": "PLANNED_UNDISPATCHED",
+        "evidence": null,
+        "external_effects_authorized": false,
+        "parallel_by_default": true
+      },
+      {
+        "id": "SF-ROAD-06",
+        "phase_id": "P0",
+        "workstream_id": "W02",
+        "owner_role_id": "head_product",
+        "objective": "Ship polished premium responsive research UX",
+        "acceptance": [
+          "Mobile and desktop tested live route"
+        ],
+        "depends_on": [],
+        "delivery_status": "PLANNED_UNDISPATCHED",
+        "evidence": null,
+        "external_effects_authorized": false,
+        "parallel_by_default": true
+      },
+      {
+        "id": "SF-ROAD-07",
+        "phase_id": "P0",
+        "workstream_id": "W02",
+        "owner_role_id": "head_product",
+        "objective": "Instrument first useful research action and saved note",
+        "acceptance": [
+          "Actual user event flow with privacy-preserving metrics"
+        ],
+        "depends_on": [],
+        "delivery_status": "PLANNED_UNDISPATCHED",
+        "evidence": null,
+        "external_effects_authorized": false,
+        "parallel_by_default": true
+      },
+      {
+        "id": "SF-ROAD-08",
+        "phase_id": "P1",
+        "workstream_id": "W06",
+        "owner_role_id": "head_customer",
+        "objective": "Activate authentic member Signal Rooms and moderation",
+        "acceptance": [
+          "Real authored content, moderation and support flow"
+        ],
+        "depends_on": [],
+        "delivery_status": "PLANNED_UNDISPATCHED",
+        "evidence": null,
+        "external_effects_authorized": false,
+        "parallel_by_default": true
+      },
+      {
+        "id": "SF-ROAD-09",
+        "phase_id": "P0",
+        "workstream_id": "W07",
+        "owner_role_id": "head_growth",
+        "objective": "Publish source-linked acquisition content and research landing paths",
+        "acceptance": [
+          "Public URL, source provenance and tracked organic visits"
+        ],
+        "depends_on": [],
+        "delivery_status": "PLANNED_UNDISPATCHED",
+        "evidence": null,
+        "external_effects_authorized": false,
+        "parallel_by_default": true
+      },
+      {
+        "id": "SF-ROAD-10",
+        "phase_id": "P0",
+        "workstream_id": "W08",
+        "owner_role_id": "head_commercial",
+        "objective": "Prove trial -> paid -> entitlement -> cancel/refund lifecycle",
+        "acceptance": [
+          "Signed provider webhook, entitlement state, settlement readback"
+        ],
+        "depends_on": [],
+        "delivery_status": "PLANNED_UNDISPATCHED",
+        "evidence": null,
+        "external_effects_authorized": false,
+        "parallel_by_default": true
+      },
+      {
+        "id": "SF-ROAD-11",
+        "phase_id": "P0",
+        "workstream_id": "W15",
+        "owner_role_id": "head_operations",
+        "objective": "Commission two sequential real M20 owned AgentOS cycles",
+        "acceptance": [
+          "Native worker IDs, task receipts, CI/deploy and next-packet evidence"
+        ],
+        "depends_on": [],
+        "delivery_status": "PLANNED_UNDISPATCHED",
+        "evidence": null,
+        "external_effects_authorized": false,
+        "parallel_by_default": true
+      },
+      {
+        "id": "SF-ROAD-12",
+        "phase_id": "P1",
+        "workstream_id": "W16",
+        "owner_role_id": "independent_verifier",
+        "objective": "Reconcile true user engagement, settled cash and releases",
+        "acceptance": [
+          "Independent artifacts + source readbacks; unknown remains unknown"
+        ],
+        "depends_on": [
+          "SF-ROAD-10",
+          "SF-ROAD-11"
+        ],
+        "delivery_status": "PLANNED_UNDISPATCHED",
+        "evidence": null,
+        "external_effects_authorized": false,
+        "parallel_by_default": true
+      }
+    ]
+  },
+  "initial_parallelism": [
+    "SF-ROAD-01",
+    "SF-ROAD-02",
+    "SF-ROAD-09",
+    "SF-ROAD-10",
+    "SF-ROAD-11"
+  ],
+  "no_claims": {
+    "live_agents": "NOT_VERIFIED_BY_THIS_PLAN",
+    "production_deploy": "NOT_VERIFIED_BY_THIS_PLAN",
+    "settled_revenue": "NOT_VERIFIED_BY_THIS_PLAN",
+    "token_issued": "NOT_VERIFIED_BY_THIS_PLAN"
+  }
+}
