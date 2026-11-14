@@ -1,3 +1,5 @@
+> **Current Web3-native commercial overlay, 2026-11-14:** This earlier Solana-only campaign is one ICP lane, not all of SignalForge. [ICP/KPI SSOT](./ICP_KPI_OPERATING_CONTRACT_v1.json) now specifies three priority cohorts: prediction event research, Hyperliquid perp intelligence, and Solana mint/pool investigation. [Runbook](../docs/WEB3_NATIVE_ICP_GROWTH_PLAYBOOK_v1.md) supersedes any chart-general or token-only positioning here. `/web3` public Polymarket/Hyperliquid read-only research exists; Kalshi/Lighter/Aster/Variational remain research-only. User return, community posts and collected subscription cash are unverified by this document; goals are hypotheses.
+
 # SIGNALFORGE — Commercial Launch System and Brand Positioning
 Version: 1.0 · 2026-11-11 · Status: operating plan, not evidence of commercial traction
 Parent/operator: Noetfield Systems Inc. · Product: SignalForge · Mission: M20-SIGNALFORGE-COMMUNITY

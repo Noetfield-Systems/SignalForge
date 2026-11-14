@@ -1,3 +1,5 @@
+> **Living ICP source override, 2026-11-14:** [Web3 ICP/KPI contract](../strategy/ICP_KPI_OPERATING_CONTRACT_v1.json) and [research-to-revenue runbook](./WEB3_NATIVE_ICP_GROWTH_PLAYBOOK_v1.md) supersede any historic generic chart-first acquisition statement below. Real Web3 native segments: prediction markets, perps, Solana token trenches. Read-only Polymarket and Hyperliquid sources have been implemented at `/web3`; later text that calls them unshipped is historical. WQRR is a TARGET, currently unmeasured, not an invented retention statistic.
+
 # SIGNALFORGE — FOUNDER-LOCKED PRODUCT, UX, BUSINESS & EXECUTION CONTRACT
 Version 3.0.0 · 2026-11-13 · Internal source of truth · Owner: Founder
 

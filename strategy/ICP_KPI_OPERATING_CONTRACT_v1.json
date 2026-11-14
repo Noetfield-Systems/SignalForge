@@ -1,0 +1,214 @@
+{
+  "schema": "signalforge.web3-icp-kpi.v1",
+  "version": "1.0.0",
+  "as_of_utc": "2026-11-14T05:45:00Z",
+  "project_id": "signalforge-market-intelligence",
+  "mission_id": "M20-SIGNALFORGE-COMMUNITY",
+  "positioning": {
+    "category": "Web3-native source-linked market intelligence",
+    "one_liner": "See what moved across prediction markets, perpetuals and Solana token markets. Follow the source, test your thesis, keep the research.",
+    "tagline": "Markets move. Evidence matters.",
+    "not_claimed": [
+      "Brokerage/execution",
+      "Trading profit guarantees",
+      "Unverified venue partnerships",
+      "100 live agents"
+    ]
+  },
+  "icps": [
+    {
+      "id": "event_researcher",
+      "priority": 1,
+      "buyer": "Prediction-market participants, event-market researchers and probability analysts",
+      "venue": "Polymarket first; Kalshi reference only",
+      "pain": "Odds screens without research provenance and event activity context",
+      "job": "Understand what event market changed and what source supports it",
+      "entry": "/web3#prediction",
+      "first_value": "Real Polymarket event with reported activity, liquidity and timing",
+      "cta": "Inspect prediction markets",
+      "retention": "Repeat research, saved event context/alerts only once shipped",
+      "channels": [
+        "Polymarket builders",
+        "event-market research forums",
+        "educational market explainers"
+      ]
+    },
+    {
+      "id": "perp_researcher",
+      "priority": 2,
+      "buyer": "Active perp-market researchers, risk analysts and Hyperliquid ecosystem participants",
+      "venue": "Hyperliquid first; Lighter/Aster/Variational reference only",
+      "pain": "Funding/OI context and methodology are scattered or poorly labeled",
+      "job": "Explain perp positioning changes with source provenance",
+      "entry": "/web3#perps",
+      "first_value": "Hyperliquid source raw funding, reported volume, approximate USD open interest",
+      "cta": "Inspect perpetual flows",
+      "retention": "Compare market observations over time when implemented",
+      "channels": [
+        "Hyperliquid developer community",
+        "perp researchers",
+        "market structure explainers"
+      ]
+    },
+    {
+      "id": "solana_token_researcher",
+      "priority": 3,
+      "buyer": "Solana token researchers and meme-market participants investigating mints and pools",
+      "venue": "Existing Solana Token Radar; pump.fun/Axiom/GMGN etc research only",
+      "pain": "Launch hype obscures pool liquidity and source integrity",
+      "job": "Investigate source-reported token pools, liquidity and changes",
+      "entry": "/radar",
+      "first_value": "Actual Solana mint lookup with timestamped source observations",
+      "cta": "Research a Solana token",
+      "retention": "Repeat token research and saved lists where supported",
+      "channels": [
+        "public token research discussions",
+        "permissioned Telegram groups",
+        "Solana developer forums"
+      ]
+    },
+    {
+      "id": "web3_builder",
+      "priority": 4,
+      "tier": "SECONDARY",
+      "buyer": "Market-data builders and small research teams",
+      "job": "Inspect reproducible public market data and methodology",
+      "entry": "/web3",
+      "cta": "Explore public source evidence",
+      "revenue": "API/team plans only after validated demand and real delivery"
+    }
+  ],
+  "north_star": {
+    "id": "WQRR",
+    "label": "Weekly qualified returning researchers",
+    "definition": "Unique eligible real human users completing a source-backed research action on two different UTC days in one rolling 7-day window",
+    "status": "NOT_MEASURED_AS_DEFINED",
+    "exclude": [
+      "test accounts",
+      "bots",
+      "demo/fallback events",
+      "admin and duplicate events"
+    ],
+    "fields": [
+      "privacy-safe user/session key",
+      "event name",
+      "market lane",
+      "source mode",
+      "observed UTC timestamp"
+    ],
+    "denominator": "eligible unique researchers in the seven-day cohort"
+  },
+  "kpis": [
+    {
+      "id": "qualified_first_research",
+      "owner": "product",
+      "formula": "Unique real visitors with first actual source-backed research action; never count a page view as research",
+      "status": "PARTIALLY_INSTRUMENTED"
+    },
+    {
+      "id": "signup_to_activation",
+      "owner": "product",
+      "formula": "Eligible signups with qualifying real research within 24h / eligible real signups",
+      "status": "NEEDS_COHORT_VALIDATION"
+    },
+    {
+      "id": "d7_research_return",
+      "owner": "growth",
+      "formula": "Matured day-zero researchers with another qualified action on day 1-7 / matured day-zero researchers",
+      "status": "NOT_MEASURED_AS_DEFINED"
+    },
+    {
+      "id": "attributed_qualified_research",
+      "owner": "growth",
+      "formula": "Actual qualified research sessions attributed to source/community campaign / observed eligible arrivals",
+      "status": "NOT_MEASURED_AS_DEFINED"
+    },
+    {
+      "id": "qualified_feedback",
+      "owner": "customer",
+      "formula": "Distinct real user problem reports or feedback tied to a market research action with verifiable provenance",
+      "status": "NOT_MEASURED"
+    },
+    {
+      "id": "source_freshness",
+      "owner": "data",
+      "formula": "Percentage of source-observed API responses within venue-specific freshness limits; unavailable is explicit",
+      "status": "SOURCE_REPORTED_NOT_INDEPENDENT"
+    },
+    {
+      "id": "paid_conversion",
+      "owner": "commercial",
+      "formula": "Verified matured trial users with signed paid entitlements / eligible matured trials",
+      "status": "NOT_INDEPENDENTLY_VERIFIED"
+    },
+    {
+      "id": "settled_margin_cad",
+      "owner": "commercial",
+      "formula": "Real processor-settled CAD receipts minus refunds, processing, marginal data/provider/host costs",
+      "status": "NOT_INDEPENDENTLY_VERIFIED"
+    },
+    {
+      "id": "verified_contributions",
+      "owner": "growth",
+      "formula": "Genuinely published helpful external research links, verified from native platform",
+      "status": "NOT_MEASURED"
+    }
+  ],
+  "experiments": {
+    "days": 14,
+    "targets_are_proposals_not_results": true,
+    "targets": {
+      "first_qualified_researchers": 30,
+      "qualified_feedback": 8,
+      "second_day_returning_researchers": 6,
+      "verified_external_contributions": 10,
+      "settled_paid_transactions": 1
+    },
+    "reassess": "Two measured seven-day cohorts; iterate on most-qualified channel and biggest activation obstacle",
+    "budget_priority": "Actual usable research and distribution first; no new scheduler"
+  },
+  "providers": [
+    {
+      "name": "Polymarket Gamma",
+      "url": "https://gamma-api.polymarket.com/docs",
+      "state": "PUBLIC_READ_ONLY_CONNECTED"
+    },
+    {
+      "name": "Hyperliquid Info",
+      "url": "https://hyperliquid.gitbook.io/Hyperliquid-docs/for-developers/api/info-endpoint",
+      "state": "PUBLIC_READ_ONLY_CONNECTED"
+    },
+    {
+      "name": "Kalshi API",
+      "url": "https://help.kalshi.com/en/articles/13823854-kalshi-api",
+      "state": "REFERENCE_ONLY"
+    },
+    {
+      "name": "pump.fun API",
+      "url": "https://docs.pump.fun/",
+      "state": "REFERENCE_ONLY"
+    }
+  ],
+  "freshness": {
+    "official_source_review_days": 7,
+    "icp_kpi_review_days": 14,
+    "before_publish": "Verify each venue/source capability claim against active product and primary provider docs",
+    "stale_policy": "Mark STALE or UNKNOWN, repair source and workpacket, keep other independent reversible tasks progressing",
+    "financial_claims": "Source-reported plans and selected trial tier never count as collected cash"
+  },
+  "agent_contract": {
+    "dispatcher": "Existing Sina Founder OS / Company OS / Governor / Agent Fabric",
+    "workpacket_fields": [
+      "icp_id",
+      "market_lane",
+      "kpi_id",
+      "source_url",
+      "atomic_artifact",
+      "test",
+      "independent_verifier",
+      "next_action"
+    ],
+    "new_scheduler_allowed": false,
+    "unsupported_claims": "Draft missions, generated prompts, user counts, joins and cash have no verified status without native evidence"
+  }
+}

@@ -7,6 +7,7 @@
  */
 import org from "./organization.v2.json";
 import identity from "../strategy/PRODUCT-IDENTITY-SSOT-v3.json";
+import icpKpi from "../strategy/ICP_KPI_OPERATING_CONTRACT_v1.json";
 import ventureRoadmap from "./venture-roadmap.v1.json";
 import autonomyAcceptance from "./autonomy-acceptance.v1.json";
 import { compileWorkforceFloor } from "./workforce-floor.ts";
@@ -59,6 +60,8 @@ export function verifySignalForgeOnly(){
     org.agents.length!==100||org.departments.length!==11||
     new Set(org.agents.map(x=>x.id)).size!==100||
     identity.company_os.non_customer_facing_by_default!==true ||
+    identity.icp_kpi_contract!=="strategy/ICP_KPI_OPERATING_CONTRACT_v1.json" ||
+    icpKpi.project_id!==PROJECT || icpKpi.mission_id!==GOAL ||
     org.operating_continuity.local_scheduler_creation!==false||
     ventureRoadmap.project!=="SignalForge"||
     ventureRoadmap.company.project_id!==PROJECT||
@@ -74,6 +77,12 @@ export function verifySignalForgeOnly(){
  }
  return {project_id:PROJECT,goal:GOAL,departments:11,defined_roles:100,
          existing_scheduler_only:true};
+}
+export function signalForgeReferenceFreshness(asOf:string){
+ const checked=Date.parse(icpKpi.as_of_utc), now=Date.parse(asOf);
+ if(!Number.isFinite(checked)||!Number.isFinite(now))return {state:"SOURCE_DATE_UNKNOWN",review_due_utc:null};
+ const due=checked+icpKpi.freshness.official_source_review_days*86400000;
+ return {state:now>due?"SOURCE_REVIEW_OVERDUE":"SOURCE_REVIEW_CURRENT_AS_OF_RECORD",review_due_utc:new Date(due).toISOString()};
 }
 function validateBoard(board:Board){
  verifySignalForgeOnly();
@@ -99,6 +108,10 @@ function coreInstructions(role:typeof org.agents[number],objective:string,select
   "NOETFIELD AGENTOS / SIGNALFORGE COMPANY M20 / ROLE PROMPT CONTRACT v1",
   "THIS IS ONE PRODUCT COMPANY ONLY. Never dispatch to any other Founder portfolio venture.",
   "Founder goal: "+identity.primary_business,
+  "Canonical ICP KPI strategy: strategy/ICP_KPI_OPERATING_CONTRACT_v1.json; north star "+icpKpi.north_star.id+" (currently not verified/measured).",
+  "Market source reference freshness: "+signalForgeReferenceFreshness(board.as_of).state+"; when overdue, verify official current APIs, update references and continue other independent lawful work.",
+  "ICP targets in priority order: "+icpKpi.icps.slice(0,3).map(x=>x.id+" -> "+x.entry).join(" | "),
+  "Web3-native benchmark markets FIRST: Polymarket/Kalshi events, Hyperliquid/Lighter/Aster/Variational perps, Solana trenches. General charting tools SECONDARY.",
   "Required commercial result: useful source-linked research, authentic activation and retention, voluntary paid conversion, actual reconciled cash.",
   "Public product is NOT the 100-agent organization. No invented market prices, users, model performance or revenue.",
   "Role: "+role.title+" ("+role.id+"); division: "+role.department+
@@ -167,6 +180,7 @@ export function compileSignalForgeCompany(board:Board){
   schema:"signalforge.company-os.autonomous-operation.v1",
   project_id:PROJECT,goal:GOAL,as_of:board.as_of,source_generated_at:board.source_generated_at,
   business:identity.primary_business,
+  strategy_contract:{...signalForgeReferenceFreshness(board.as_of),source:"strategy/ICP_KPI_OPERATING_CONTRACT_v1.json",north_star:icpKpi.north_star.id,icps:icpKpi.icps.map(x=>({id:x.id,priority:x.priority,entry:x.entry,cta:x.cta})),kpis:icpKpi.kpis.map(x=>x.id),measurement_status:icpKpi.north_star.status},
   status:"SOURCE_BOUND_COMPILATION_NOT_EXECUTION",
   orchestration:{
    executive:"managing_director",existing_parent:"sina_founder_os",

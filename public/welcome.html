@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#070d11">
-<meta name="description" content="SignalForge — source-aware crypto market intelligence. Professional candlestick charts, explainable signals, market scanner, Solana Token Radar, strategy backtesting and research journals.">
+<meta name="description" content="SignalForge Web3 market intelligence: source-linked Polymarket events, Hyperliquid funding and open interest, and Solana token liquidity research.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="SignalForge — Research Every Move. Trade With Context.">
-<meta property="og:description" content="Charts, token intelligence, explainable signals and research evidence — together in one market workspace.">
+<meta property="og:description" content="Public Polymarket event flow, Hyperliquid perp markets and Solana mint research with evidence and source labels.">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://signalforge-web-production.up.railway.app/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -383,6 +383,7 @@ body:before{height:1350px;background:radial-gradient(ellipse at 58% 46%,#1e36302
  .term-top{padding:9px}
  .term-controls{padding:7px 9px}
 }
+.icp-entrances{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding-top:14px;padding-bottom:5px}.icp-entrances a{display:flex;flex-direction:column;gap:5px;padding:13px 16px;border:1px solid #30443f;border-radius:10px;background:#10201e;color:#dceee9;min-width:0;text-decoration:none}.icp-entrances a:hover,.icp-entrances a:focus-visible{border-color:#8cdbb5}.icp-entrances strong{font-size:12px;letter-spacing:.06em}.icp-entrances span{font-size:11px;color:#9eb5af}@media(max-width:720px){.icp-entrances{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -393,7 +394,8 @@ body:before{height:1350px;background:radial-gradient(ellipse at 58% 46%,#1e36302
  <div class="navright"><a class="navlogin" href="/app">Open terminal</a><a class="btn small" href="/app?view=dashboard">Explore platform <span class="arrow" aria-hidden="true">↗</span></a><button class="menubtn" type="button" id="menuToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Toggle menu">☰</button></div>
 </div></header>
 <main id="main">
- <div class="container marquee"><span><b>Digital asset market intelligence</b> &nbsp; / &nbsp; Research · Explain · Validate</span><a href="/web3">Explore Web3 market flow ↗</a></div>
+ <div class="container marquee"><span><b>Web3-native market intelligence</b> &nbsp; / &nbsp; Research · Explain · Validate</span><a href="/web3">Explore Web3 market flow ↗</a></div>
+ <nav class="container icp-entrances" aria-label="Choose your market research focus"><a href="/web3#prediction"><strong>01 / Prediction markets</strong><span>Real event activity and source-reported liquidity</span></a><a href="/web3#perps"><strong>02 / Perpetual DEX</strong><span>Hyperliquid funding, reported volume and open interest</span></a><a href="/radar"><strong>03 / Solana tokens</strong><span>Research token pools and liquidity by mint</span></a></nav>
  <section class="hero" id="markets"><div class="container hero-grid">
   <div class="hero-copy">
    <div class="hero-artline"><span>AN INTELLIGENT VIEW OF DIGITAL ASSET MARKETS</span><span>RESEARCH SYSTEM / 001</span></div>
@@ -404,7 +406,7 @@ body:before{height:1350px;background:radial-gradient(ellipse at 58% 46%,#1e36302
    </div>
    <div class="hero-summary"><div class="hero-summary-top"><span>01 — A BETTER READ ON THE MARKET</span><span>↗</span></div>
     <p class="lead"><span class="desktop-lead">Price tells you what happened. SignalForge connects market structure, explainable signals, token evidence and historical research — so you can understand the move before drawing your own conclusion.</span><span class="mobile-lead">Candlestick charts, source-aware signals, token research and backtests. One clear view of the market.</span></p>
-    <div class="hero-actions"><a class="btn" href="/app?view=dashboard"><span class="desktop-cta">Open market terminal</span><span class="mobile-cta">Open terminal</span> <span class="arrow" aria-hidden="true">↗</span></a><a class="btn ghost" href="/radar"><span class="desktop-cta">Explore Token Radar</span><span class="mobile-cta">Token Radar</span> <span class="arrow" aria-hidden="true">↗</span></a></div>
+    <div class="hero-actions"><a class="btn" href="/web3"><span class="desktop-cta">Explore Web3 market pulse</span><span class="mobile-cta">Explore Web3</span> <span class="arrow" aria-hidden="true">↗</span></a><a class="btn ghost" href="/radar"><span class="desktop-cta">Explore Token Radar</span><span class="mobile-cta">Token Radar</span> <span class="arrow" aria-hidden="true">↗</span></a></div>
     <div class="hero-caption"><span>Real market sources</span><span>No wallet required</span><span>Read-only research</span></div>
    </div>
   </div>

@@ -1,6 +1,6 @@
 {
   "schema": "signalforge.web3-native-market-atlas.v1",
-  "as_of": "2026-11-13",
+  "as_of": "2026-11-14",
   "project_id": "signalforge-market-intelligence",
   "mission_id": "M20-SIGNALFORGE-COMMUNITY",
   "owner": "SignalForge Research/Growth/Engineering Company OS",
@@ -53,7 +53,7 @@
         "https://builders.polymarket.com/",
         "https://help.kalshi.com/en/articles/13823854-kalshi-api"
       ],
-      "next_real_artifact": "Public event market research dataset backed by documented Gamma/market endpoints; no claim of production integration without live readback"
+      "next_real_artifact": "Already shipped /web3 public Polymarket observation; next actual task: source-linked event-change comparison and qualified cohort telemetry."
     },
     {
       "id": "PERPETUAL_DEX",
@@ -75,7 +75,7 @@
         "https://t.me/s/lighter_api_updates",
         "https://docs.lighter.xyz/"
       ],
-      "next_real_artifact": "Read-only Hyperliquid public-market intelligence connector with tests and source timestamp"
+      "next_real_artifact": "Already shipped /web3 public Hyperliquid observation; next actual task: source-aware movement context and qualifying first-research/return events."
     },
     {
       "id": "MEME_COIN_TRENCHES",
@@ -98,7 +98,7 @@
         "https://gmgn.ai/trend?chain=sol",
         "https://docs.pump.fun/"
       ],
-      "next_real_artifact": "Solana token radar high-signal trend cohorts with authentic public-source readbacks; no seeded fake posts/users"
+      "next_real_artifact": "Existing /radar Solana mint research; next: qualified pool-research and return events, no invented launch feed."
     }
   ],
   "platforms": [
@@ -233,5 +233,27 @@
     "Nansen",
     "Arkham",
     "Bubblemaps"
+  ],
+  "icp_kpi_contract": "strategy/ICP_KPI_OPERATING_CONTRACT_v1.json",
+  "source_freshness_policy": "Official venue review every 7 days; unknown claims must be marked STALE/UNKNOWN and reverified from current source, not guessed.",
+  "implemented_source_observations": [
+    {
+      "venue": "Polymarket",
+      "route": "/api/web3/pulse",
+      "status": "PUBLIC_READ_ONLY_CONNECTED",
+      "not_proof_of": "real users/trading"
+    },
+    {
+      "venue": "Hyperliquid",
+      "route": "/api/web3/pulse",
+      "status": "PUBLIC_READ_ONLY_CONNECTED",
+      "not_proof_of": "transactions/strategy win rate"
+    },
+    {
+      "venue": "Solana mint research",
+      "route": "/radar",
+      "status": "TOKEN_LOOKUP",
+      "not_proof_of": "new launch feed"
+    }
   ]
 }
