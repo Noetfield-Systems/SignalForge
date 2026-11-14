@@ -108,13 +108,13 @@ jobs:
           kind=d.get("error_type","NONE")
           link="https://github.com/Noetfield-Systems/SignalForge/actions/runs/"+os.environ["GITHUB_RUN_ID"]
           Path("/tmp/sina-delivery-status.md").write_text(
-              "SignalForge M20 Company OS delivery — observed GitHub Actions state\\n\\n"
-              +"- State: `"+state+"`\\n"
-              +"- Failed stage: `"+str(stage)+"`\\n"
-              +"- Error type: `"+str(kind)+"`\\n"
-              +"- Workstream prefix: `"+str(d.get("workstream_prefix","not_claimed"))+"`\\n"
-              +"- [Actual runner and checks]("+link+")\\n\\n"
-              +"No fabricated production release, payment, active users or independently verified business outcome.\\n")
+              "SignalForge M20 Company OS delivery — observed GitHub Actions state\n\n"
+              +"- State: `"+state+"`\n"
+              +"- Failed stage: `"+str(stage)+"`\n"
+              +"- Error type: `"+str(kind)+"`\n"
+              +"- Workstream prefix: `"+str(d.get("workstream_prefix","not_claimed"))+"`\n"
+              +"- [Actual runner and checks]("+link+")\n\n"
+              +"No fabricated production release, payment, active users or independently verified business outcome.\n")
           PY
           gh issue comment "$SIGNALFORGE_TRIGGER_ISSUE" --repo Noetfield-Systems/SignalForge --body-file /tmp/sina-delivery-status.md
       - name: Preserve bounded failing-stage diagnostics for independent review
