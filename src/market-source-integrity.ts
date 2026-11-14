@@ -1,3 +1,4 @@
+import {GENERATED_MARKET_RULES} from "../company-os/generated/runtime-registry.ts";
 /**
  * Customer-facing SignalForge market source-integrity state.
  * Kraken OHLC timestamps are exchange-reported, not an independent signature.
@@ -7,6 +8,32 @@ export type ResearchMarketInput={
  mode:string;source:string;interval:number;
  candles:Array<{time:number;close?:number}>;fetchedAt:string;
 };
+function evaluateGeneratedMarketRules(input:ResearchMarketInput, ageSeconds:number){
+ const age=Math.max(0,ageSeconds);
+ const passed={
+  ageSeconds:age,
+  intervalMinutes:input.interval,
+  source:input.source,
+  sourceReportedLive:input.mode==="LIVE_PUBLIC_DATA",
+  sourceTimestampPresent:true,
+ };
+ // Cap consumption even if many independently reviewed code capabilities
+ // have been merged. A model rule cannot overwrite the core market verdict.
+ return GENERATED_MARKET_RULES.slice(-3).map(rule=>{
+  try {
+   const result=rule.evaluate(passed);
+   if(!result||typeof result.state!=="string"||
+      result.state.length>80||typeof result.researchReady!=="boolean"||
+      result.tradingAuthorized!==false)
+     return {workstreamId:rule.workstreamId,state:"INVALID_GENERATED_RULE",researchReady:false};
+   return {workstreamId:rule.workstreamId,state:result.state,
+           researchReady:result.researchReady};
+  }catch{
+   return {workstreamId:rule.workstreamId,state:"GENERATED_RULE_ERROR",researchReady:false};
+  }
+ });
+}
+
 export function assessMarketSourceIntegrity(input:ResearchMarketInput, nowMs=Date.now()){
  const denied={researchEligible:false,tradingAuthorized:false,independentlyVerified:false};
  if(!input||typeof input!=="object"||!Array.isArray(input.candles)||
@@ -29,5 +56,6 @@ export function assessMarketSourceIntegrity(input:ResearchMarketInput, nowMs=Dat
  const stale=ageSeconds>input.interval*120+300;
  return {state:stale?"STALE_PUBLIC_CANDLES":"SOURCE_OBSERVED_CURRENT",
    ageSeconds,sourceTimestamp:seconds,
-   researchEligible:!stale,tradingAuthorized:false,independentlyVerified:false};
+   researchEligible:!stale,tradingAuthorized:false,independentlyVerified:false,
+   generatedResearchRules:stale?[]:evaluateGeneratedMarketRules(input,ageSeconds)};
 }
