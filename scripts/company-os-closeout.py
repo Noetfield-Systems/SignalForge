@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import urllib.request
 import urllib.error
+import urllib.error
 import re
 from importlib.util import spec_from_file_location, module_from_spec
 spec=spec_from_file_location('readback',Path(__file__).with_name('company-os-readback.py'))
@@ -41,8 +42,24 @@ def main():
         if pending.get('state')=='NO_PENDING_VERIFICATION':
             print(json.dumps(pending)); return
         evidence=pending['evidence']
-    receipt=post(VERIFIER,evidence,token)
-    result=post(module.API+'/verify',receipt,token)
+    try:
+        receipt=post(VERIFIER,evidence,token)
+    except urllib.error.HTTPError as exc:
+        # An isolated verifier's 409 is a real source-level conflict, not a
+        # successful independent receipt. Do not silently re-issue or advance.
+        diagnostic={"stage":"ISOLATED_VERIFIER","http_status":exc.code,
+                    "verified":False,"next_workpacket_dispatched":False}
+        Path("company-delivery-closeout-diagnostics.json").write_text(
+            json.dumps(diagnostic,sort_keys=True))
+        raise RuntimeError("ISOLATED_VERIFIER_HTTP_"+str(exc.code)) from None
+    try:
+        result=post(module.API+'/verify',receipt,token)
+    except urllib.error.HTTPError as exc:
+        diagnostic={"stage":"FABRIC_VERIFIER_READBACK","http_status":exc.code,
+                    "verified":False,"next_workpacket_dispatched":False}
+        Path("company-delivery-closeout-diagnostics.json").write_text(
+            json.dumps(diagnostic,sort_keys=True))
+        raise RuntimeError("FABRIC_VERIFICATION_HTTP_"+str(exc.code)) from None
     if result.get('state')!='TECHNICALLY_VERIFIED': raise RuntimeError('VERIFICATION_NOT_RECORDED')
     # A GitHub/CI signature alone does not close the real Founder WorkPacket.
     # Only the independent verifier's source-bound, signed Founder DONE proof
@@ -50,5 +67,11 @@ def main():
     if result.get('founder_workstream_done') is not True:
         raise RuntimeError('CANONICAL_FOUNDER_WORKSTREAM_NOT_DONE')
     Path('company-delivery-verification.json').write_text(json.dumps(receipt,sort_keys=True,indent=2))
+    # The sole automatic-continuation permit is a genuine isolated verifier
+    # receipt AND the canonical Founder WorkPacket DONE acknowledgment.
+    # GitHub Actions cannot read stdout as a step output; explicitly write it.
+    if os.environ.get("GITHUB_OUTPUT"):
+        with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf8") as output:
+            output.write("state=TECHNICALLY_VERIFIED\n")
     print(json.dumps(result,sort_keys=True))
 if __name__=='__main__': main()
