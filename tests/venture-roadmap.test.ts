@@ -34,6 +34,11 @@ test("roadmap is delivered through existing source-bound Company OS projection",
  };
  const board=compileOperatingBoard(sample,when);
  const compiled=compileSignalForgeCompany(board);
+ expect(compiled.autonomy_acceptance.phases).toHaveLength(10);
+ expect(compiled.autonomy_acceptance.failure_scenarios).toHaveLength(16);
+ expect(compiled.autonomy_acceptance.created_separate_scheduler).toBe(false);
+ expect(compiled.autonomy_acceptance.dispatch_performed).toBe(false);
+ expect(compiled.autonomy_acceptance.status).toBe("NOT_INDEPENDENTLY_VERIFIED");
  expect(compiled.venture_roadmap.mission_candidates).toHaveLength(12);
  expect(compiled.venture_roadmap.initial_parallelism).toHaveLength(5);
  expect(compiled.venture_roadmap.owns_scheduler).toBe(false);
