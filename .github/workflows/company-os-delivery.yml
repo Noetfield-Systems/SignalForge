@@ -39,6 +39,7 @@ jobs:
       contents: write
       pull-requests: write
       id-token: write
+      issues: write
     services:
       postgres:
         image: postgres:16-alpine
@@ -87,6 +88,43 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python3 scripts/company-os-delivery.py
+      - name: Return bounded real execution status to the Founder trigger issue
+        if: ${{ always() && github.event_name == 'issues' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SIGNALFORGE_TRIGGER_ISSUE: ${{ github.event.issue.number }}
+          DELIVERY_STATE: ${{ steps.deliver.outputs.state }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+        run: |
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          d={}
+          f=Path("company-delivery-diagnostics.json")
+          if f.is_file():
+              d=json.loads(f.read_text())
+          state=os.environ.get("DELIVERY_STATE") or d.get("state") or "UNREPORTED"
+          stage=d.get("stage","COMPANY_OS_SOURCE_OR_CANDIDATE")
+          kind=d.get("error_type","NONE")
+          link="https://github.com/Noetfield-Systems/SignalForge/actions/runs/"+os.environ["GITHUB_RUN_ID"]
+          Path("/tmp/sina-delivery-status.md").write_text(
+              "SignalForge M20 Company OS delivery — observed GitHub Actions state\n\n"
+              +"- State: `"+state+"`\n"
+              +"- Failed stage: `"+str(stage)+"`\n"
+              +"- Error type: `"+str(kind)+"`\n"
+              +"- Workstream prefix: `"+str(d.get("workstream_prefix","not_claimed"))+"`\n"
+              +"- [Actual runner and checks]("+link+")\n\n"
+              +"No fabricated production release, payment, active users or independently verified business outcome.\n")
+          PY
+          gh issue comment "$SIGNALFORGE_TRIGGER_ISSUE" --repo Noetfield-Systems/SignalForge --body-file /tmp/sina-delivery-status.md
+      - name: Preserve bounded failing-stage diagnostics for independent review
+        if: ${{ always() && steps.deliver.outputs.state == 'FAILED' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: sina-signalforge-delivery-failure-${{ github.run_id }}
+          path: company-delivery-diagnostics.json
+          if-no-files-found: ignore
+          retention-days: 14
       - name: Preserve exact source and candidate evidence
         if: ${{ steps.deliver.outputs.state == 'OPENED' || steps.deliver.outputs.state == 'BRANCH_READY' }}
         uses: actions/upload-artifact@v4
