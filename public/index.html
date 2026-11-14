@@ -253,7 +253,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 <footer class="footer"><span>© 2026 SIGNALFORGE · MARKET INTELLIGENCE PLATFORM</span><span>Data: Kraken public market endpoints · Research only · No broker execution</span></footer></main></div><div class="modalback" id="authModal"><div class="modal"><div class="eyebrow">Personal workspace</div><h2 id="authTitle">Create your free account</h2><p>Save watchlists and research preferences in your private workspace.</p><div class="field"><label>EMAIL ADDRESS</label><input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com"></div><div class="field"><label>PASSWORD</label><input id="authPassword" type="password" autocomplete="new-password" placeholder="At least 10 characters"></div><div id="emailConsentWrap" class="notice"><label style="display:flex;gap:8px;align-items:flex-start;color:#a8bac9"><input id="emailConsent" type="checkbox" style="margin-top:2px"> Email me product tips, activation guidance and trial reminders. I can unsubscribe at any time.</label></div><button class="primary" id="authSubmit" style="width:100%;margin-top:6px">Create account</button><div class="modalfoot"><button class="textbtn" id="authSwitch">Already have an account? Sign in</button><button class="textbtn" id="authClose">Close</button></div><div class="notice">30 days of full Pro + Quant access. No payment method is required; no automatic charge occurs when the trial ends.</div></div></div><div class="toast" id="toast"></div><script>
 (function(){
 const $=function(id){return document.getElementById(id)};
-const state={view:"dashboard",symbol:"BTCUSD",interval:60,candles:[],market:null,signals:[],overview:[],scanner:[],user:null,strategies:[],authMode:"signup",lastPayload:null};
+const state={view:"dashboard",symbol:"BTCUSD",interval:60,candles:[],market:null,signals:[],overview:[],scanner:[],scanSources:{},user:null,strategies:[],authMode:"signup",lastPayload:null};
 const names={BTCUSD:"BTC / USD",ETHUSD:"ETH / USD",SOLUSD:"SOL / USD",XRPUSD:"XRP / USD",ADAUSD:"ADA / USD",DOGEUSD:"DOGE / USD",LINKUSD:"LINK / USD",AVAXUSD:"AVAX / USD",LTCUSD:"LTC / USD",DOTUSD:"DOT / USD"};
 const fmt=function(n,d){if(n===null||n===undefined||!Number.isFinite(Number(n)))return "—";return Number(n).toLocaleString("en-US",{minimumFractionDigits:d===undefined?2:d,maximumFractionDigits:d===undefined?2:d})};
 const money=function(n){if(n===null||n===undefined)return "—";return "$"+fmt(n,Math.abs(n)<1?4:2)};
@@ -270,6 +270,8 @@ document.querySelectorAll("[data-interval]").forEach(function(b){b.onclick=funct
 $("scanNow").onclick=function(){nav("scanner")};
 $("saveWatch").onclick=async function(){if(!state.user){openAuth("signup");return}try{await api("/api/watchlist",{method:"POST",body:JSON.stringify({symbol:state.symbol})});toast("Market saved to your workspace");loadWatchlist()}catch(e){toast(e.message)}};
 $("runScanner").onclick=runScanner;
+["scanSearch","scanSource","scanDirection","scanSort","scanScore"].forEach(function(id){$(id).addEventListener(id==="scanSearch"||id==="scanScore"?"input":"change",renderScanner)});
+$("scanInterval").addEventListener("change",runScanner);
 $("runBacktest").onclick=runBacktest;
 $("refreshRecord").onclick=loadTrackRecord;
 $("loginBtn").onclick=function(){openAuth("login")};
@@ -315,9 +317,93 @@ line(20,"#83aaff");line(50,"#bd92ff");const last=c[c.length-1],ly=priceY(last.cl
 async function loadWatchlist(){if(!state.user)return;try{const j=await api("/api/watchlist");const root=$("userWatchlist");root.innerHTML=j.items.length?j.items.map(function(x){return '<button class="ghost" data-watch="'+x.symbol+'" style="margin:3px">'+x.symbol+' · Open →</button>'}).join(""):'<div class="empty">Your watchlist is empty. Select a market and choose Save market.</div>';root.querySelectorAll("[data-watch]").forEach(function(b){b.onclick=function(){state.symbol=b.dataset.watch;$("pairSelect").value=state.symbol;loadMarket(true)}})}catch(e){$("userWatchlist").innerHTML='<div class="empty">'+e.message+'</div>'}}
 function renderSignals(){const root=$("signalList");if(!state.signals.length){root.innerHTML='<div class="empty">No strategy confirmation on this candle. Waiting is a valid signal state.</div>';return}root.innerHTML=state.signals.slice().sort(function(a,b){return b.score-a.score}).map(function(s){const tag=s.direction==="LONG"?"long":s.direction==="SHORT"?"short":s.state==="WATCH"?"watch":"wait";const label=s.direction==="LONG"?"LONG":s.direction==="SHORT"?"SHORT":s.state;return '<article class="signal"><div class="signalrow"><span class="signalname">'+s.name+'</span><span class="tag '+tag+'">'+label+'</span></div><div class="signaldesc">'+s.thesis+'</div><div class="signalrow"><small class="muted">Confluence score</small><b style="font-size:11px">'+s.score+'/100</b></div><div class="scoreline"><i style="width:'+s.score+'%"></i></div><div class="signallevels"><div><small>ENTRY</small><b>'+money(s.entry)+'</b></div><div><small>INVALIDATION</small><b class="neg">'+money(s.stop)+'</b></div><div><small>TARGET 2</small><b class="pos">'+money(s.targets[1])+'</b></div></div></article>'}).join("")}
 function renderOverview(){const root=$("assetCards");root.innerHTML=state.overview.map(function(x){return '<div class="panel asset" data-asset="'+x.symbol+'"><div class="assetname"><span>'+x.symbol.replace("USD","")+'</span><span class="muted">USD</span></div><div class="assetprice">'+money(x.price)+'</div><div class="assetdelta '+(x.change24h>=0?"pos":"neg")+'">'+pct(x.change24h)+' <span class="muted">24h</span></div></div>'}).join("");root.querySelectorAll("[data-asset]").forEach(function(b){b.onclick=function(){state.symbol=b.dataset.asset;$("pairSelect").value=state.symbol;loadMarket(true)}})}
-function renderOpportunities(){const rows=state.scanner.filter(function(x){return x.direction==="LONG"||x.direction==="SHORT"}).sort(function(a,b){return b.score-a.score}).slice(0,8);$("opportunityRows").innerHTML=rows.length?rows.map(function(s){return '<tr><td>'+s.symbol+'</td><td>'+s.name+'</td><td><span class="tag '+(s.direction==="LONG"?"long":"short")+'">'+s.direction+'</span></td><td>'+s.score+'/100</td><td>'+money(s.entry)+'</td><td class="neg">'+money(s.stop)+'</td><td>'+fmt(s.riskReward,2)+'</td></tr>'}).join(""):'<tr><td colspan="7" class="empty">No high-confluence setups right now. Monitor the next completed candle.</td></tr>'}
+function renderOpportunities(){const rows=state.scanner.filter(function(x){return x.researchEligible===true && (x.direction==="LONG"||x.direction==="SHORT")}).sort(function(a,b){return b.score-a.score}).slice(0,8);$("opportunityRows").innerHTML=rows.length?rows.map(function(s){return '<tr><td>'+s.symbol+'</td><td>'+s.name+'</td><td><span class="tag '+(s.direction==="LONG"?"long":"short")+'">'+s.direction+'</span></td><td>'+s.score+'/100</td><td>'+money(s.entry)+'</td><td class="neg">'+money(s.stop)+'</td><td>'+fmt(s.riskReward,2)+'</td></tr>'}).join(""):'<tr><td colspan="7" class="empty">No high-confluence setups right now. Monitor the next completed candle.</td></tr>'}
 async function loadMarket(force){try{$("feedStatus").textContent="FETCHING PUBLIC MARKET DATA";const j=await api("/api/market?symbol="+state.symbol+"&interval="+state.interval+(force?"&refresh=1":""));state.lastPayload=j;state.candles=j.candles;state.market=j.summary;state.signals=j.signals;state.overview=j.overview||[];$("feedStatus").textContent=j.mode==="LIVE_PUBLIC_DATA"?(j.researchIntegrity?.state==="SOURCE_OBSERVED_CURRENT"?"SOURCE CURRENT · KRAKEN":"SOURCE AGE UNCONFIRMED"):"DEMO FALLBACK";$("feedNotice").textContent=j.mode==="LIVE_PUBLIC_DATA"?(j.researchIntegrity?.state==="SOURCE_OBSERVED_CURRENT"?"Kraken public OHLC · exchange-reported completed candles · source age "+Math.floor((j.researchIntegrity.ageSeconds||0)/60)+"m. Not independently verified or a trade instruction.":"Kraken market-source integrity warning: "+(j.researchIntegrity?.state||"UNAVAILABLE")+". Research data is not verified for freshness."):"Market provider unavailable; this view is using deterministic demo data. Demo outputs are excluded from live record. "+(j.fallbackReason||"");$("chartTitle").textContent=names[state.symbol]+" · Market structure";$("chartSub").textContent=state.interval+"m candles · completed bars";$("statPrice").textContent=money(j.summary.price);$("statChange").textContent=pct(j.summary.change24h)+" vs 24 completed candles";$("statChange").className="statfoot "+(j.summary.change24h>=0?"pos":"neg");$("statRegime").textContent=j.summary.regime;$("statRSI").textContent="RSI "+fmt(j.summary.rsi,1)+" · ATR "+money(j.summary.atr);$("chartPrice").textContent=money(j.summary.price);$("chartChange").textContent=pct(j.summary.change24h);$("chartChange").className="change "+(j.summary.change24h>=0?"pos":"neg");$("chartSource").textContent=j.mode==="LIVE_PUBLIC_DATA"?"LIVE MARKET DATA":"DEMO DATA";$("chartRange").textContent="24-bar range "+money(j.summary.low24h)+" — "+money(j.summary.high24h);$("chartUpdated").textContent="Updated "+new Date(j.fetchedAt).toLocaleTimeString();const top=j.signals.slice().sort(function(a,b){return b.score-a.score})[0];$("statScore").textContent=top?top.score+"/100":"—";$("statTop").textContent=top?top.name+" · "+top.state:"No setup";renderSignals();renderOverview();drawChart();renderOpportunities()}catch(e){$("feedStatus").textContent="FEED ERROR";$("feedNotice").textContent=e.message;toast(e.message)}}
-async function runScanner(){$("scannerRows").innerHTML='<tr><td colspan="9" class="empty">Scanning live markets…</td></tr>';try{const j=await api("/api/scanner?interval="+Number($("scanInterval")?.value||60));state.scanner=j.items||[];$("scannerRows").innerHTML=state.scanner.slice(0,70).map(function(s,i){return '<tr><td>#'+(i+1)+'</td><td><b>'+s.symbol+'</b></td><td>'+s.name+'</td><td><span class="tag '+(s.direction==="LONG"?"long":s.direction==="SHORT"?"short":s.state==="WATCH"?"watch":"wait")+'">'+s.direction+'</span></td><td>'+s.score+'</td><td>'+money(s.entry)+'</td><td class="neg">'+money(s.stop)+'</td><td class="pos">'+money(s.targets[1])+'</td><td>'+fmt(s.riskReward,2)+'</td></tr>'}).join("")||'<tr><td colspan="9" class="empty">No opportunities confirmed.</td></tr>';renderOpportunities()}catch(e){$("scannerRows").innerHTML='<tr><td colspan="9" class="empty">'+e.message+'</td></tr>'}}
+const scanEscape=function(value){return String(value===undefined||value===null?"":value).replace(/[&<>"']/g,function(x){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[x]})};
+const scanPacificTime=function(value){const date=new Date(value||"");return Number.isFinite(date.getTime())?new Intl.DateTimeFormat("en-CA",{timeZone:"America/Vancouver",month:"short",day:"numeric",hour:"2-digit",minute:"2-digit",hour12:true}).format(date)+" PT":"Unknown"};
+function openScanChart(item){
+ if(!item||!Object.prototype.hasOwnProperty.call(names,item.symbol))return;
+ state.symbol=item.symbol;$("pairSelect").value=item.symbol;
+ state.interval=Number($("scanInterval").value)||60;
+ document.querySelectorAll("[data-interval]").forEach(function(b){b.classList.toggle("active",Number(b.dataset.interval)===state.interval)});
+ nav("dashboard");loadMarket(true);
+}
+function openScanBacktest(item){
+ if(!item||!Object.prototype.hasOwnProperty.call(names,item.symbol))return;
+ nav("backtest");$("btPair").value=item.symbol;$("btInterval").value=String($("scanInterval").value);
+ if($("btStrategy").querySelector('option[value="'+item.id+'"]'))$("btStrategy").value=item.id;
+ runBacktest();
+}
+function renderScanner(){
+ const search=($("scanSearch").value||"").trim().toLowerCase();
+ const required=Number($("scanScore").value||0);
+ const bias=$("scanDirection").value,source=$("scanSource").value,sort=$("scanSort").value;
+ $("scanMinLabel").textContent=String(required);
+ let rows=state.scanner.filter(function(item){
+  const real=item.researchEligible===true && item.sourceState==="SOURCE_OBSERVED_CURRENT";
+  if(source==="current"&&!real || source==="unverified"&&real)return false;
+  if(bias!=="all"&&item.direction!==bias)return false;
+  if(Number(item.score)<required)return false;
+  if(search&&!String(item.symbol+" "+item.name+" "+item.id).toLowerCase().includes(search))return false;
+  return true;
+ });
+ rows.sort(function(a,b){
+  if(sort==="market")return String(a.symbol).localeCompare(String(b.symbol))||Number(b.score)-Number(a.score);
+  if(sort==="rr")return Number(b.riskReward||0)-Number(a.riskReward||0);
+  if(sort==="source")return Number(b.researchEligible===true)-Number(a.researchEligible===true)||Number(b.score)-Number(a.score);
+  return Number(b.score)-Number(a.score);
+ });
+ const root=$("scannerRows");
+ root.innerHTML=rows.length?rows.slice(0,70).map(function(item,i){
+  const real=item.researchEligible===true&&item.sourceState==="SOURCE_OBSERVED_CURRENT";
+  const tag=real?"KRAKEN CURRENT":item.mode!=="LIVE_PUBLIC_DATA"?"DEMO FALLBACK":"STALE / UNVERIFIED";
+  const evidence=state.scanSources[item.symbol]||{};
+  const age=real&&Number.isFinite(evidence.ageSeconds)?Math.floor(evidence.ageSeconds/60)+"m since completed candle":scanEscape(item.sourceState||"UNKNOWN");
+  return '<tr><td class="muted">'+String(i+1).padStart(2,"0")+'</td>'+
+   '<td><span class="sf-scan-asset">'+scanEscape(names[item.symbol]||item.symbol)+'</span><span class="sf-scan-sub">'+scanEscape(item.symbol)+" · "+String($("scanInterval").value)+"m</span></td>"+
+   '<td><strong>'+scanEscape(item.name)+'</strong><span class="sf-scan-sub">'+scanEscape(item.state)+'</span></td>'+
+   '<td><span class="tag '+(item.direction==="LONG"?"long":item.direction==="SHORT"?"short":"watch")+'">'+scanEscape(item.direction)+'</span></td>'+
+   '<td><span class="sf-scan-score">'+fmt(item.score,0)+'</span></td>'+
+   '<td><span class="sf-source-tag'+(real?"":item.mode!=="LIVE_PUBLIC_DATA"?" unverified":" stale")+'">'+tag+'</span><span class="sf-scan-sub">'+age+'</span></td>'+
+   '<td>'+money(item.entry)+'</td><td>'+fmt(item.riskReward,2)+'</td>'+
+   '<td><div class="sf-scan-actions"><button type="button" data-scan-chart="'+i+'">Chart ↗</button><button type="button" data-scan-inspect="'+i+'">Evidence</button><button type="button" data-scan-backtest="'+i+'">Backtest</button></div></td></tr>';
+ }).join(""):'<tr><td colspan="9" class="empty">No source-observed setup matches these filters. Lower the score threshold or inspect other market states.</td></tr>';
+ const shown=rows.slice(0,70);
+ root.querySelectorAll("[data-scan-chart]").forEach(function(b){b.onclick=function(){openScanChart(shown[Number(b.dataset.scanChart)])}});
+ root.querySelectorAll("[data-scan-backtest]").forEach(function(b){b.onclick=function(){openScanBacktest(shown[Number(b.dataset.scanBacktest)])}});
+ root.querySelectorAll("[data-scan-inspect]").forEach(function(b){b.onclick=function(){
+  const selected=shown[Number(b.dataset.scanInspect)];if(!selected)return;
+  const info=state.scanSources[selected.symbol]||{},inspector=$("scanInspector");
+  inspector.hidden=false;
+  $("scanInspectTitle").textContent=(names[selected.symbol]||selected.symbol)+" / "+selected.name;
+  $("scanInspectReason").textContent=(selected.reasons||[]).join(" · ")+" · Entry "+money(selected.entry)+" / Stop "+money(selected.stop)+" / Target 2 "+money((selected.targets||[])[1])+". Confluence is not a predicted win probability.";
+  $("scanInspectProvenance").textContent=String(info.source||"Source unavailable")+" · "+String(info.sourceState||"UNVERIFIED")+" · "+(info.sourceTimestamp?scanPacificTime(new Date(info.sourceTimestamp*1000).toISOString()):"No verified candle timestamp");
+  $("scanInspectChart").onclick=function(){openScanChart(selected)};
+  $("scanInspectBacktest").onclick=function(){openScanBacktest(selected)};
+  inspector.scrollIntoView({behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches?"instant":"smooth",block:"nearest"});
+ }});
+ $("scanSignalsCount").textContent=rows.length+"/"+state.scanner.length;
+ $("scanFeedback").textContent="Showing "+Math.min(70,rows.length)+" of "+rows.length+" matching strategy setups across "+Object.keys(state.scanSources).length+" markets. Only source-current, completed Kraken candles qualify for live source evidence. Confluence is not probability; this tool does not place orders.";
+}
+async function runScanner(){
+ $("scannerRows").innerHTML='<tr><td colspan="9" class="empty">Reading Kraken completed candles and labeling every source…</td></tr>';
+ $("scanFeedStatus").textContent="FETCHING · CHECKING SOURCE AGE";$("runScanner").disabled=true;
+ try{
+  const j=await api("/api/scanner?interval="+Number($("scanInterval").value||60));
+  if(!Array.isArray(j.items)||!j.sources||typeof j.sources!=="object")throw Error("Scanner source contract unavailable");
+  state.scanner=j.items;state.scanSources=j.sources;
+  $("scanLiveCount").textContent=String(j.liveSources)+"/"+j.marketCount;
+  $("scanDemoCount").textContent=String(j.unavailableSources);
+  $("scanUpdated").textContent=scanPacificTime(j.scannedAt);
+  $("scanFeedStatus").textContent=j.unavailableSources===0?"KRAKEN · SOURCE CURRENT":"MIXED SOURCE · CHECK EACH ROW";
+  $("scanInspector").hidden=true;
+  renderScanner();renderOpportunities();
+ }catch(error){
+  $("scanFeedStatus").textContent="MARKET SOURCE UNAVAILABLE";
+  $("scannerRows").innerHTML='<tr><td colspan="9" class="empty">Scanner source request failed. Do not treat previous values as current; refresh to retry.</td></tr>';
+  $("scanFeedback").textContent="Scanner error: "+String(error.message||"UNKNOWN")+". No invented market data is displayed.";
+ }finally{$("runScanner").disabled=false}
+}
 function renderStrategies(){if(state.strategies.length){$("strategyCards").innerHTML=state.strategies.map(function(s){return '<article class="panel strategycard"><div class="eyebrow">'+s.category+'</div><h3>'+s.name+'</h3><p>'+s.thesis+'</p><div class="chips"><span class="chip">'+s.horizon+'</span><span class="chip">Trigger '+s.trigger+'</span><span class="chip">Long / Short</span></div><button class="ghost" data-bt="'+s.id+'">Test strategy →</button><button class="ghost" data-alert="'+s.id+'">Create alert</button></article>'}).join("");$("strategyCards").querySelectorAll("[data-bt]").forEach(function(b){b.onclick=function(){nav("backtest");$("btStrategy").value=b.dataset.bt}});$("strategyCards").querySelectorAll("[data-alert]").forEach(function(b){b.onclick=async function(){if(!state.user){openAuth("signup");return}try{await api("/api/alerts",{method:"POST",body:JSON.stringify({symbol:state.symbol,strategyId:b.dataset.alert,minScore:75})});toast("Strategy alert saved")}catch(e){toast(e.message)}}});}}
 async function loadStrategies(){try{const j=await api("/api/strategies");state.strategies=j.strategies;renderStrategies()}catch(e){}}
 async function runBacktest(){const symbol=$("btPair").value,interval=$("btInterval").value,strategy=$("btStrategy").value;$("runBacktest").textContent="Calculating…";$("runBacktest").disabled=true;try{const j=await api("/api/backtest?symbol="+symbol+"&interval="+interval+"&strategy="+strategy);const v=j.aggregate||j.results[0]||{};const metric=function(title,value,foot){return '<div class="panel stat"><div class="statlabel">'+title+'</div><div class="statvalue">'+value+'</div><div class="statfoot">'+foot+'</div></div>'};$("btMetrics").innerHTML=metric("Net return",v.netReturn===null?"—":pct(v.netReturn),"Historical simulation")+metric("Win rate",v.winRate===null?"—":fmt(v.winRate,1)+"%","Closed historical samples")+metric("Profit factor",v.profitFactor===null?"—":fmt(v.profitFactor,2),"Gross wins / gross losses")+metric("Max drawdown",v.maxDrawdown===null?"—":fmt(v.maxDrawdown,2)+"%","Peak to trough");$("btSub").textContent=v.trades+" simulated trades · "+v.sampleStatus;$("btDetails").innerHTML='<div class="muted" style="font-size:10px"><b>'+v.trades+' trades · '+v.sampleStatus+'</b><br>'+j.assumptions+'<br>Data source: '+j.mode+'. Historical backtest only — not live performance.</div>';drawEquity(v.equity||[])}catch(e){toast(e.message)}finally{$("runBacktest").textContent="Run historical simulation →";$("runBacktest").disabled=false}}
