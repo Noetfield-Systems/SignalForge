@@ -7,6 +7,8 @@
  */
 import org from "./organization.v2.json";
 import identity from "../strategy/PRODUCT-IDENTITY-SSOT-v3.json";
+import identityV4 from "../strategy/PRODUCT-IDENTITY-SSOT-v4.json";
+import founderAmendment from "../strategy/SIGNALFORGE_2027_AMENDMENT_MANIFEST_v1.json";
 import icpKpi from "../strategy/ICP_KPI_OPERATING_CONTRACT_v1.json";
 import ventureRoadmap from "./venture-roadmap.v1.json";
 import autonomyAcceptance from "./autonomy-acceptance.v1.json";
@@ -57,6 +59,8 @@ function sanitized(text:string,max=450){
 }
 export function verifySignalForgeOnly(){
  if(org.tenant_project_id!==PROJECT||identity.project_id!==PROJECT||
+    identityV4.venture_id!==PROJECT||identityV4.mission_id!==GOAL||
+    founderAmendment.canonical_identity!=="strategy/PRODUCT-IDENTITY-SSOT-v4.json"||
     org.agents.length!==100||org.departments.length!==11||
     new Set(org.agents.map(x=>x.id)).size!==100||
     identity.company_os.non_customer_facing_by_default!==true ||
@@ -107,9 +111,12 @@ function coreInstructions(role:typeof org.agents[number],objective:string,select
  const parts=[
   "NOETFIELD AGENTOS / SIGNALFORGE COMPANY M20 / ROLE PROMPT CONTRACT v1",
   "THIS IS ONE PRODUCT COMPANY ONLY. Never dispatch to any other Founder portfolio venture.",
-  "Founder goal: "+identity.primary_business,
+  "Founder goal: "+identityV4.thesis,
+  "FOUNDER 2027 V4 CANONICAL: strategy/PRODUCT-IDENTITY-SSOT-v4.json and docs/SIGNALFORGE_2027_FOUNDER_MASTER_AMENDMENT_v4.md; preserve original research/Stripe and evolve optional native token, customer Agent Runtime, Studio, community, and future user-authorized connected trade. Prospective plan != shipped/live product.",
+  "Independent SignalForge token and points readiness is authorized in parallel; NOT ARQANT AGC or shared liquidity. Points are NOT minted tokens, sale is NOT active, live execution is NOT active unless independently proven.",
+  "Read branch/mission contract: strategy/SIGNALFORGE_2027_AMENDMENT_MANIFEST_v1.json; claim WorkPacket in existing Governor, unique branch lease, PR and CI evidence, separate financial owner signature for effects.",
   "Canonical ICP KPI strategy: strategy/ICP_KPI_OPERATING_CONTRACT_v1.json; north star "+icpKpi.north_star.id+" (currently not verified/measured).",
-  "Current source-first community and paid-research execution: docs/SIGNALFORGE_COMMUNITY_REACHOUT_REVENUE_MASTER_v1.md; actual native community posts and settled Stripe cash require readback, NOT a token/ARQANT liquidity strategy.",
+  "Current source-first community and paid-research execution: docs/SIGNALFORGE_COMMUNITY_REACHOUT_REVENUE_MASTER_v1.md; actual native community posts and settled Stripe cash require readback, NOT an ARQANT token or shared-liquidity strategy; independent SignalForge token readiness is a future separate track.",
   "Market source reference freshness: "+signalForgeReferenceFreshness(board.as_of).state+"; when overdue, verify official current APIs, update references and continue other independent lawful work.",
   "ICP targets in priority order: "+icpKpi.icps.slice(0,3).map(x=>x.id+" -> "+x.entry).join(" | "),
   "Web3-native benchmark markets FIRST: Polymarket/Kalshi events, Hyperliquid/Lighter/Aster/Variational perps, Solana trenches. General charting tools SECONDARY.",
@@ -180,7 +187,8 @@ export function compileSignalForgeCompany(board:Board){
  return {
   schema:"signalforge.company-os.autonomous-operation.v1",
   project_id:PROJECT,goal:GOAL,as_of:board.as_of,source_generated_at:board.source_generated_at,
-  business:identity.primary_business,
+  business:identityV4.thesis,
+  founder_amendment:{identity_contract:"strategy/PRODUCT-IDENTITY-SSOT-v4.json",manifest:"strategy/SIGNALFORGE_2027_AMENDMENT_MANIFEST_v1.json",status:"DESIGN_AND_BACKLOG_NOT_SHIPPED",workstreams:founderAmendment.workstreams.map(w=>({id:w.id,objective:w.objective,status:w.status})),dispatch_performed:false,live_trade_claimed:false,native_token_issued:false},
   strategy_contract:{community_execution_source:"docs/SIGNALFORGE_COMMUNITY_REACHOUT_REVENUE_MASTER_v1.md",...signalForgeReferenceFreshness(board.as_of),source:"strategy/ICP_KPI_OPERATING_CONTRACT_v1.json",north_star:icpKpi.north_star.id,icps:icpKpi.icps.map(x=>({id:x.id,priority:x.priority,entry:x.entry,cta:x.cta})),kpis:icpKpi.kpis.map(x=>x.id),measurement_status:icpKpi.north_star.status},
   status:"SOURCE_BOUND_COMPILATION_NOT_EXECUTION",
   orchestration:{
