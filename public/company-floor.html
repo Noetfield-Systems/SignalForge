@@ -11,7 +11,24 @@ section.block{padding:44px 0;border-top:1px solid var(--line)}h2{font-size:29px;
 .roster{display:grid;grid-template-columns:1fr 1fr;gap:10px}.seat h3{font-size:15px;letter-spacing:-.02em;margin:0 0 7px}.seat .accept{border-top:1px solid var(--line);padding-top:10px}.work{margin-bottom:10px}.work h3{font-size:16px;margin:8px 0}.work .lane{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-top:16px}.step{background:#0e1921;border-top:2px solid #7db49b;padding:13px;font-size:11px;border-radius:4px}.step b{color:var(--mint);font-size:10px}.step p{color:#a6bbc0;margin:8px 0}.step .state{color:#c9ba98;font-size:9px}.empty{color:var(--mut);font-size:12px}footer{border-top:1px solid var(--line);padding:28px 0;color:#8198a0;font-size:11px}
 @media(max-width:900px){.departments{grid-template-columns:1fr 1fr}.work .lane{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){.wrap{padding:0 16px}.metrics{grid-template-columns:1fr 1fr}.metric{padding:13px}.metric b{font-size:26px}.departments,.roster,.work .lane{grid-template-columns:1fr}.hero{padding:35px 0}.links{font-size:11px}}
-.dept .task{font-size:12px;color:#cedbd3;line-height:1.65;margin:14px 0}.dept .scope{color:#b9ccbd;font:10px ui-monospace,monospace}.dept details{margin-top:12px;border-top:1px solid var(--line);padding-top:12px}.dept summary{cursor:pointer;color:#c8d8c9;font-size:11px}.dept pre{white-space:pre-wrap;word-break:break-word;max-height:260px;overflow:auto;font:11px/1.55 ui-monospace,monospace;color:#c3d8cb;background:#0b151b;padding:12px;border:1px solid #344950;border-radius:4px}.dept .state{display:inline-block;font:9px/1.5 ui-monospace,monospace;color:#d6c0a4;margin-top:8px}</style></head><body>
+.dept .task{font-size:12px;color:#cedbd3;line-height:1.65;margin:14px 0}.dept .scope{color:#b9ccbd;font:10px ui-monospace,monospace}.dept details{margin-top:12px;border-top:1px solid var(--line);padding-top:12px}.dept summary{cursor:pointer;color:#c8d8c9;font-size:11px}.dept pre{white-space:pre-wrap;word-break:break-word;max-height:260px;overflow:auto;font:11px/1.55 ui-monospace,monospace;color:#c3d8cb;background:#0b151b;padding:12px;border:1px solid #344950;border-radius:4px}.dept .state{display:inline-block;font:9px/1.5 ui-monospace,monospace;color:#d6c0a4;margin-top:8px}
+.team10-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin:24px 0}
+.team10-metrics .metric{padding:19px;border-radius:9px}
+.team10-metrics b{font-size:29px}
+.team10-table-wrap{overflow:auto;max-width:100%;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+.team10-table{border-collapse:collapse;width:100%;min-width:900px;font-size:12px}
+.team10-table th,.team10-table td{padding:14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+.team10-table th{font-size:10px;letter-spacing:.12em;color:var(--mut);text-transform:uppercase;background:#0d1a22}
+.team10-table td strong{display:block;color:#e3f6ec}
+.team10-table td small{display:block;font-size:11px;color:var(--mut)}
+.team10-chip{display:inline-flex;border:1px solid #405956;padding:4px 8px;border-radius:7px;font:10px/1.5 ui-monospace,monospace;color:#d8e5e0}
+.team10-chip.ok{border-color:#3f9475;color:#a8e3c5}.team10-chip.pending{border-color:#706c42;color:#e1d9a4}
+.team10-chip.missing{border-color:#7f514a;color:#e3b0a2}
+.team10-intro{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center}
+.team10-clock{font:11px ui-monospace,monospace;color:var(--mint);border:1px solid #2f6159;padding:10px 13px;border-radius:8px}
+.team10-rail{font-size:12px;color:var(--mut);line-height:1.8;margin:14px 0 24px}
+@media(max-width:680px){.team10-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style></head><body>
 <header><div class="wrap"><nav><a class="brand" href="/">◈ SIGNALFORGE / COMPANY FLOOR</a><div class="links"><a href="https://noetfield-agent-fabric-staging-staging.up.railway.app/" target="_blank" rel="noopener noreferrer">Team 10 · Live Runs ↗</a><a href="/app">Research Terminal</a><a href="/admin/revenue">Revenue Control</a><a href="/">Public Website</a></div></nav></div></header>
 <main class="wrap">
 <div class="hero"><div class="eyebrow">PRIVATE OPERATIONS · SOURCE-OBSERVED COMPANY OS</div><h1>One company.<br><em>100 defined work seats.</em></h1><p>One product organization with atomic duties, accountable managers, acceptance criteria and source-triggered work plans. Role definitions are not a claim that 100 human employees or independently executing AI agents are active.</p><div id="notice" class="notice" role="status" aria-live="polite">Reading authorized Company OS evidence…</div></div>
@@ -22,6 +39,24 @@ section.block{padding:44px 0;border-top:1px solid var(--line)}h2{font-size:29px;
  <p class="explain">Research (3), Engineering (4), Growth (3): original M20 WorkPacket-bound model Run IDs, generated specialist drafts, manager peer review and local Vancouver timestamps are inspected in the existing private Agent Fabric Team 10 ledger. A defined role or model draft is not independently verified delivery.</p>
  <a href="https://noetfield-agent-fabric-staging-staging.up.railway.app/" target="_blank" rel="noopener noreferrer" style="display:inline-block;border:1px solid var(--mint);border-radius:5px;padding:12px 18px;font-weight:700">Open actual Team 10 execution ledger ↗</a>
  <p class="explain" style="margin-top:12px">This opens the original Agent Fabric private console, which requires its separate administrator token. Select “SignalForge — Team 10.” No duplicate dashboard or synthetic data is created here.</p>
+</section>
+<section class="block" id="signalforge-runtime">
+ <div class="eyebrow">SIGNALFORGE COMPANY OS / REAL RESIDENT RUNTIME</div>
+ <div class="team10-intro"><div><h2>Operating team · 10 accountable AI roles</h2>
+ <p class="explain">Research × 3 · Engineering × 4 · Growth × 3. Every person belongs to SignalForge M20; executions use shared Fabric infrastructure, not public product pages or other ventures.</p></div>
+ <span class="team10-clock" id="team10Clock">Vancouver · loading real shift</span></div>
+ <div id="team10Status" class="notice" role="status" aria-live="polite">Reading real SignalForge company runtime, individual Run IDs, and manager supervision…</div>
+ <div class="team10-metrics">
+  <div class="metric"><span>INDIVIDUAL MODEL RUNS</span><b id="team10Runs">—</b></div>
+  <div class="metric"><span>SPECIALIST OUTPUTS</span><b id="team10Outputs">—</b></div>
+  <div class="metric"><span>MANAGER MODEL REVIEWS</span><b id="team10Reviews">—</b></div>
+  <div class="metric"><span>RUNNING SHIFT</span><b id="team10Shift" style="font-size:19px">—</b></div>
+ </div>
+ <div class="team10-table-wrap"><table class="team10-table">
+  <thead><tr><th>Employee / Team</th><th>Supervisor</th><th>Active roadmap goal</th><th>Original task / model Run</th><th>Manager review</th><th>Local update</th></tr></thead>
+  <tbody id="team10People"><tr><td colspan="6">Waiting for authenticated runtime…</td></tr></tbody>
+ </table></div>
+ <p class="team10-rail">This is the original persisted runtime, not simulated employee activity. <b>OUTPUT_GENERATED ≠ deployed code, independent verification, or collected money.</b> Next internal work is created only after real supervisor output. Work outside the Vancouver shift is not dispatched.</p>
 </section>
 <section class="block" id="signalforge-autonomy">
  <div class="eyebrow">M20 / THE AUTONOMOUS COMPANY MISSION</div>
@@ -114,6 +149,59 @@ async function loadAutonomy(){
   $("autonomyStatus").textContent="SignalForge autonomous plan unavailable: "+String(error.message||error);
  }
 }
+function localWorkerTime(value){
+ if(!value)return "No recorded execution";
+ var parsed=new Date(value);
+ if(!Number.isFinite(parsed.getTime()))return "Unverified time";
+ return new Intl.DateTimeFormat("en-CA",{timeZone:"America/Vancouver",
+    year:"numeric",month:"short",day:"numeric",hour:"2-digit",minute:"2-digit",
+    hour12:true}).format(parsed)+" · Vancouver";
+}
+function stateChip(state){
+ var span=node("span",human(state||"NOT_RECORDED"),"team10-chip");
+ if(state==="OUTPUT_GENERATED")span.classList.add("ok");
+ else if(["DRAFT","NEEDS_REVIEW","QUEUED","RUNNING","NOT_CREATED"].includes(state))
+   span.classList.add("pending");
+ else span.classList.add("missing");
+ return span;
+}
+async function loadTeam10(){
+ try{
+  var response=await fetch("/api/admin/company-runtime",{credentials:"same-origin",cache:"no-store"});
+  if(!response.ok)throw Error("SignalForge runtime currently unavailable (HTTP "+response.status+")");
+  var data=await response.json();
+  if(data.schema!=="signalforge.company-os.continuous-runtime.v1"||
+     data.project_id!=="signalforge-market-intelligence"||data.people.length!==10)
+     throw Error("Source identity or team contract mismatch");
+  $("team10Status").textContent="Read from authenticated SignalForge-only Company OS · "+data.operating_window.shift_window_local+" · source-owned roles / real Model Run and manager-review IDs";
+  $("team10Runs").textContent=String(data.actual_model_run_ids);
+  $("team10Outputs").textContent=String(data.completed_model_outputs);
+  $("team10Reviews").textContent=String(data.manager_reviews_with_model_output);
+  $("team10Shift").textContent=data.operating_window.shift==="ON_SHIFT"?"Working":"Off shift";
+  $("team10Clock").textContent=localWorkerTime(data.operating_window.local_now);
+  var root=$("team10People");root.replaceChildren();
+  data.people.forEach(function(a){
+   var tr=node("tr");
+   var person=node("td");person.append(node("strong",a.role_id),node("small",a.department));
+   var supervisor=node("td",a.manager_role_id);
+   var goal=node("td");goal.append(node("strong",a.mission_id||"Original M20 mission"),
+     node("small","Round "+a.iteration));
+   var run=node("td");run.append(stateChip(a.model_run_state||a.task_state),
+     node("small",a.model_run_id||"No model Run ID"),
+     node("small",a.task_id||"Not yet commissioned"));
+   var review=node("td");review.append(stateChip(a.manager_review_run_state||a.manager_review_state),
+     node("small",a.manager_review_run_id||"Awaiting a real supervisor Run"));
+   var time=node("td",localWorkerTime(a.updated_at_local));
+   tr.append(person,supervisor,goal,run,review,time);root.append(tr);
+  });
+ }catch(error){
+  $("team10Status").textContent="Actual Company OS runtime not yet available: "+String(error.message||error)+". This screen does not substitute simulated counts.";
+  $("team10People").replaceChildren();
+  var tr=node("tr"),td=node("td","Unable to read ten native Fabric role states; no output is being claimed.");
+  td.colSpan=6;tr.append(td);$("team10People").append(tr);
+ }
+}
+
 async function load(){
  try{
   var response=await fetch("/api/admin/company-floor",{credentials:"same-origin",cache:"no-store"});
@@ -127,5 +215,7 @@ $("filterDept").addEventListener("change",function(){if(data)renderRoster()});
 $("filterSearch").addEventListener("input",function(){if(data)renderRoster()});
 load();
 loadAutonomy();
+loadTeam10();
+setInterval(loadTeam10,45000);
 }());
 </script></body></html>

@@ -481,6 +481,31 @@ if(method==="GET"&&path==="/api/company-os/autonomy"){
   return json({error:"SignalForge company mission unavailable",state:"SOURCE_VALIDATION_FAILED"},503);
  }
 }
+if(method==="GET"&&path==="/api/admin/company-runtime"){
+  const viewer=await userFor(req);
+  if(!viewer||viewer.role!=="admin")return json({error:"Admin access required"},403);
+  const credential=(Bun.env.SIGNALFORGE_COMPANY_RUNTIME_READ_KEY||"").trim();
+  if(credential.length<48)return json({error:"SignalForge runtime read-only integration not configured"},503);
+  try{
+   // Fixed expected deployment host; no user-controlled URL or arbitrary proxying.
+   const upstream=await fetch("https://noetfield-agent-fabric-staging-staging.up.railway.app/api/internal/signalforge/company-runtime",{
+     method:"GET",headers:{"authorization":"Bearer "+credential,"accept":"application/json"},
+     cache:"no-store",signal:AbortSignal.timeout(6500)
+   });
+   if(!upstream.ok)return json({error:"SignalForge dedicated runtime unavailable",upstreamStatus:upstream.status},503);
+   const state:any=await upstream.json();
+   if(state?.schema!=="signalforge.company-os.continuous-runtime.v1" ||
+      state?.project_id!=="signalforge-market-intelligence" ||
+      state?.company!=="SignalForge" || state?.defined_team!==10 ||
+      !Array.isArray(state?.people) || state.people.length!==10){
+      return json({error:"SignalForge runtime identity/source mismatch"},502);
+   }
+   return json({...state,read_only:true,admin_scope:"SIGNALFORGE_ONLY"},200,{"cache-control":"private,no-store"});
+  }catch(error:any){
+   console.error("SignalForge operating runtime currently unavailable:",error?.name||"UNKNOWN");
+   return json({error:"SignalForge runtime service unreachable"},503);
+  }
+}
 if(method==="GET"&&path==="/api/admin/company-autonomy"){
  const viewer=await userFor(req);
  if(!viewer||viewer.role!=="admin")return json({error:"Admin access required"},403);
