@@ -56,13 +56,15 @@ class CloseoutTests(unittest.TestCase):
         self.assertFalse(Path("company-delivery-verification.json").exists())
 
     def test_verifier_409_is_not_a_receipt_or_next_job(self):
-        conflict=urllib.error.HTTPError(closeout.VERIFIER,409,"Conflict",None,io.BytesIO(b'{}'))
+        conflict=urllib.error.HTTPError(closeout.VERIFIER,409,"Conflict",None,
+            io.BytesIO(b'{"error":"verification_blocked","reason":"candidate_commit_scope_mismatch"}'))
         with patch.object(closeout.module,"authorize",return_value="scope"),patch.object(closeout,"post",side_effect=conflict):
             with self.assertRaisesRegex(RuntimeError,"ISOLATED_VERIFIER_HTTP_409"):
                 closeout.main()
         evidence=json.loads(Path("company-delivery-closeout-diagnostics.json").read_text())
         self.assertEqual(evidence["http_status"],409)
         self.assertEqual(evidence["stage"],"ISOLATED_VERIFIER")
+        self.assertEqual(evidence["reason_code"],"candidate_commit_scope_mismatch")
         self.assertFalse(evidence["next_workpacket_dispatched"])
         self.assertFalse(self.output_file.exists())
 
