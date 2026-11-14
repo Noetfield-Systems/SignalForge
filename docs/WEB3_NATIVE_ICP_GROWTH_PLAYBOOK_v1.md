@@ -1,3 +1,5 @@
+> **2026-11-14 current practical companion:** [SignalForge community, contributor culture, outreach, source-first funnel and paid subscription plan](./SIGNALFORGE_COMMUNITY_REACHOUT_REVENUE_MASTER_v1.md). Do not import ARQANT tokenomics or any Genesis/LP claims into SignalForge's research product. WQRR remains unmeasured until genuine source-action cohorts are instrumented and verified.
+
 # SignalForge — Web3-native ICP, KPI, Growth & Freshness Runbook
 Version 1.0 · 2026-11-14 UTC · Canonical: [ICP_KPI_OPERATING_CONTRACT_v1.json](../strategy/ICP_KPI_OPERATING_CONTRACT_v1.json)
 
