@@ -6,6 +6,7 @@ import { compileOperatingBoard, verifySingleCompanyHierarchy } from "../company-
 import { compileWorkforceFloor } from "../company-os/workforce-floor.ts";
 import { compileSignalForgeCompany } from "../company-os/signalforge-autonomy.ts";
 import { assessMarketSourceIntegrity } from "./market-source-integrity.ts";
+import { compileSourceRankedScanner, VALID_SCAN_INTERVALS } from "./scanner-research.ts";
 import productIdentity from "../strategy/PRODUCT-IDENTITY-SSOT-v3.json";
 const COMPANY_FLOOR_HTML = await Bun.file(new URL("../public/company-floor.html", import.meta.url)).text();
 import { evaluateCompanyPolicy } from "./company-os-policy";
@@ -549,7 +550,23 @@ if(path==="/api/strategies")return json({strategies:STRATEGIES,engine:"Explainab
 if(path==="/api/models")return json({models:modelList(),ensemble:"Walk-forward calibrated weighting; not active until model endpoints are configured.",routerReady:true});
 if(path==="/api/market"){const symbol=u.searchParams.get("symbol")||"BTCUSD",interval=Number(u.searchParams.get("interval")||60),pack=await marketData(symbol,interval,u.searchParams.get("refresh")==="1"),c=pack.candles,x=indicators(c),signals=STRATEGIES.map(s=>makeSignal(s,c.length-1,c,x));if(pack.mode==="LIVE_PUBLIC_DATA")await persistSignals(symbol,interval,c,signals,pack.mode);const perf=await metricsLive();const overview=await Promise.all(Object.keys(MARKETS).map(async sym=>{const d=await marketData(sym,60),m=summarize(d.candles);return{symbol:sym,price:m.price,change24h:m.change24h,mode:d.mode}}));return json({...pack,researchIntegrity:assessMarketSourceIntegrity(pack),summary:summarize(c),signals,overview,liveRecord:perf})}
 if(path==="/api/signals"){const symbol=u.searchParams.get("symbol")||"BTCUSD",interval=Number(u.searchParams.get("interval")||60),p=await marketData(symbol,interval),x=indicators(p.candles),signals=STRATEGIES.map(s=>makeSignal(s,p.candles.length-1,p.candles,x));if(p.mode==="LIVE_PUBLIC_DATA")await persistSignals(symbol,interval,p.candles,signals,p.mode);return json({...p,signals})}
-if(path==="/api/scanner"){const interval=Number(u.searchParams.get("interval")||60),items:any[]=[];for(const symbol of Object.keys(MARKETS)){const p=await marketData(symbol,interval),x=indicators(p.candles),signals=STRATEGIES.map(s=>makeSignal(s,p.candles.length-1,p.candles,x));if(p.mode==="LIVE_PUBLIC_DATA")await persistSignals(symbol,interval,p.candles,signals,p.mode);for(const s of signals)items.push({...s,symbol,mode:p.mode})}items.sort((a,b)=>b.score-a.score);return json({items,mode:items.every(x=>x.mode==="LIVE_PUBLIC_DATA")?"LIVE_PUBLIC_DATA":"MIXED_OR_DEMO",count:items.length,scannedAt:new Date().toISOString()})}
+if(path==="/api/scanner"){
+ const proposed=Number(u.searchParams.get("interval")||60);
+ const interval=VALID_SCAN_INTERVALS.includes(proposed)?proposed:60;
+ // Scan ten independent Kraken markets in parallel. A delayed/down feed may
+ // NOT block unrelated markets or become a fictitious ranked opportunity.
+ const observations=await Promise.all(Object.keys(MARKETS).map(async symbol=>{
+  const pack=await marketData(symbol,interval);
+  const integrity=assessMarketSourceIntegrity(pack);
+  const x=indicators(pack.candles);
+  const signals=STRATEGIES.map(s=>makeSignal(s,pack.candles.length-1,pack.candles,x));
+  return {symbol,mode:pack.mode,source:pack.source,fetchedAt:pack.fetchedAt,
+   integrity,signals,candles:pack.candles};
+ }));
+ await Promise.all(observations.filter(x=>x.integrity.researchEligible)
+  .map(x=>persistSignals(x.symbol,interval,x.candles,x.signals,x.mode)));
+ return json(compileSourceRankedScanner(observations,interval,new Date().toISOString()));
+}
 if(path==="/api/backtest"){const symbol=u.searchParams.get("symbol")||"BTCUSD",interval=Number(u.searchParams.get("interval")||60),strategy=u.searchParams.get("strategy")||"all";const result=await backtestResponse(symbol,interval,strategy);const viewer=await userFor(req);if(viewer)await recordProductAction(viewer.id,"research_backtest","backtest:"+viewer.id+":"+symbol+":"+interval+":"+strategy+":"+Math.floor(Date.now()/86400000));return json(result)}
 if(path==="/api/performance"){const live=await metricsLive();let recent:any[]=[];if(dbReady&&db){recent=await db.unsafe("SELECT symbol,strategy_name AS strategy,direction,entry,exit_price AS \"exitPrice\",outcome,pnl_pct AS \"pnlPct\",created_at AS \"createdAt\" FROM signal_events WHERE status='CLOSED' ORDER BY closed_at DESC LIMIT 50")}return json({live,recent,recordStatus:live.closedCount>=30?"LIVE_SAMPLE_30_PLUS":live.closedCount>=12?"LIVE_LOW_SAMPLE":"BUILDING_LIVE_RECORD",source:"Timestamped public-market signals; fees and slippage included."})}
 if(path==="/api/referral"&&method==="GET"){const u=await userFor(req);if(!u)return json({error:"Sign in first."},401);const n=await db.unsafe("SELECT COUNT(*)::int AS count FROM users WHERE referred_by=$1",[u.id]);return json({code:u.referral_code,referrals:n[0]?.count||0,url:BASE_URL+"/?ref="+encodeURIComponent(u.referral_code||"")})}
