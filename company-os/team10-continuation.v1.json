@@ -1,6 +1,6 @@
 {
   "schema": "signalforge.company-os.venture-team-continuation.v1",
-  "version": "2026-11-13.1",
+  "version": "2026-11-13.2",
   "company": "SignalForge",
   "project_id": "signalforge-market-intelligence",
   "mission_id": "M20-SIGNALFORGE-COMMUNITY",
@@ -9,7 +9,8 @@
     "company-os/organization.v2.json",
     "company-os/venture-roadmap.v1.json",
     "company-os/autonomy-acceptance.v1.json",
-    "company-os/OPERATING-MANUAL.md"
+    "company-os/OPERATING-MANUAL.md",
+    "strategy/WEB3_NATIVE_MARKET_ATLAS_v1.json"
   ],
   "parent_controller": "Sina Founder OS / canonical M20 Governor",
   "local_company_os": "SignalForge Company OS",
@@ -149,40 +150,40 @@
   ],
   "missions": {
     "SF-ROAD-01": {
-      "objective": "Signup to authentic Kraken OHLC research to saved note and return: browser-first journey",
-      "acceptance": "Working browser E2E and source-linked defect/test evidence"
+      "objective": "Build a working SignalForge Web3-native journey from prediction/perp/meme market discovery to source-linked signal, saved research and credible return; preserve current existing Kraken terminal and Solana Radar.",
+      "acceptance": "Source-observed Web3 market card and real browser E2E / actual PR+CI+active customer route; no demo-as-live"
     },
     "SF-ROAD-02": {
-      "objective": "Validate actual candle data source, freshness, sample delays and labeled demo fallback",
-      "acceptance": "Reproducible source comparison and negative-path checks"
+      "objective": "Research Polymarket Gamma/CLOB and Kalshi public event market APIs: actual events, odds, liquidity, activity, resolution context and 2 realistic read-only connector tests.",
+      "acceptance": "Public source refs + field contract + actual HTTP observations; never label uncalled API responses verified"
     },
     "SF-ROAD-03": {
-      "objective": "Improve real scanner filtering, current API failure paths and researcher workflow",
-      "acceptance": "Code/test/PR candidate mapped to active source and CI"
+      "objective": "Build one small actual Hyperliquid/Lighter/Aster/Variational perp market research improvement: source-stamped funding, open interest, market structure or provider failure state. No leverage trading.",
+      "acceptance": "Code + tests + source-field provenance + CI + GitHub PR candidate and active deployment readback when released"
     },
     "SF-ROAD-04": {
-      "objective": "Explainable signal research with explicit data source timestamps, assumptions and risk",
-      "acceptance": "Timestamped falsifiable hypothesis and reference source evidence"
+      "objective": "Investigate active Solana meme coin trenches including pump.fun/Axiom Trade/GMGN.ai: early pools, wallet/market change, real community discovery, and truthful uncertainty.",
+      "acceptance": "One reusable source-backed token research artifact, timestamps and negative-path tests; no fake smart money or member claims"
     },
     "SF-ROAD-05": {
-      "objective": "Historical backtest controls, lookahead prevention, out-of-sample replay",
-      "acceptance": "Deterministic methodology and test vectors, not claimed forward alpha"
+      "objective": "Research explainable prediction-event probability changes, perp OI/funding and rapid meme-token change signals. Distinguish estimated odds, trading risk, historical backtests and actual forward performance.",
+      "acceptance": "Reproducible signal criteria with falsification, public-source provenance and explicit non-trading limitations"
     },
     "SF-ROAD-06": {
-      "objective": "Premium accessible mobile and desktop research UX and useful error states",
-      "acceptance": "Real route, responsive behavior and reproducible defects"
+      "objective": "Upgrade premium Web3-native researcher UX for event, perp and meme market niches, competing on trader workflow speed and credible source context, not cloning TradingView.",
+      "acceptance": "Responsive tested source-to-market-to-note navigation and accessible failure/loading paths with real deployed UI readback"
     },
     "SF-ROAD-07": {
-      "objective": "Real researcher first-use activation and saved research returning-user instrumentation",
-      "acceptance": "Privacy-safe instrumentation, actual source event query or proposed exact test"
+      "objective": "Instrument real first-use activation for Web3-native research cohorts (event / perp / meme) and legitimate return to a saved market hypothesis.",
+      "acceptance": "Actual eligible cohort events and no invented user, daily active, conversion or retention numbers"
     },
     "SF-ROAD-08": {
-      "objective": "Genuine Signal Rooms onboarding, authentic discussions and moderation paths",
-      "acceptance": "Opt-in community experiments with traceable real feedback and no invented users"
+      "objective": "Study Polymarket/Hyperliquid/Lighter/GMGN public builder and trader communities; contribute authentic value and organize consent-based SignalForge Signal Rooms discussions.",
+      "acceptance": "Official-source community link, relevant helpful research contribution, and separately verified publication/feedback if any; no fabricated joins or posts"
     },
     "SF-ROAD-09": {
-      "objective": "Public source-linked acquisition and researcher landing journeys",
-      "acceptance": "Genuine published URL and observed traffic only after authorized publishing"
+      "objective": "Acquire actual SignalForge Web3 trader/researcher users via prediction market, perp DEX and meme trenches communities with distinct source-backed educational artifacts and opt-in invitations.",
+      "acceptance": "One real public artifact/link and measured source visit or independently verified genuine outreach; unsent drafts never marked sent"
     }
   },
   "team_size": 10,
@@ -192,11 +193,11 @@
     "growth"
   ],
   "benchmarks": [
-    "Prediction markets: Polymarket and Kalshi market communities/events",
-    "Perp DEX: Hyperliquid, Lighter, Aster, Variational funding/OI/data communities",
-    "Meme trenches: user-specified category; research additions pump.fun, Axiom, GMGN, Photon, Trojan"
+    "Prediction Markets: Polymarket and Kalshi",
+    "Perp DEX: Hyperliquid, Lighter, Aster, Variational",
+    "Meme Coin Trenches: Founder-specified market class; researched pump.fun, Axiom Trade, GMGN.ai, Photon, Trojan"
   ],
-  "customer_product": "Web3-native market research, signals and community participation across prediction markets, perp DEX and meme trenches; preserve current app data integrity and subscription controls",
+  "customer_product": "Web3-native market intelligence for prediction market, perp DEX, and meme trenches participants; authentic research and community with evidence-grounded subscriptions. General chart software is component inspiration, not primary market benchmark.",
   "definition_of_done": "No DONE until GitHub code SHA + CI + active Railway deployment + customer route + distinct verifier receipt, or separately verified real user/revenue outcome",
   "market_atlas": "strategy/WEB3_NATIVE_MARKET_ATLAS_v1.json"
 }
