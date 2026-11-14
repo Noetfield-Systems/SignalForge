@@ -14,11 +14,11 @@
     "scope": "signalforge-market-intelligence",
     "acceptance": "EXISTING_COMPANY_OS_GOVERNOR",
     "parallel_internal_teams": true,
-    "max_unverified_strategic_workpackets_per_company": 4,
+    "max_unverified_strategic_workpackets_per_company": 10,
     "auto_dispatch_external_effects": false,
     "local_scheduler_creation": false,
     "model_team_provisioning": "REGISTER_ONLY_UNTIL_EXISTING_FABRIC_BOUND",
-    "max_parallel_internal_drafts": 8,
+    "max_parallel_internal_drafts": 10,
     "staffing_claim": "100_DECLARED_ROLE_CONTRACTS_NOT_100_LIVE_AGENTS",
     "product_identity_mandatory": true,
     "product_goal_guard": "FOUNDER_INTENT_DRIFT_REJECT_PUBLIC_AGENT_COUNT_POSITIONING"
@@ -810,7 +810,7 @@
       "department": "engineering",
       "scope": [
         "GitHub_coding",
-        "schema_migrations_with_approval",
+        "backward_compatible_schema_migrations_with_ci",
         "API_tests"
       ],
       "model_tier": "reasoning",
@@ -820,12 +820,12 @@
       "evidence_authority": "NONE",
       "functional_unit": "product",
       "operating_contract": {
-        "objective": "GitHub_coding, schema_migrations_with_approval, API_tests",
+        "objective": "GitHub_coding, backward_compatible_schema_migrations_with_ci, API_tests",
         "inputs": [
           "Latest authenticated SignalForge aggregate or canonical WorkPacket",
           "Relevant repository and source evidence"
         ],
-        "atomic_task": "GitHub_coding, schema_migrations_with_approval, API_tests",
+        "atomic_task": "GitHub_coding, backward_compatible_schema_migrations_with_ci, API_tests",
         "deliverable": "Source-backed, reviewable Bun/Postgres Backend Engineer work artifact, linked to project M20",
         "acceptance_criteria": [
           "Acceptance requires named evidence, scoped tests, and an independent reviewer",
