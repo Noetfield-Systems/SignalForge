@@ -8,6 +8,8 @@ on:
       - "scripts/company-os-delivery.py"
       - "scripts/company-os-readback.py"
       - "scripts/company-os-closeout.py"
+      - "tests/test_company_os_closeout.py"
+      - "scripts/company-os-closeout.py"
       - "company-os/organization.v2.json"
       - "company-os/workforce-floor.ts"
       - "src/market-source-integrity.ts"
@@ -209,6 +211,8 @@ jobs:
         with:
           name: sina-signalforge-workpacket-${{ github.run_id }}
           path: /tmp/sina-company-evidence
+      - name: Validate isolated verifier closeout and next-action contract
+        run: python3 tests/test_company_os_closeout.py
       - name: Verify GitHub provenance with isolated verifier and advance existing queue
         id: verified
         env:
@@ -219,6 +223,14 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh workflow run company-os-delivery.yml --ref main
+      - name: Preserve actual verifier conflict evidence without promoting it
+        if: ${{ always() && steps.verified.outcome == 'failure' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: sina-signalforge-closeout-failure-${{ github.run_id }}
+          path: company-delivery-closeout-diagnostics.json
+          if-no-files-found: ignore
+          retention-days: 14
       - uses: actions/upload-artifact@v4
         with:
           name: sina-signalforge-verification-${{ github.run_id }}
