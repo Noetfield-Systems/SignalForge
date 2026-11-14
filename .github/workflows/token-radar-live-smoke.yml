@@ -9,10 +9,50 @@ on:
       - "src/token-radar.mjs"
       - "src/server.ts"
       - "public/token-radar.html"
+      - "src/scanner-research.ts"
+      - "public/index.html"
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
+
+  verify-market-scanner:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    env:
+      BASE: https://signalforge-web-production.up.railway.app
+    steps:
+      - name: Independently inspect deployed TradingView × DEX Screener source-ranked scanner
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsS --retry 3 --retry-delay 4 --max-time 25 "$BASE/app?view=scanner" -o /tmp/signalforge-scanner.html
+          grep -q 'id="scanSourceFilter"' /tmp/signalforge-scanner.html
+          grep -q 'id="scanBiasFilter"' /tmp/signalforge-scanner.html
+          grep -q 'id="scannerMeta"' /tmp/signalforge-scanner.html
+          curl -fsS --retry 3 --retry-delay 4 --max-time 45 "$BASE/api/scanner?interval=60" -o /tmp/signalforge-source-scanner.json
+          python3 - <<'PY'
+          import json
+          x=json.load(open("/tmp/signalforge-source-scanner.json"))
+          assert x["schema"]=="signalforge.source-ranked-scanner.v1"
+          assert x["coverage"]["markets"]==10
+          assert x["coverage"]["independentVerification"] is False
+          assert x["count"]==len(x["items"])==50
+          assert x["liveRankedCount"]+x["unrankedCount"]==50
+          ranked=[z for z in x["items"] if z["rankEligible"]]
+          excluded=[z for z in x["items"] if not z["rankEligible"]]
+          assert all(z["mode"]=="LIVE_PUBLIC_DATA" and z["sourceStatus"]=="KRAKEN_SOURCE_CURRENT" for z in ranked)
+          assert [z["liveRank"] for z in ranked]==list(range(1,len(ranked)+1))
+          assert all(z["liveRank"] is None for z in excluded)
+          assert all(z["evidence"]["independentlyVerified"] is False for z in x["items"])
+          assert all(z["evidence"]["tradingAuthorized"] is False for z in x["items"])
+          assert all(z["researchLinks"]["chart"].startswith("/app?view=dashboard&symbol=") for z in x["items"])
+          assert all(z["researchLinks"]["backtest"] is None or z["researchLinks"]["backtest"].startswith("/app?view=backtest&symbol=") for z in x["items"])
+          assert all(z["rankEligible"] for z in x["items"][:len(ranked)])
+          print("SIGNALFORGE_DEPLOYED_SCANNER_VERIFIED source_current="+str(x["coverage"]["currentMarkets"])
+            +" live_ranked="+str(len(ranked))+" excluded="+str(len(excluded))
+            +" source_policy="+x["sourcePolicy"]+" time="+x["scannedAt"])
+          PY
   verify-production-token:
     runs-on: ubuntu-latest
     timeout-minutes: 6
