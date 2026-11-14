@@ -166,7 +166,28 @@ def main():
             "benchmarks": [b["name"] + ": " + b["adapt"] for b in identity["reference_benchmarks"][:3]],
             "drift_rule": "Do not promote 100 AI agent organization as primary public SignalForge product."
         }
-        context = "\nFOUNDER PRODUCT CONTRACT (CANONICAL; DO NOT OVERRIDE)\n" + json.dumps(contract, sort_keys=True)[:3300]
+        # Current v3 production contract is retained; Founder v4 is the
+        # prospective build mandate and must reach the ACTUAL coding worker.
+        v4_path = ROOT / "strategy/PRODUCT-IDENTITY-SSOT-v4.json"
+        execution_path = ROOT / "strategy/SIGNALFORGE_EXECUTION_FIRST_NETWORK_DOCTRINE_v1.json"
+        v4 = json.loads(v4_path.read_text(encoding="utf8"))
+        execution = json.loads(execution_path.read_text(encoding="utf8"))
+        if (v4.get("venture_id") != "signalforge-market-intelligence" or
+                v4.get("mission_id") != "M20-SIGNALFORGE-COMMUNITY" or
+                execution.get("venture") != v4["venture_id"] or
+                execution.get("work", {}).get("default") != "EXECUTE_BY_DEFAULT"):
+            raise RuntimeError("FOUNDER_EXECUTION_FIRST_V4_SCOPE_INVALID")
+        prospective = {
+            "founder_goal": v4["big_thesis"],
+            "public_tagline": execution["thesis"]["public_tagline"],
+            "execution_default": "EXECUTE_BY_DEFAULT",
+            "do_not_wait_for_approval": "Normal owned research, code, CI, and authorized existing deploy. Actual owner grants apply only to specific funds/live trading/issuer/destructive effects.",
+            "current_release_truth": "v3 research-only live; v4 customer Agent/Studio/token/trade mostly planned",
+            "network_moat": v4["market_attraction_engine"],
+            "current_workstream_limit": "This current market-rule builder only implements validated real source-integrity rules. Use existing other canonical WorkPacket skill owners for Agent/Studio/Community; do not label a single rule a whole runtime.",
+        }
+        context = "\nFOUNDER EXECUTION-FIRST v4 (HIGHEST PROSPECTIVE PRIORITY)\n" + json.dumps(prospective, sort_keys=True)[:3300]
+        context += "\nFOUNDER PRODUCT CONTRACT (CURRENT PRODUCTION BASELINE; PRESERVE)\n" + json.dumps(contract, sort_keys=True)[:2700]
         context += "".join(
             f"\nFILE {path}\n"+(ROOT/path).read_text(encoding="utf8")[:2000]
             for path in ("src/server.ts", "company-os/operating-engine.ts"))

@@ -1,0 +1,92 @@
+{
+  "schema": "signalforge.execution-first-market-network.v1",
+  "version": "2026-11-14.1",
+  "priority": "FOUNDER_DIRECTIVE_ABOVE_OLDER_REVIEW_THEATER",
+  "venture": "signalforge-market-intelligence",
+  "mission": "M20-SIGNALFORGE-COMMUNITY",
+  "thesis": {
+    "headline": "The market isn't a dashboard. It's a living intelligence network.",
+    "big_idea": "Make every market participant an intelligence node and every AI agent an economic market worker. Humans and AI agents research, build tools, monitor markets, simulate strategies, make authorized decisions, and create a compounding research economy.",
+    "distinctiveness": "SignalForge is a living, programmable market society: collective evidence + personal memory + executable research + user-made market tools + real monetization.",
+    "public_tagline": "FORGE WHAT MOVES THE MARKET.",
+    "long_form": "A global market-intelligence network that learns and compounds as its humans and agents discover, test, build, share and earn.",
+    "founding_movement": "FORGERS — operators, researchers, quant builders and independent market agents who shape the next market intelligence layer",
+    "practical_truth": "The living network and customer agent features are strategic architecture, not all deployed today."
+  },
+  "work": {
+    "default": "EXECUTE_BY_DEFAULT",
+    "auto": [
+      "competitive research and documented benchmarks",
+      "free source-linked product features",
+      "premium product UI and design upgrades",
+      "compatible schema migrations and rollback-tested code",
+      "CI test/repair",
+      "unique branch and PR with independent merge checks",
+      "existing-authorized production publication",
+      "owned-channel source-backed content publication and permission-based participation",
+      "qualified referral and points campaign",
+      "developer docs and public Skill work",
+      "opt-in trial and current Stripe membership sales"
+    ],
+    "no_new_founder_approval": [
+      "reversible source-code change",
+      "existing authorized deployment",
+      "bounded user research",
+      "preauthorized marketing content",
+      "backward compatible DB migration",
+      "CI repairs and independent test"
+    ],
+    "exception_only": [
+      "new spending beyond granted budget",
+      "real token sale, contract mint, treasury transfer or LP provision",
+      "actual live order without real customer scope",
+      "destructive production mutation",
+      "cross-tenant or 3rd-party secrets",
+      "legally required authorization or binding new agreement"
+    ],
+    "provider_status": "Needs approval is a provider-specific repair state, NEVER a company-wide mission state; recover legitimate existing authority, continue all independent work."
+  },
+  "competitive_references": [
+    "Bankr persistent user Agent and builder distribution",
+    "Virtuals agent-economy narrative and creator platform",
+    "Polymarket viral market-specific social research",
+    "Hyperliquid high-frequency trader utility, API and ecosystem",
+    "Solana trenches fast token discovery with rigorous source checks"
+  ],
+  "method": "Benchmark genuine public functionality, reproduce general patterns through independent engineering and novel research/data advantages; don't copy brand code or proprietary design.",
+  "loops": [
+    "PULSE: discover fresh cross-venue market motion -> cite source -> saved thesis -> monitor -> revisit",
+    "FORGE: ask agent -> create research widget -> test -> publish -> independent user install -> metered revenue",
+    "ROOMS: publish a falsifiable thesis -> counter-source debate -> peer credibility -> shared Research Card",
+    "GENESIS: contribution -> proof -> noncash points -> optional future token eligibility terms, not a promised payout",
+    "GROWTH: each real shareable market result gives a free newcomer useful first value -> active research -> return",
+    "EXECUTION: user mandate -> quote/preview -> simulated or real bounded eligible execution -> receipt -> learn"
+  ],
+  "ias": [
+    "Explore",
+    "Terminal",
+    "Agent",
+    "Forge Studio",
+    "Signal Rooms",
+    "Rewards",
+    "Trade connections"
+  ],
+  "visual_tokens": {
+    "base": "#070D11",
+    "surface": "#101B1F",
+    "headline": "#F0F5F2",
+    "accent": "#F2CB88",
+    "evidence": "#78E5B3",
+    "negative": "#E97883",
+    "approach": "cinematic research terminal; editorial positioning, richly functional source-backed market visuals, meaningful motion, exceptional responsive detail"
+  },
+  "measurement": "WQRR, first qualified market answer, retained saved thesis, verified Agent runs, user-built tool adoption, paid settlement/net contribution margin, genuine qualified referrals; no fake numbers.",
+  "codeowners": "existing Sina Founder OS / Company OS / Agent Fabric; no second internal orchestrator",
+  "truth": "Candidate tasks need actual dispatch and workers; passing CI is not deployment; published marketing can't claim planned runtime/token/trading as shipped.",
+  "references": [
+    "strategy/PRODUCT-IDENTITY-SSOT-v4.json",
+    "docs/SIGNALFORGE_2027_FOUNDER_MASTER_AMENDMENT_v4.md",
+    "docs/SIGNALFORGE_2027_EXECUTION_WORKPACKETS_v1.md",
+    "Noetfield-Systems/sina_founder_os/portfolio/EXECUTION-FIRST-OPERATING-LAW-v2.json"
+  ]
+}

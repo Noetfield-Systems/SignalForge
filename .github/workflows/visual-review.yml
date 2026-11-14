@@ -58,6 +58,6 @@ jobs:
           retention-days: 14
       - name: Check static page source accessibility and product links
         run: |
-          curl -fsS http://127.0.0.1:18180/ | grep -q "Research every move"
+          curl -fsS http://127.0.0.1:18180/ | grep -q "The market is alive."
           curl -fsS http://127.0.0.1:18180/app | grep -q 'id="priceChart"'
           curl -fsS http://127.0.0.1:18180/radar | grep -q "Token Radar"

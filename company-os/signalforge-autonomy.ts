@@ -9,6 +9,7 @@ import org from "./organization.v2.json";
 import identity from "../strategy/PRODUCT-IDENTITY-SSOT-v3.json";
 import identityV4 from "../strategy/PRODUCT-IDENTITY-SSOT-v4.json";
 import founderAmendment from "../strategy/SIGNALFORGE_2027_AMENDMENT_MANIFEST_v1.json";
+import executionFirst from "../strategy/SIGNALFORGE_EXECUTION_FIRST_NETWORK_DOCTRINE_v1.json";
 import icpKpi from "../strategy/ICP_KPI_OPERATING_CONTRACT_v1.json";
 import ventureRoadmap from "./venture-roadmap.v1.json";
 import autonomyAcceptance from "./autonomy-acceptance.v1.json";
@@ -61,6 +62,8 @@ export function verifySignalForgeOnly(){
  if(org.tenant_project_id!==PROJECT||identity.project_id!==PROJECT||
     identityV4.venture_id!==PROJECT||identityV4.mission_id!==GOAL||
     founderAmendment.canonical_identity!=="strategy/PRODUCT-IDENTITY-SSOT-v4.json"||
+    executionFirst.venture!==PROJECT||executionFirst.mission!==GOAL||
+    executionFirst.work.default!=="EXECUTE_BY_DEFAULT"||
     org.agents.length!==100||org.departments.length!==11||
     new Set(org.agents.map(x=>x.id)).size!==100||
     identity.company_os.non_customer_facing_by_default!==true ||
@@ -112,6 +115,10 @@ function coreInstructions(role:typeof org.agents[number],objective:string,select
   "NOETFIELD AGENTOS / SIGNALFORGE COMPANY M20 / ROLE PROMPT CONTRACT v1",
   "THIS IS ONE PRODUCT COMPANY ONLY. Never dispatch to any other Founder portfolio venture.",
   "Founder goal: "+identityV4.thesis,
+  "FOUNDER EXECUTION FIRST: "+executionFirst.thesis.big_idea+" | Public narrative: "+executionFirst.thesis.public_tagline,
+  "EXECUTE BY DEFAULT: perform owned research, product development, compatible migrations, QA, branch/PR, already-authorized CI/CD publication, legitimate community outreach and organic growth without separate Founder approval. Do not put normal work into NEEDS_APPROVAL. Claim existing canonical WorkPacket, or arrange automatic canonical admission using existing Company OS; no shadow runner.",
+  "Only real missing financial signature/provider rights, actual law, cross-tenant or destructive production effects require exact-step authority. For unknown service access repair existing identity and continue other workstreams. Never forge provider approval.",
+  "ATTRACTION & MOAT: build genuinely useful shareable source-grounded market artifacts, a living market intelligence society and programmable research agents. Be bold in narrative, premium in UI, and precise about current shipped capability. Ship and measure before investor opinion.",
   "FOUNDER 2027 V4 CANONICAL: strategy/PRODUCT-IDENTITY-SSOT-v4.json and docs/SIGNALFORGE_2027_FOUNDER_MASTER_AMENDMENT_v4.md; preserve original research/Stripe and evolve optional native token, customer Agent Runtime, Studio, community, and future user-authorized connected trade. Prospective plan != shipped/live product.",
   "Independent SignalForge token and points readiness is authorized in parallel; NOT ARQANT AGC or shared liquidity. Points are NOT minted tokens, sale is NOT active, live execution is NOT active unless independently proven.",
   "Read branch/mission contract: strategy/SIGNALFORGE_2027_AMENDMENT_MANIFEST_v1.json; claim WorkPacket in existing Governor, unique branch lease, PR and CI evidence, separate financial owner signature for effects.",
@@ -188,6 +195,7 @@ export function compileSignalForgeCompany(board:Board){
   schema:"signalforge.company-os.autonomous-operation.v1",
   project_id:PROJECT,goal:GOAL,as_of:board.as_of,source_generated_at:board.source_generated_at,
   business:identityV4.thesis,
+  execution_first:{policy:"strategy/SIGNALFORGE_EXECUTION_FIRST_NETWORK_DOCTRINE_v1.json",default_action:executionFirst.work.default,public_tagline:executionFirst.thesis.public_tagline,automatic_scopes:executionFirst.work.auto,ordinary_founder_reapproval_required:false,provider_approval_is_terminal:false,real_effects_require_valid_authority:true,external_dispatch_performed:false},
   founder_amendment:{identity_contract:"strategy/PRODUCT-IDENTITY-SSOT-v4.json",manifest:"strategy/SIGNALFORGE_2027_AMENDMENT_MANIFEST_v1.json",status:"DESIGN_AND_BACKLOG_NOT_SHIPPED",workstreams:founderAmendment.workstreams.map(w=>({id:w.id,objective:w.objective,status:w.status})),dispatch_performed:false,live_trade_claimed:false,native_token_issued:false},
   strategy_contract:{community_execution_source:"docs/SIGNALFORGE_COMMUNITY_REACHOUT_REVENUE_MASTER_v1.md",...signalForgeReferenceFreshness(board.as_of),source:"strategy/ICP_KPI_OPERATING_CONTRACT_v1.json",north_star:icpKpi.north_star.id,icps:icpKpi.icps.map(x=>({id:x.id,priority:x.priority,entry:x.entry,cta:x.cta})),kpis:icpKpi.kpis.map(x=>x.id),measurement_status:icpKpi.north_star.status},
   status:"SOURCE_BOUND_COMPILATION_NOT_EXECUTION",

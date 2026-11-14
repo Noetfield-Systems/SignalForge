@@ -61,7 +61,9 @@ test("real database community lifecycle, security boundaries and Company OS cont
   let publicHome=await fetch(BASE+"/");
   expect(publicHome.status).toBe(200);
   const landingHtml = await publicHome.text();
-  expect(landingHtml).toContain("Research every move.");
+  expect(landingHtml).toContain("The market is alive.");
+  expect(landingHtml).toContain("Forge what moves it.");
+  expect(landingHtml).toContain("Start today with source-linked Polymarket events");
   expect(landingHtml).toContain("SignalForge");
   expect(landingHtml).toContain("href=\"/radar\"");
   expect(landingHtml).toContain("href=\"/app\"");

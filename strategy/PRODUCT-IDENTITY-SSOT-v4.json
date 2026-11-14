@@ -6,8 +6,8 @@
   "venture_id": "signalforge-market-intelligence",
   "mission_id": "M20-SIGNALFORGE-COMMUNITY",
   "repository": "Noetfield-Systems/SignalForge",
-  "headline": "Markets move. Your intelligence compounds.",
-  "category": "AI-native crypto market intelligence and personal research/action agent platform",
+  "headline": "The market is alive. Forge what moves it.",
+  "category": "Living AI-native crypto market intelligence network and market-agent operating system",
   "thesis": "Source-linked crypto market intelligence, continuous personal Agent research, simulated and optionally user-authorized connected actions, builder tools, community research, and a distinct optional native token economy.",
   "one_liner": "Understand the market, test your thesis, monitor the change, and act within user-controlled authority.",
   "strategic_precedence": {
@@ -169,5 +169,26 @@
     "docs/SIGNALFORGE_2027_EXECUTION_WORKPACKETS_v1.md",
     "strategy/SIGNALFORGE_2027_AMENDMENT_MANIFEST_v1.json"
   ],
-  "implementation_status": "DESIGN_AND_BACKLOG_NOT_SHIPPED"
+  "implementation_status": "DESIGN_AND_BACKLOG_NOT_SHIPPED",
+  "secondary_tagline": "Markets move. Your intelligence compounds.",
+  "big_thesis": "Build a programmable, self-evolving market intelligence network where humans and AI agents research, test, create tools, publish verifiable knowledge, and earn from real utility; no external opinion approval is a precondition for shipping owned lawful work.",
+  "founder_execution_law": "strategy/SIGNALFORGE_EXECUTION_FIRST_NETWORK_DOCTRINE_v1.json",
+  "market_attraction_engine": [
+    "category-defining thesis",
+    "premium recognizable visual identity",
+    "source-linked research that earns trust",
+    "real public market utility in native Web3 communities",
+    "builders publish useful original tools",
+    "repeat participant-to-participant network value"
+  ],
+  "execution_defaults": {
+    "reversible_code_and_research": "EXECUTE_NOW",
+    "compatible_migration": "EXECUTE_NOW_WITH_CI",
+    "existing_authorized_deploy": "EXECUTE_AND_VERIFY",
+    "scoped_owned_social": "EXECUTE_AND_VERIFY",
+    "unknown_provider_permission": "REPAIR_SCOPE_AND_CONTINUE_NOT_GENERIC_FOUNDER_APPROVAL",
+    "unowned_legal_or_financial_effect": "EXACT_OWNER_AUTHORITY_ONLY",
+    "community_or_investor_validation": "NOT_A_LAUNCH_GATE",
+    "internal_dispatcher": "EXISTING_CANONICAL_COMPANY_OS"
+  }
 }
