@@ -246,7 +246,8 @@ jobs:
     timeout-minutes: 12
     permissions:
       contents: read
-      actions: read
+      actions: write
+      issues: write
       id-token: write
     steps:
       - uses: actions/checkout@v4
@@ -322,3 +323,32 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh workflow run company-os-delivery.yml --ref main
+
+      - name: Recovery result to the authenticated source issue
+        if: ${{ always() }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RECOVERY_ISSUE: ${{ github.event.issue.number }}
+          READBACK_STATE: ${{ steps.verified.outputs.state }}
+          READBACK_OUTCOME: ${{ steps.verified.outcome }}
+          RECOVERY_RUN: ${{ github.run_id }}
+        run: |
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          state="TECHNICALLY_VERIFIED" if (os.environ.get("READBACK_STATE")=="TECHNICALLY_VERIFIED"
+                  and os.environ.get("READBACK_OUTCOME")=="success") else "NOT_VERIFIED"
+          diagnostics=Path("company-delivery-closeout-diagnostics.json")
+          cause="NONE"
+          if diagnostics.is_file():
+              obj=json.loads(diagnostics.read_text())
+              raw=str(obj.get("reason_code") or obj.get("stage") or "UNKNOWN")
+              cause=raw[:100] if all(c.isascii() and (c.isalnum() or c=="_") for c in raw) else "UNCLASSIFIED"
+          text=("Original SignalForge Company OS candidate recovery — source readback.\\n\\n"
+                +"- Independent closeout: "+state+"\\n"
+                +"- Failure reason code: "+cause+"\\n"
+                +"- [Actual GitHub Actions run](https://github.com/Noetfield-Systems/SignalForge/actions/runs/"+os.environ["RECOVERY_RUN"]+")\\n"
+                +"No production release, users, token, money or three-chain autonomy are claimed here.\\n")
+          Path("/tmp/sina-recovery-status.md").write_text(text)
+          PY
+          gh issue comment "$RECOVERY_ISSUE" --repo Noetfield-Systems/SignalForge --body-file /tmp/sina-recovery-status.md
