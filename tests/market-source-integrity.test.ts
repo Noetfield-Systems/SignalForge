@@ -31,6 +31,16 @@ test("15m and 4h timeframes apply their own completed-bar freshness windows",()=
  expect(assessMarketSourceIntegrity(observed(2300,{interval:15}),now).state).toBe("STALE_PUBLIC_CANDLES");
  expect(assessMarketSourceIntegrity(observed(2000,{interval:240}),now).state).toBe("SOURCE_OBSERVED_CURRENT");
 });
+test("coding agent registry is actually imported by customer-facing source evaluator",async()=>{
+ const market=await Bun.file(new URL("../src/market-source-integrity.ts",import.meta.url)).text();
+ const registry=await Bun.file(new URL("../company-os/generated/runtime-registry.ts",import.meta.url)).text();
+ expect(market).toContain('import {GENERATED_MARKET_RULES}');
+ expect(market).toContain("rule.evaluate(passed)");
+ expect(registry).toContain("SINA_GENERATED_IMPORTS");
+ expect(registry).toContain("SINA_GENERATED_RULES");
+ expect(assessMarketSourceIntegrity(observed(900),now).generatedResearchRules).toEqual([]);
+});
+
 test("the deployed market endpoint and browser terminal must consume readiness",async()=>{
  const [server,ui]=await Promise.all([
   Bun.file(new URL("../src/server.ts",import.meta.url)).text(),
