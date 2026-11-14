@@ -99,7 +99,7 @@ At 90 days, evaluate verifiable user first-value, retention, paid settlement, so
 - System architecture, internal/external runtimes and execution: SIGNALFORGE_2027_SYSTEM_ARCHITECTURE_RUNTIME_v4.md.
 - Token design, Genesis, points, airdrop, referral and potential sale: SIGNALFORGE_2027_TOKEN_GENESIS_SALE_AIRDROP_v1.md.
 - Premium UX, social loops, community and acquisition: SIGNALFORGE_2027_PRODUCT_DESIGN_COMMUNITY_GTM_v1.md.
-- Commercial and investment thesis: SIGNALFORGE_2027_BUSINESS_UNITEconomics_INVESTMENT_v1.md.
+- Commercial and investment thesis: SIGNALFORGE_2027_BUSINESS_UNIT_ECONOMICS_INVESTMENT_v1.md.
 - Production workstreams and acceptance: SIGNALFORGE_2027_EXECUTION_WORKPACKETS_v1.md.
 - Machine contract: ../strategy/PRODUCT-IDENTITY-SSOT-v4.json and ../strategy/SIGNALFORGE_2027_AMENDMENT_MANIFEST_v1.json.
 
