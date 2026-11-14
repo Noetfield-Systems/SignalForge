@@ -115,39 +115,103 @@
   },
   "reference_benchmarks": [
     {
-      "name": "TradingView",
-      "reference": "https://www.tradingview.com/features/",
-      "adapt": "Responsive OHLC charts, indicators, timeframe selection, screeners and strategy validation",
-      "status": "CHART_AND_BACKTEST_BASELINE; NOT_FEATURE_PARITY",
-      "priority": "P0"
+      "name": "Polymarket",
+      "market": "PREDICTION_MARKETS",
+      "reference": "https://polymarket.com/",
+      "adapt": "Event-market discovery, price-implied probabilities, volume/liquidity changes, real researcher discussions and builder distribution",
+      "priority": "P0",
+      "user_reference": true,
+      "signalforge_goal": "Event odds-monitoring and source-linked market research; no exchange/order matching parity claimed"
     },
     {
-      "name": "DEX Screener",
-      "reference": "https://dexscreener.com/",
-      "adapt": "Token-first discovery, pool liquidity, volume and transparent source timestamps",
-      "status": "SOLANA_RADAR_BASELINE; NOT_MULTI_CHAIN_PARITY",
-      "priority": "P0"
+      "name": "Kalshi",
+      "market": "PREDICTION_MARKETS",
+      "reference": "https://kalshi.com/",
+      "adapt": "Event market taxonomy, public orderbook/market-data discipline, catalyst calendars, developer community",
+      "priority": "P0",
+      "user_reference": true,
+      "signalforge_goal": "Event market intelligence and change alerts; no regulated exchange operation claimed"
     },
     {
-      "name": "Nansen",
-      "reference": "https://docs.nansen.ai/api/overview",
-      "adapt": "Token due diligence, holder flows and provenance-aware onchain research",
-      "status": "FUTURE_CHAIN_PROVIDER_AND_DATA_RIGHTS_NEEDED",
-      "priority": "P1"
+      "name": "Hyperliquid",
+      "market": "PERPETUAL_DEX",
+      "reference": "https://hyperliquid.xyz/",
+      "adapt": "Trader-first product, market depth, open interest, funding, ecosystem tools, developer/user communities",
+      "priority": "P0",
+      "user_reference": true,
+      "signalforge_goal": "Evidence-led funding/OI insights, analytics, source-timestamped signal content; no leveraged orders"
     },
     {
-      "name": "Arkham",
-      "reference": "https://platform.arkm.com/",
-      "adapt": "Wallet/contract evidence investigation and entity provenance",
-      "status": "FUTURE; NO_LIVE_ENTITY_GRAPH_CLAIM",
-      "priority": "P2"
+      "name": "Lighter",
+      "market": "PERPETUAL_DEX",
+      "reference": "https://lighter.xyz/",
+      "adapt": "Perp UX, market-data/API surfaces, trader research and builder distribution",
+      "priority": "P0",
+      "user_reference": true,
+      "signalforge_goal": "Cross-venue risk/context dashboards, public-source freshness and community participation"
     },
     {
-      "name": "Bubblemaps",
-      "reference": "https://bubblemaps.io/",
-      "adapt": "Visual token holder concentration and clusters with explicit source",
-      "status": "FUTURE; NO_LIVE_CLUSTER_GRAPH_CLAIM",
-      "priority": "P2"
+      "name": "Aster",
+      "market": "PERPETUAL_DEX",
+      "reference": "https://www.asterdex.com/",
+      "adapt": "Cross-chain perps discovery, incentives/rewards communication, creator and builder distribution",
+      "priority": "P0",
+      "user_reference": true,
+      "signalforge_goal": "Onchain market scanning and incentives research, no synthetic token rewards"
+    },
+    {
+      "name": "Variational",
+      "market": "PERPETUAL_DEX",
+      "reference": "https://variational.io/",
+      "adapt": "RFQ-style derivatives market design, diverse market coverage, evidence-informed trading community",
+      "priority": "P0",
+      "user_reference": true,
+      "signalforge_goal": "Compare funding and market structure where real public-source fields are available"
+    },
+    {
+      "name": "pump.fun",
+      "market": "MEME_COIN_TRENCHES",
+      "reference": "https://pump.fun/",
+      "adapt": "Launch discovery, social velocity, token community and trader attention",
+      "priority": "P0",
+      "user_reference": false,
+      "signalforge_goal": "Source-linked early market observation and opt-in community research"
+    },
+    {
+      "name": "Axiom Trade",
+      "market": "MEME_COIN_TRENCHES",
+      "reference": "https://axiom.trade/",
+      "adapt": "High-density Solana trader terminal, discovery, wallet observations and rapid workflows",
+      "priority": "P0",
+      "user_reference": false,
+      "signalforge_goal": "Speed/utility of token discovery and research UX; no copied trade dress"
+    },
+    {
+      "name": "GMGN.ai",
+      "market": "MEME_COIN_TRENCHES",
+      "reference": "https://gmgn.ai/",
+      "adapt": "Meme token trend scanning, market wallets and Telegram-community workflows",
+      "priority": "P0",
+      "user_reference": false,
+      "signalforge_goal": "Actionable source-linked wallet and liquidity context if observable"
+    },
+    {
+      "name": "Photon",
+      "market": "MEME_COIN_TRENCHES",
+      "reference": null,
+      "adapt": "Fast token discovery, chart-to-token workflow and Solana trader habits",
+      "priority": "P1",
+      "user_reference": false,
+      "signalforge_goal": "Research terminal speed and community expectations; verify current official URLs before linking"
+    },
+    {
+      "name": "Trojan",
+      "market": "MEME_COIN_TRENCHES",
+      "reference": null,
+      "adapt": "Telegram-first token trading bot, distribution and research-to-action pathway",
+      "priority": "P1",
+      "user_reference": false,
+      "signalforge_goal": "Understand Telegram workflow, not replicate custody/execution or perform unsanctioned outreach"
     }
   ],
   "market_ui_rules": [
@@ -215,5 +279,14 @@
       "not_claimed": "PROMPTS_OR_ROLES_ARE_NOT_PROOF_OF_LIVE_AGENT_DISPATCH_OR_REVENUE"
     }
   },
-  "proof_definition": "A deployed code change is verified only by matching GitHub SHA, green CI, active Railway revision, relevant HTTP/user acceptance evidence and independently sourced proof where applicable."
+  "proof_definition": "A deployed code change is verified only by matching GitHub SHA, green CI, active Railway revision, relevant HTTP/user acceptance evidence and independently sourced proof where applicable.",
+  "web3_market_atlas": "strategy/WEB3_NATIVE_MARKET_ATLAS_v1.json",
+  "benchmark_kind": "WEB3_NATIVE_MARKETS_COMMUNITIES",
+  "technical_tool_references": [
+    "TradingView",
+    "DEX Screener",
+    "Nansen",
+    "Arkham",
+    "Bubblemaps"
+  ]
 }

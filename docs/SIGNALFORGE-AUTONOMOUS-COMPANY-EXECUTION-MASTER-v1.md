@@ -1,3 +1,7 @@
+# WEB3-NATIVE MARKET OVERRIDE — FOUNDER 2026-11-13
+
+The prior references TradingView/DEX Screener/Nansen were secondary **tool/component analogies**, not the founder's intended market/community benchmarks. Primary markets are Prediction Markets (Polymarket/Kalshi), Perp DEX (Hyperliquid/Lighter/Aster/Variational), and Meme Coin Trenches; additional examples are sourced/marked distinctly in `strategy/WEB3_NATIVE_MARKET_ATLAS_v1.json`. Research and growth departments must operate in these real communities, build source-based Web3 research utility, and tie every code/outreach claim to an independent receipt. This overrides conflicting primary benchmark language below but does not replace existing Company OS runtime, current product safeguards or proof requirements.
+
 # SIGNALFORGE AUTONOMOUS COMPANY — EXECUTION MASTER v1.0
 
 **Scope**: SignalForge only · Project \`signalforge-market-intelligence\` · Founder OS strategic mission \`M20-SIGNALFORGE-COMMUNITY\` · 2026-11-13.

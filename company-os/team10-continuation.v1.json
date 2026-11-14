@@ -192,10 +192,11 @@
     "growth"
   ],
   "benchmarks": [
-    "TradingView: historical candles and overlays",
-    "DEX Screener: discovery/filtering and source freshness",
-    "Nansen: onchain provenance depth"
+    "Prediction markets: Polymarket and Kalshi market communities/events",
+    "Perp DEX: Hyperliquid, Lighter, Aster, Variational funding/OI/data communities",
+    "Meme trenches: user-specified category; research additions pump.fun, Axiom, GMGN, Photon, Trojan"
   ],
-  "customer_product": "Premium source-aware crypto market research and researcher retention, not an AI-agent marketplace",
-  "definition_of_done": "No DONE until GitHub code SHA + CI + active Railway deployment + customer route + distinct verifier receipt, or separately verified real user/revenue outcome"
+  "customer_product": "Web3-native market research, signals and community participation across prediction markets, perp DEX and meme trenches; preserve current app data integrity and subscription controls",
+  "definition_of_done": "No DONE until GitHub code SHA + CI + active Railway deployment + customer route + distinct verifier receipt, or separately verified real user/revenue outcome",
+  "market_atlas": "strategy/WEB3_NATIVE_MARKET_ATLAS_v1.json"
 }
