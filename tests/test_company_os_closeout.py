@@ -55,6 +55,27 @@ class CloseoutTests(unittest.TestCase):
         self.assertFalse(self.output_file.exists())
         self.assertFalse(Path("company-delivery-verification.json").exists())
 
+    def test_idle_tick_with_no_pending_receipt_does_not_forge_done_or_dispatch(self):
+        self.evidence_file.unlink()
+        network=io.BytesIO(b'{"state":"NO_PENDING_VERIFICATION"}')
+        with patch.object(closeout.module,"authorize",return_value="source-scoped-OIDC"),patch(
+            "urllib.request.urlopen",return_value=network),patch.object(
+            closeout,"post",side_effect=AssertionError("verifier must not run without work")):
+            closeout.main()
+        self.assertFalse(self.output_file.exists())
+        self.assertFalse(Path("company-delivery-verification.json").exists())
+
+    def test_existing_scheduled_workflow_routes_idle_to_original_pending_verifier(self):
+        flow=(ROOT/".github/workflows/company-os-delivery.yml").read_text()
+        self.assertIn("needs.candidate.outputs.state == 'IDLE'",flow)
+        self.assertIn("needs.independent-readback.result == 'success'",flow)
+        self.assertIn("if: ${{ needs.candidate.outputs.head_sha != '' }}",flow)
+        self.assertIn("run: python3 scripts/company-os-closeout.py",flow)
+        self.assertIn("if: ${{ steps.verified.outputs.state == 'TECHNICALLY_VERIFIED' }}",flow)
+        # This is still the same GitHub Actions pipeline + Fabric queue.
+        self.assertIn('schedule:',flow)
+        self.assertIn('cron: "*/30 * * * *"',flow)
+
     def test_verifier_409_is_not_a_receipt_or_next_job(self):
         conflict=urllib.error.HTTPError(closeout.VERIFIER,409,"Conflict",None,
             io.BytesIO(b'{"error":"verification_blocked","reason":"candidate_commit_scope_mismatch"}'))
