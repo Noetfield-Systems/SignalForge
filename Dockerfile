@@ -12,6 +12,7 @@ COPY --chown=bun:bun strategy/SIGNALFORGE_2027_AMENDMENT_MANIFEST_v1.json ./stra
 COPY --chown=bun:bun strategy/SIGNALFORGE_EXECUTION_FIRST_NETWORK_DOCTRINE_v1.json ./strategy/SIGNALFORGE_EXECUTION_FIRST_NETWORK_DOCTRINE_v1.json
 COPY --chown=bun:bun strategy/ICP_KPI_OPERATING_CONTRACT_v1.json ./strategy/ICP_KPI_OPERATING_CONTRACT_v1.json
 COPY --chown=bun:bun public ./public
+COPY --chown=bun:bun server.json ./server.json
 USER bun
 EXPOSE 8080
 CMD ["bun", "run", "src/server.ts"]
