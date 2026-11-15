@@ -65,7 +65,9 @@ jobs:
         run: |
           set -euo pipefail
           curl -fsS --max-time 20 "$BASE/radar" -o /tmp/radar.html
-          grep -q 'Trace the token.' /tmp/radar.html
+          # Verify the functional mint research form; copy can change during rollout.
+          grep -q 'id="mint"' /tmp/radar.html
+          grep -q 'id="submit"' /tmp/radar.html
           curl -fsS --max-time 20 "$BASE/tokens/solana/$MINT" -o /tmp/report.html
           grep -q 'Solana token So11111111111111111111111111111111111111112' /tmp/report.html
           invalid_code=$(curl -sS --max-time 20 -o /tmp/invalid.json -w "%{http_code}" "$BASE/api/tokens/lookup?chain=solana&address=INVALID")
