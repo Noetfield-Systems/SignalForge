@@ -10,6 +10,7 @@ import { getWeb3NativePulse } from "./web3-native-pulse.ts";
 import { runMarketResearch } from "./agent-research.ts";
 import {modelGatewayStatus,selectMarketTools,synthesizeMarketEvidence} from "./model-gateway.ts";
 import {makeSignalForgeMcpHandler} from "./signalforge-mcp.ts";
+import {externalMcpConfig,listExternalMcpTools,callExternalMcpTool} from "./signalforge-mcp-client.ts";
 import {awardObservedResearchParticipation,genesisHistory,publishVerifiedResearchToRooms} from "./agent-genesis.ts";
 import {agentEntitlements,customerQuota,getCustomerEntitlements,createCustomerConversation,ownsConversation,conversationHistory,customerMemoryContext,customerNotificationFeed,recordMarketNotification} from "./agent-customer.ts";
 import {MARKET_RESEARCH_SKILL,compileMarketWorkPacket,verifyExecutionReceipt} from "./sourcea-execution-adapter.ts";
@@ -659,7 +660,27 @@ if(method==="GET"&&path==="/api/web3/pulse"){
 
  // Customer intelligence, retention, and first Forge Studio monitor.
  // All private resources are scoped to the authenticated SignalForge user.
- if(path==="/api/agent/gateway"&&method==="GET")return json(modelGatewayStatus());
+ if(path==="/api/agent/gateway"&&method==="GET")return json({...modelGatewayStatus(),externalMcpClient:!!externalMcpConfig()});
+ if(path==="/api/agent/external-tools"&&["GET","POST"].includes(method)){
+  if(!dbReady||!db)return json({error:"DATABASE_UNAVAILABLE"},503);
+  const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+  if(method==="GET"){
+   try{return json(await listExternalMcpTools())}
+   catch{return json({error:"EXTERNAL_MCP_SOURCE_UNAVAILABLE"},503)}
+  }
+  if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
+  if(rateLimit(req,4,"external-mcp-calls"))return json({error:"EXTERNAL_MCP_RATE_LIMIT"},429);
+  if(Number(req.headers.get("content-length")||0)>1800)return json({error:"MCP_TOOL_PAYLOAD_TOO_LARGE"},413);
+  const ent=await getCustomerEntitlements(db,owner.id);
+  if(ent.tier==="explorer")return json({error:"EXTERNAL_TOOLS_REQUIRE_PAID_PLAN",checkoutPath:ent.checkoutPath},403);
+  let data:any;try{data=await req.json()}catch{return json({error:"INVALID_JSON"},400)}
+  const name=typeof data?.name==="string"?data.name:"",args=data?.arguments||{};
+  if(/(?:trade|order|wallet|transfer|payment|swap|issue|mint|purchase)/i.test(name))return json({error:"FINANCIAL_EXTERNAL_TOOL_OUTSIDE_RESEARCH_SCOPE"},403);
+  try{
+   const result=await callExternalMcpTool(name,args);
+   return result.error?json(result,400):json(result);
+  }catch{return json({error:"EXTERNAL_MCP_EXECUTION_UNAVAILABLE"},503)}
+ }
  if(path==="/api/agent/genesis"&&method==="GET"){
   if(!dbReady||!db)return json({error:"DATABASE_UNAVAILABLE"},503);
   const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
