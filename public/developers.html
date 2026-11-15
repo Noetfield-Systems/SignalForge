@@ -47,7 +47,7 @@ h1{font-size:clamp(57px,5.7vw,91px);font-weight:700;letter-spacing:-.086em;line-
 <h1>Markets meet<br><em>your agents.</em></h1>
 <p class="lead"><strong>Market intelligence.</strong> Connected to your tools, not locked behind another dashboard. Bring source-linked Hyperliquid, Kraken, Polymarket and Solana research into the AI workflows you already use.</p>
 <div class="actions"><a class="btn primary" href="#connect">Connect your agent <span aria-hidden="true">↗</span></a><a class="btn" href="/agent">Explore the research agent <span aria-hidden="true">↗</span></a></div>
-<div class="sf-v11-developer-shortcuts"><a href="/agent">Try the research engine ↗</a><a href="/app?view=api">Manage Developer API ↗</a><a href="/app?view=pricing">Explore paid access ↗</a></div><div class="proof"><span><i></i> Official MCP Registry</span><span><i></i> Public tools · no account</span><span><i></i> No wallet access</span></div>
+<div class="sf-v11-developer-shortcuts"><a href="/agent">Try the research engine ↗</a><a href="/app?view=api">Manage Developer API ↗</a><a href="/app?view=pricing">Explore paid access ↗</a></div><div class="sf-mcp-live-readback" id="sfMcpLiveReadback" role="status" aria-live="polite">MANIFEST / CHECKING DEPLOYED MCP CONFIGURATION</div><div class="proof"><span><i></i> Official MCP Registry</span><span><i></i> Public tools · no account</span><span><i></i> No wallet access</span></div>
 </div>
 <div class="visual" aria-label="Preview of how a SignalForge MCP request returns source-backed evidence; no simulated live price is shown">
 <span class="tinyflag">REMOTE · STREAMABLE HTTP</span>
@@ -124,6 +124,24 @@ $("createKey").addEventListener("click",async function(){
  }catch(e){$("accountStatus").textContent=String(e.message||"Key issuance failed");this.disabled=false}
 });
 status();
+})();
+</script>
+<script>
+/* Real readback of this deployment's MCP manifest, not a demo or client test. */
+(async()=>{
+ const label=document.getElementById("sfMcpLiveReadback");
+ if(!label)return;
+ try{
+  const r=await fetch("/server.json",{credentials:"omit",cache:"no-store",headers:{accept:"application/json"}});
+  if(!r.ok)throw Error("HTTP "+r.status);
+  const data=await r.json();
+  if(!data||typeof data!=="object"||(!data.name&&!data.serverName))throw Error("invalid manifest");
+  label.textContent="MANIFEST / AVAILABLE ON THIS DEPLOYMENT · MCP / STREAMABLE HTTP";
+  label.dataset.state="verified";
+ }catch{
+  label.textContent="MANIFEST READBACK UNAVAILABLE · CHECK CONNECTIVITY";
+  label.dataset.state="unavailable";
+ }
 })();
 </script>
 </body></html>
