@@ -249,7 +249,7 @@ test("real database community lifecycle, security boundaries and Company OS cont
 test("Token Radar public route and invalid-source research boundary", async () => {
   const radar = await fetch(BASE + "/radar");
   expect(radar.status).toBe(200);
-  expect(await radar.text()).toContain("Know what the");
+  expect(await radar.text()).toContain("Trace the token.");
   const validPage = await fetch(BASE + "/tokens/solana/So11111111111111111111111111111111111111112");
   expect(validPage.status).toBe(200);
   expect(await validPage.text()).toContain("Solana token So111");
