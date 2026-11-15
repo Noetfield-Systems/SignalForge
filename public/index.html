@@ -246,6 +246,14 @@ $("loginBtn").onclick=function(){openAuth("login")};
 $("sideJoin").onclick=function(){openAuth("signup")};
 $("createApiKey").onclick=async function(){if(!state.user){openAuth("signup");return}try{const j=await api("/api/api-keys",{method:"POST",body:"{}"});$("apiKeyOutput").textContent=j.apiKey+" · Copy this key now; it is only shown once."}catch(e){toast(e.message)}};
 function renderPricing(){
+ // Existing Growth Assets already owns this checkout surface when loaded.
+ // Its period selector, trial details and Stripe actions remain wired.
+ // Rendering a second pricing UI over those nodes orphaned live event handlers
+ // and caused refreshPricing() to access removed #sfProPrice/#sfQuantPrice.
+ const canonicalGrowth=document.getElementById("view-pricing");
+ if(canonicalGrowth?.querySelector("#sfProPrice")&&canonicalGrowth?.querySelector("#sfQuantPrice"))return;
+ // If the external Growth Assets service is unavailable, the tested core
+ // Pro/Quant checkout UI below is still a functional first-party fallback.
  const active=state.user&&["active","past_due"].includes(state.user.subscription_status);
  const trial=state.user&&state.user.subscription_status==="trialing"&&state.user.trial_days_remaining>0;
  const trialText=trial?"You have "+state.user.trial_days_remaining+" days of your existing no-card trial remaining. Paying now is entirely optional; your trial is not billed automatically.":"A no-card trial is available to eligible new members. Choose a paid plan voluntarily when ready.";
