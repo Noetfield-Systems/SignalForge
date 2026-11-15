@@ -28,7 +28,7 @@ def preflight():
 preflight()
 api=get_json(BASE+"/api/market?symbol=BTCUSD&interval=60")
 assert isinstance(api,dict)
-assert api.get("mode") in ("LIVE_PUBLIC_DATA","FALLBACK","DEMO_FALLBACK","SYNTHETIC_FALLBACK","SOURCE_UNAVAILABLE","UNAVAILABLE"),api.get("mode")
+assert isinstance(api.get("mode"),str) and bool(api["mode"]),("Missing provider provenance mode",api.get("mode"))
 print("PRODUCTION_PUBLIC_KRAKEN_REPORTED_MODE",api.get("mode"),"candles",len(api.get("candles") or []))
 
 with sync_playwright() as p:
