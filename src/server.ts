@@ -713,7 +713,16 @@ if(method==="GET"&&path==="/api/web3/pulse"){
   if(!dbReady||!db)return json({error:"DATABASE_UNAVAILABLE"},503);
   if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
   const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
-  const parts=path.split("/");if(parts.length!==6||parts[5]!=="share"||!/^[a-f0-9-]{36}$/.test(parts[4]))return json({error:"INVALID_MONITOR_ACTION"},400);
+  const parts=path.split("/");if(parts.length!==6||!["share","run"].includes(parts[5])||!/^[a-f0-9-]{36}$/.test(parts[4]))return json({error:"INVALID_MONITOR_ACTION"},400);
+  if(parts[5]==="run"){
+   const q=await customerQuota(db,owner.id,"source");if(!q.eligible)return json({error:"SOURCE_RESEARCH_DAILY_LIMIT",limit:q.limit},429);
+   const owned=await db.unsafe('SELECT id,prompt,active,intelligence_requested AS "modelRequested" FROM sourcea_customer_schedules WHERE id=$1 AND user_id=$2 AND monitor_title IS NOT NULL',[parts[4],owner.id]);
+   if(!owned.length)return json({error:"MONITOR_NOT_FOUND"},404);
+   if(!owned[0].active)return json({error:"MONITOR_DISABLED"},409);
+   const m=await customerQuota(db,owner.id,"model");
+   const task=await newCustomerTask(db,owner.id,owned[0].prompt,parts[4],{modelEnabled:owned[0].modelRequested===true&&m.eligible&&modelGatewayStatus().configured});
+   return "error" in task?json(task,400):json({...task,monitorId:parts[4],status:"QUEUED"},202);
+  }
   const rows=await db.unsafe("SELECT id FROM sourcea_customer_schedules WHERE id=$1 AND user_id=$2 AND monitor_title IS NOT NULL",[parts[4],owner.id]);
   if(!rows.length)return json({error:"MONITOR_NOT_FOUND"},404);
   const executed=await db.unsafe("SELECT id FROM sourcea_customer_tasks WHERE schedule_id=$1 AND user_id=$2 AND status='SUCCEEDED' AND receipt->'evaluation'->>'verdict'='PASS' LIMIT 1",[parts[4],owner.id]);
