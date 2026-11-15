@@ -12,6 +12,8 @@
     "forecast": "bun run scripts/forecast.ts"
   },
   "dependencies": {
-    "postgres": "3.4.5"
+    "postgres": "3.4.5",
+    "@modelcontextprotocol/server": "2.4.0",
+    "zod": "^4.1.0"
   }
 }
