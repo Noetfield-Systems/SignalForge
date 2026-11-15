@@ -1,0 +1,68 @@
+name: Publish SignalForge MCP to Official Registry
+on:
+  push:
+    branches: [main]
+    paths:
+      - server.json
+      - .github/workflows/publish-mcp-registry.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: signalforge-mcp-registry
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Confirm production MCP is already deployed
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --max-time 15 https://signalforge-web-production.up.railway.app/api/health > health.json
+          python3 - <<'PY'
+          import json
+          health=json.load(open("health.json"))
+          assert health.get("ok") is True and health.get("database")=="connected", health
+          print("SignalForge production and database verified")
+          PY
+      - name: Install official registry publisher (pinned release)
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/modelcontextprotocol/registry/releases/download/v1.8.0/mcp-publisher_linux_amd64.tar.gz -o mcp-publisher.tar.gz
+          tar xzf mcp-publisher.tar.gz mcp-publisher
+          chmod +x ./mcp-publisher
+          ./mcp-publisher --help > /dev/null
+      - name: Validate remote server manifest
+        run: ./mcp-publisher validate server.json
+      - name: Authenticate publisher with GitHub OIDC
+        run: ./mcp-publisher login github-oidc
+      - name: Publish to the official MCP registry
+        run: ./mcp-publisher publish server.json
+      - name: Independently read back registry listing
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,urllib.parse,urllib.request,time
+          name="io.github.noetfield-systems/signalforge"
+          url="https://registry.modelcontextprotocol.io/v0.1/servers?search="+urllib.parse.quote(name,safe="")
+          for attempt in range(8):
+              try:
+                  with urllib.request.urlopen(url,timeout=12) as r:
+                      result=json.load(r)
+                  if any(s.get("server",{}).get("name")==name or s.get("name")==name for s in result.get("servers",[])):
+                      print("MCP_REGISTRY_LISTING_VERIFIED",name)
+                      break
+              except Exception as exc:
+                  print("Registry readback pending:",type(exc).__name__)
+              time.sleep(3)
+          else:
+              raise SystemExit("MCP_REGISTRY_NOT_INDEPENDENTLY_VERIFIED")
+          PY

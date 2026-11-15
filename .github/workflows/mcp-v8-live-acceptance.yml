@@ -1,0 +1,26 @@
+name: SignalForge MCP v8 distribution live acceptance
+on:
+  push:
+    branches: [main]
+    paths:
+      - src/server.ts
+      - src/signalforge-mcp.ts
+      - public/developers.html
+      - server.json
+      - Dockerfile
+      - scripts/mcp-v8-live-acceptance.ts
+      - .github/workflows/mcp-v8-live-acceptance.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  external-mcp-v8:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Install existing production dependencies
+        run: bun install --frozen-lockfile || bun install
+      - name: Independently verify live developer page, manifest, SDK, source and admin boundary
+        run: bun run scripts/mcp-v8-live-acceptance.ts
