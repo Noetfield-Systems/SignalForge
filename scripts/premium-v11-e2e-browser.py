@@ -5,7 +5,7 @@ Tests functional navigation and user flows instead of screenshot-only green badg
 import os, pathlib, json, uuid, re
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeout
 
-BASE=os.environ.get("VISUAL_BASE","http://127.0.0.1:18182").rstrip("/")
+BASE=os.environ.get("VISUAL_BASE","http://localhost:18182").rstrip("/")
 CHROME=os.environ.get("CHROME","/usr/bin/google-chrome")
 ART=pathlib.Path("artifacts/ui-v11")
 ART.mkdir(parents=True,exist_ok=True)
