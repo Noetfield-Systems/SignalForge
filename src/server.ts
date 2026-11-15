@@ -8,6 +8,7 @@ import { compileSignalForgeCompany } from "../company-os/signalforge-autonomy.ts
 import { assessMarketSourceIntegrity } from "./market-source-integrity.ts";
 import { getWeb3NativePulse } from "./web3-native-pulse.ts";
 import { runMarketResearch } from "./agent-research.ts";
+import { compareMarketObservations } from "./agent-compare.ts";
 import { compileSourceRankedScanner, VALID_SCAN_INTERVALS } from "./scanner-research.ts";
 import productIdentity from "../strategy/PRODUCT-IDENTITY-SSOT-v3.json";
 const COMPANY_FLOOR_HTML = await Bun.file(new URL("../public/company-floor.html", import.meta.url)).text();
@@ -103,6 +104,9 @@ await db.unsafe("CREATE TABLE IF NOT EXISTS token_research_notes (id BIGSERIAL P
 await db.unsafe("CREATE INDEX IF NOT EXISTS token_research_notes_owner_idx ON token_research_notes(user_id,chain_id,address,id DESC)");
 await db.unsafe("CREATE TABLE IF NOT EXISTS agent_jobs(id BIGSERIAL PRIMARY KEY,user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,prompt TEXT NOT NULL,tool TEXT NOT NULL,status TEXT NOT NULL,mode TEXT NOT NULL,result JSONB NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())");
 await db.unsafe("CREATE INDEX IF NOT EXISTS agent_jobs_owner_idx ON agent_jobs(user_id,id DESC)");
+await db.unsafe("ALTER TABLE agent_jobs ADD COLUMN IF NOT EXISTS parent_job_id BIGINT REFERENCES agent_jobs(id) ON DELETE SET NULL");
+await db.unsafe("ALTER TABLE agent_jobs ADD COLUMN IF NOT EXISTS comparison JSONB");
+await db.unsafe("CREATE INDEX IF NOT EXISTS agent_jobs_parent_idx ON agent_jobs(user_id,parent_job_id,id DESC) WHERE parent_job_id IS NOT NULL");
 await db.unsafe("CREATE TABLE IF NOT EXISTS agent_theses(id BIGSERIAL PRIMARY KEY,user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,job_id BIGINT NOT NULL REFERENCES agent_jobs(id) ON DELETE CASCADE,invalidation TEXT NOT NULL,source_snapshot JSONB NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),UNIQUE(user_id,job_id))");
 await db.unsafe("CREATE INDEX IF NOT EXISTS agent_theses_owner_idx ON agent_theses(user_id,id DESC)");
 await db.unsafe("CREATE TABLE IF NOT EXISTS agent_public_cards(id UUID PRIMARY KEY DEFAULT gen_random_uuid(),user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,job_id BIGINT NOT NULL REFERENCES agent_jobs(id) ON DELETE CASCADE,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),UNIQUE(user_id,job_id))");
@@ -594,11 +598,38 @@ if(method==="GET"&&path==="/api/web3/pulse"){
   }
   return json(result,200,{"x-content-type-options":"nosniff"});
  }
+ if(path==="/api/agent/recheck"){
+  if(method!=="POST")return json({error:"METHOD_NOT_ALLOWED"},405);
+  if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
+  if(!dbReady||!db)return json({error:"RESEARCH_STORAGE_UNAVAILABLE"},503);
+  const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+  if(rateLimit(req,8,"agent-recheck"))return json({error:"RECHECK_RATE_LIMIT"},429,{"retry-after":"60"});
+  if(Number(req.headers.get("content-length")||0)>256)return json({error:"PAYLOAD_TOO_LARGE"},413);
+  const raw=await req.text();if(raw.length>256)return json({error:"PAYLOAD_TOO_LARGE"},413);
+  let body:any;try{body=JSON.parse(raw)}catch{return json({error:"INVALID_JSON"},400)}
+  const jobId=String(body?.jobId||"");
+  if(!/^[1-9][0-9]{0,15}$/.test(jobId))return json({error:"INVALID_JOB_ID"},400);
+  const older=await db.unsafe("SELECT id::text,prompt,result FROM agent_jobs WHERE user_id=$1 AND id=$2",[owner.id,jobId]);
+  if(!older.length)return json({error:"JOB_NOT_FOUND"},404);
+  const original=agentPayload(older[0].result);
+  if(original.status!=="SOURCE_OBSERVED")return json({error:"BASELINE_NOT_OBSERVED"},409);
+  const fresh:any=await runMarketResearch(older[0].prompt,{
+   pulse:async()=>getWeb3NativePulse(),
+   solana:researchSolanaToken,validateSolana:validSolanaAddress,
+   kraken:async symbol=>{const pack=await marketData(symbol,60,true);return {...pack,summary:summarize(pack.candles)}}
+  });
+  const comparison=compareMarketObservations(original,fresh);
+  if(fresh.status!=="SOURCE_OBSERVED")return json({status:"SOURCE_UNAVAILABLE",current:fresh,comparison,parentJobId:jobId,persisted:false});
+  const saved=await db.unsafe("INSERT INTO agent_jobs(user_id,prompt,tool,status,mode,result,parent_job_id,comparison) VALUES($1,$2,$3,$4,$5,$6::text::jsonb,$7,$8::text::jsonb) RETURNING id::text AS id",
+   [owner.id,fresh.prompt,fresh.tool,fresh.status,fresh.mode,JSON.stringify(fresh),jobId,JSON.stringify(comparison)]);
+  await recordProductAction(owner.id,"agent_research_rechecked","agent-rechecked:"+owner.id+":"+saved[0].id);
+  return json({status:"SOURCE_OBSERVED",current:fresh,comparison,parentJobId:jobId,persistedJobId:saved[0].id,persisted:true},201);
+ }
  if(path==="/api/agent/history"&&method==="GET"){
   if(!dbReady||!db)return json({error:"RESEARCH_STORAGE_UNAVAILABLE"},503);
   const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
-  const items=await db.unsafe("SELECT id::text,prompt,tool,status,result,created_at AS \"createdAt\" FROM agent_jobs WHERE user_id=$1 ORDER BY id DESC LIMIT 40",[owner.id]);
-  return json({items:items.map((item:any)=>({...item,result:agentPayload(item.result)})),ownerScope:"AUTHENTICATED_PRIVATE"});
+  const items=await db.unsafe("SELECT id::text,prompt,tool,status,result,parent_job_id::text AS \"parentJobId\",comparison,created_at AS \"createdAt\" FROM agent_jobs WHERE user_id=$1 ORDER BY id DESC LIMIT 40",[owner.id]);
+  return json({items:items.map((item:any)=>({...item,result:agentPayload(item.result),comparison:item.comparison?agentPayload(item.comparison):null})),ownerScope:"AUTHENTICATED_PRIVATE"});
  }
  if(path==="/api/agent/theses"&&["GET","POST"].includes(method)){
   if(!dbReady||!db)return json({error:"RESEARCH_STORAGE_UNAVAILABLE"},503);
