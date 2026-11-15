@@ -7,6 +7,7 @@ import { compileWorkforceFloor } from "../company-os/workforce-floor.ts";
 import { compileSignalForgeCompany } from "../company-os/signalforge-autonomy.ts";
 import { assessMarketSourceIntegrity } from "./market-source-integrity.ts";
 import { getWeb3NativePulse } from "./web3-native-pulse.ts";
+import { runMarketResearch } from "./agent-research.ts";
 import { compileSourceRankedScanner, VALID_SCAN_INTERVALS } from "./scanner-research.ts";
 import productIdentity from "../strategy/PRODUCT-IDENTITY-SSOT-v3.json";
 const COMPANY_FLOOR_HTML = await Bun.file(new URL("../public/company-floor.html", import.meta.url)).text();
@@ -17,6 +18,8 @@ import { validateResearchNote, validResearchNoteId } from "./research-notes.mjs"
 import { loadResearchJournalWithEvidence } from "./research-evidence.mjs";
 const SIGNALFORGE_MARKETING_HTML = await Bun.file(new URL("../public/welcome.html", import.meta.url)).text();
 const HTML = await Bun.file(new URL("../public/index.html", import.meta.url)).text();
+const AGENT_HTML = await Bun.file(new URL("../public/agent.html", import.meta.url)).text();
+const RESEARCH_CARD_HTML = await Bun.file(new URL("../public/research-card.html", import.meta.url)).text();
 const TOKEN_RADAR_HTML = await Bun.file(new URL("../public/token-radar.html", import.meta.url)).text();
 const WEB3_NATIVE_HTML = await Bun.file(new URL("../public/web3-market-pulse.html", import.meta.url)).text();
 let web3PulseCache:{at:number;result:any}|null=null;
@@ -54,6 +57,7 @@ function demoCandles(symbol:string,interval:number){let seed=[...symbol].reduce(
 async function marketData(symbol:string,interval:number,force=false){if(!MARKETS[symbol])symbol="BTCUSD";if(![15,60,240].includes(interval))interval=60;const key=symbol+":"+interval,old=cache.get(key);if(!force&&old&&Date.now()-old.at<25000)return old.data;let mode="LIVE_PUBLIC_DATA",source="Kraken public OHLC",fallbackReason="",candles:any[]=[];try{const r=await fetch("https://api.kraken.com/0/public/OHLC?pair="+MARKETS[symbol].pair+"&interval="+interval,{signal:AbortSignal.timeout(8500),headers:{"user-agent":"SignalForge/0.2 market research"}});if(!r.ok)throw new Error("Kraken HTTP "+r.status);const j:any=await r.json();if(j.error&&j.error.length)throw new Error(j.error.join(", "));const k=Object.keys(j.result||{}).find(z=>z!=="last"),rows=k?j.result[k]:null;if(!Array.isArray(rows)||rows.length<100)throw new Error("Insufficient OHLC response");candles=rows.slice(0,-1).map((v:any[])=>({time:+v[0],open:+v[1],high:+v[2],low:+v[3],close:+v[4],volume:+v[6]})).filter((z:any)=>Number.isFinite(z.close))}catch(e:any){mode="DEMO_DATA";source="Deterministic fallback";fallbackReason=e?.message||"Market data unavailable";candles=demoCandles(symbol,interval)}const data={candles,mode,source,fallbackReason,symbol,interval,fetchedAt:new Date().toISOString()};cache.set(key,{at:Date.now(),data});return data}
 function summarize(c:any[]){const p=c[c.length-1],q=c[Math.max(0,c.length-25)]||p,x=indicators(c),recent=c.slice(-24);return{price:p.close,change24h:(p.close/q.close-1)*100,high24h:Math.max(...recent.map(z=>z.high)),low24h:Math.min(...recent.map(z=>z.low)),volume:p.volume,rsi:x.rsi.at(-1),ema20:x.e20.at(-1),ema50:x.e50.at(-1),atr:x.atr.at(-1),regime:x.e20.at(-1)>x.e50.at(-1)&&p.close>x.e20.at(-1)?"UPTREND":x.e20.at(-1)<x.e50.at(-1)&&p.close<x.e50.at(-1)?"DOWNTREND":"RANGE",lastTime:p.time}}
 function json(data:any,status=200,headers:any={}){return new Response(JSON.stringify(data),{status,headers:Object.assign({"content-type":"application/json; charset=utf-8","cache-control":"no-store"},headers)})}
+function agentPayload(value:any){if(typeof value==="string"){try{return JSON.parse(value)}catch{return {}}}return value&&typeof value==="object"?value:{}}
 async function digest(s:string){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,"0")).join("")}
 function cookie(req:Request,name:string){const c=req.headers.get("cookie")||"";const p=c.split(";").map(x=>x.trim()).find(x=>x.startsWith(name+"="));return p?p.slice(name.length+1):""}
 async function userFor(req:Request){if(!dbReady||!db)return null;const raw=cookie(req,"sf_session");if(!raw)return null;const h=await digest(raw),s=await db.unsafe("SELECT u.id FROM user_sessions s JOIN users u ON u.id=s.user_id WHERE s.token_hash=$1 AND s.expires_at>NOW()",[h]);if(!s.length)return null;const id=s[0].id;await db.unsafe("UPDATE users SET plan='explorer',subscription_status='expired',updated_at=NOW() WHERE id=$1 AND subscription_status='trialing' AND trial_ends_at<=NOW() AND stripe_subscription_id IS NULL",[id]);await db.unsafe("UPDATE users SET last_active_at=NOW() WHERE id=$1",[id]);const r=await db.unsafe("SELECT id,email,role,selected_plan,selected_period,trial_ends_at,stripe_customer_id,stripe_subscription_id,subscription_status,billing_risk_status,billing_current_period_end,cancel_at_period_end,referral_code,CASE WHEN billing_risk_status<>'clear' THEN 'explorer' WHEN subscription_status='active' THEN plan WHEN subscription_status='past_due' AND billing_current_period_end>NOW() THEN plan WHEN subscription_status='trialing' AND trial_ends_at>NOW() THEN 'quant' ELSE 'explorer' END AS plan,CASE WHEN subscription_status='trialing' AND trial_ends_at>NOW() THEN GREATEST(0,CEIL(EXTRACT(EPOCH FROM(trial_ends_at-NOW()))/86400))::int ELSE 0 END AS trial_days_remaining FROM users WHERE id=$1",[id]);return r[0]||null}
@@ -97,6 +101,11 @@ await db.unsafe("CREATE TABLE IF NOT EXISTS token_digest_deliveries(id BIGSERIAL
 await db.unsafe("CREATE INDEX IF NOT EXISTS token_digest_due_idx ON token_digest_deliveries(status,scheduled_at)");
 await db.unsafe("CREATE TABLE IF NOT EXISTS token_research_notes (id BIGSERIAL PRIMARY KEY,user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,chain_id TEXT NOT NULL DEFAULT 'solana',address TEXT NOT NULL,kind TEXT NOT NULL CHECK (kind IN ('note','thesis')),body TEXT NOT NULL,invalidation TEXT,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())");
 await db.unsafe("CREATE INDEX IF NOT EXISTS token_research_notes_owner_idx ON token_research_notes(user_id,chain_id,address,id DESC)");
+await db.unsafe("CREATE TABLE IF NOT EXISTS agent_jobs(id BIGSERIAL PRIMARY KEY,user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,prompt TEXT NOT NULL,tool TEXT NOT NULL,status TEXT NOT NULL,mode TEXT NOT NULL,result JSONB NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())");
+await db.unsafe("CREATE INDEX IF NOT EXISTS agent_jobs_owner_idx ON agent_jobs(user_id,id DESC)");
+await db.unsafe("CREATE TABLE IF NOT EXISTS agent_theses(id BIGSERIAL PRIMARY KEY,user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,job_id BIGINT NOT NULL REFERENCES agent_jobs(id) ON DELETE CASCADE,invalidation TEXT NOT NULL,source_snapshot JSONB NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),UNIQUE(user_id,job_id))");
+await db.unsafe("CREATE INDEX IF NOT EXISTS agent_theses_owner_idx ON agent_theses(user_id,id DESC)");
+await db.unsafe("CREATE TABLE IF NOT EXISTS agent_public_cards(id UUID PRIMARY KEY DEFAULT gen_random_uuid(),user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,job_id BIGINT NOT NULL REFERENCES agent_jobs(id) ON DELETE CASCADE,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),UNIQUE(user_id,job_id))");
 dbReady=true;return true}
 function rateLimit(req:Request,limit=30,scope="general"){const ip=req.headers.get("x-forwarded-for")?.split(",")[0]||"unknown",now=Date.now(),v=rate.get(scope+":"+ip);if(!v||now-v.at>60000){rate.set(scope+":"+ip,{n:1,at:now});return false}v.n++;return v.n>limit}
 async function persistSignals(symbol:string,interval:number,c:any[],signals:any[],mode:string){if(!dbReady||!db||mode!=="LIVE_PUBLIC_DATA")return;const last=c[c.length-1];for(const s of signals){if(s.state!=="ACTIVE"||!["LONG","SHORT"].includes(s.direction))continue;const key=[symbol,interval,s.id,s.direction,last.time].join(":");await db.unsafe("INSERT INTO signal_events (signal_key,symbol,interval,strategy_id,strategy_name,direction,score,entry,stop,target1,target2,target3,entry_time,candle_time,reasoning,source) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15::jsonb,$16) ON CONFLICT(signal_key) DO NOTHING",[key,symbol,interval,s.id,s.name,s.direction,s.score,s.entry,s.stop,s.targets[0],s.targets[1],s.targets[2],Date.now(),last.time,db.json(s.reasons),"KRAKEN_PUBLIC_OHLC"])}await evaluateSignals(symbol,interval,c)}
@@ -552,6 +561,73 @@ if(method==="GET"&&path==="/api/web3/pulse"){
  }
  return json(web3PulseCache.result);
 }
+
+ if(method==="GET"&&path==="/agent")return new Response(AGENT_HTML,{headers:{"content-type":"text/html; charset=utf-8","cache-control":"no-store","x-content-type-options":"nosniff"}});
+ if(method==="GET"&&/^\/research\/[a-f0-9-]{36}$/.test(path))return new Response(RESEARCH_CARD_HTML,{headers:{"content-type":"text/html; charset=utf-8","cache-control":"no-store","x-content-type-options":"nosniff"}});
+ if(method==="GET"&&/^\/api\/agent\/public\/[a-f0-9-]{36}$/.test(path)){
+  if(!dbReady||!db)return json({error:"RESEARCH_STORAGE_UNAVAILABLE"},503);
+  const rows=await db.unsafe("SELECT j.status,j.mode,j.result,c.created_at AS \"publishedAt\" FROM agent_public_cards c JOIN agent_jobs j ON j.id=c.job_id AND j.user_id=c.user_id WHERE c.id=$1",[path.split("/").at(-1)]);
+  if(!rows.length)return json({error:"CARD_NOT_FOUND"},404);
+  const j=rows[0],evidence=agentPayload(j.result);
+  return json({status:j.status,mode:j.mode,summary:evidence.summary,evidence:evidence.evidence,limitations:evidence.limitations,observedAt:evidence.observedAt,executedAt:evidence.executedAt,publishedAt:j.publishedAt,independentlyVerified:false});
+ }
+ if(path==="/api/agent/research"){
+  if(method!=="POST")return json({error:"METHOD_NOT_ALLOWED"},405);
+  if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
+  if(rateLimit(req,12,"agent-research"))return json({error:"AGENT_RESEARCH_RATE_LIMIT"},429,{"retry-after":"60"});
+  if(Number(req.headers.get("content-length")||0)>2048)return json({error:"PROMPT_TOO_LARGE"},413);
+  const raw=await req.text();if(raw.length>2048)return json({error:"PROMPT_TOO_LARGE"},413);
+  let body:any;try{body=JSON.parse(raw)}catch{return json({error:"INVALID_JSON"},400)}
+  const result:any=await runMarketResearch(body?.prompt,{
+   pulse:async()=>{if(!web3PulseCache||Date.now()-web3PulseCache.at>45000)web3PulseCache={at:Date.now(),result:await getWeb3NativePulse()};return web3PulseCache.result},
+   solana:researchSolanaToken,validateSolana:validSolanaAddress,
+   kraken:async symbol=>{const pack=await marketData(symbol,60);return {...pack,summary:summarize(pack.candles)}}
+  });
+  if(result.status==="INVALID_REQUEST")return json(result,400);
+  const owner=await userFor(req);
+  if(owner&&dbReady&&db&&result.status==="SOURCE_OBSERVED"){
+   try{
+    const saved=await db.unsafe("INSERT INTO agent_jobs(user_id,prompt,tool,status,mode,result) VALUES($1,$2,$3,$4,$5,$6::text::jsonb) RETURNING id::text AS id",[owner.id,result.prompt,result.tool,result.status,result.mode,JSON.stringify(result)]);
+    result.persistedJobId=saved[0].id;
+    await recordProductAction(owner.id,"agent_research_completed","agent-research:"+owner.id+":"+saved[0].id);
+   }catch(error){console.error("Agent research persistence failure",String(error).slice(0,100));result.storageStatus="UNAVAILABLE"}
+  }
+  return json(result,200,{"x-content-type-options":"nosniff"});
+ }
+ if(path==="/api/agent/history"&&method==="GET"){
+  if(!dbReady||!db)return json({error:"RESEARCH_STORAGE_UNAVAILABLE"},503);
+  const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+  const items=await db.unsafe("SELECT id::text,prompt,tool,status,result,created_at AS \"createdAt\" FROM agent_jobs WHERE user_id=$1 ORDER BY id DESC LIMIT 40",[owner.id]);
+  return json({items:items.map((item:any)=>({...item,result:agentPayload(item.result)})),ownerScope:"AUTHENTICATED_PRIVATE"});
+ }
+ if(path==="/api/agent/theses"&&["GET","POST"].includes(method)){
+  if(!dbReady||!db)return json({error:"RESEARCH_STORAGE_UNAVAILABLE"},503);
+  const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+  if(method==="GET")return json({items:await db.unsafe("SELECT id::text,job_id::text AS \"jobId\",invalidation,source_snapshot AS \"sourceSnapshot\",created_at AS \"createdAt\" FROM agent_theses WHERE user_id=$1 ORDER BY id DESC LIMIT 50",[owner.id])});
+  if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
+  if(Number(req.headers.get("content-length")||0)>1024)return json({error:"PAYLOAD_TOO_LARGE"},413);
+  const raw=await req.text();if(raw.length>1024)return json({error:"PAYLOAD_TOO_LARGE"},413);
+  let body:any;try{body=JSON.parse(raw)}catch{return json({error:"INVALID_JSON"},400)}
+  const jobId=String(body?.jobId||""),invalidation=String(body?.invalidation||"").trim();
+  if(!/^[1-9][0-9]{0,15}$/.test(jobId)||invalidation.length<5||invalidation.length>500)return json({error:"INVALID_THESIS"},400);
+  const notes=await db.unsafe("INSERT INTO agent_theses(user_id,job_id,invalidation,source_snapshot) SELECT $1,id,$3,result FROM agent_jobs WHERE id=$2 AND user_id=$1 AND status='SOURCE_OBSERVED' ON CONFLICT(user_id,job_id) DO NOTHING RETURNING id::text AS id",[owner.id,jobId,invalidation]);
+  if(!notes.length)return json({error:"THESIS_NOT_CREATED_OR_ALREADY_SAVED"},409);
+  await recordProductAction(owner.id,"agent_thesis_saved","agent-thesis:"+owner.id+":"+notes[0].id);
+  return json({id:notes[0].id,status:"SAVED_PRIVATE",sourceJobId:jobId},201);
+ }
+ if(path==="/api/agent/share"&&method==="POST"){
+  if(!dbReady||!db)return json({error:"RESEARCH_STORAGE_UNAVAILABLE"},503);
+  if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
+  const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+  if(Number(req.headers.get("content-length")||0)>256)return json({error:"PAYLOAD_TOO_LARGE"},413);
+  const raw=await req.text();if(raw.length>256)return json({error:"PAYLOAD_TOO_LARGE"},413);
+  let body:any;try{body=JSON.parse(raw)}catch{return json({error:"INVALID_JSON"},400)}
+  const jobId=String(body?.jobId||"");
+  if(!/^[1-9][0-9]{0,15}$/.test(jobId))return json({error:"INVALID_JOB_ID"},400);
+  const rows=await db.unsafe("INSERT INTO agent_public_cards(user_id,job_id) SELECT $1,id FROM agent_jobs WHERE id=$2 AND user_id=$1 AND status='SOURCE_OBSERVED' ON CONFLICT(user_id,job_id) DO UPDATE SET user_id=EXCLUDED.user_id RETURNING id::text AS id",[owner.id,jobId]);
+  if(!rows.length)return json({error:"JOB_NOT_FOUND"},404);
+  return json({path:"/research/"+rows[0].id,status:"PUBLISHED_SOURCE_RESEARCH",verifiedMarketFacts:false},201);
+ }
 if(path==="/")return new Response(SIGNALFORGE_MARKETING_HTML,{headers:{"content-type":"text/html; charset=utf-8","cache-control":"no-cache","x-content-type-options":"nosniff"}});if(path==="/app"||path==="/index.html")return new Response(HTML,{headers:{"content-type":"text/html; charset=utf-8","cache-control":"no-cache"}});
 if(path.startsWith("/api/v1/")){if(method!=="GET")return json({error:"Read-only API. Use GET."},405);const key=await apiKeyFor(req);if(!key)return json({error:"Valid developer API key required. Send Authorization: Bearer sf_live_…"},401);if(key.rateLimited)return json({error:"API key rate limit exceeded. Limit: 120 requests per minute."},429);if(key.plan==="explorer")return json({error:"Developer API access requires Pro or Quant Desk."},403);if(path==="/api/v1/strategies")return json({strategies:STRATEGIES});if(path==="/api/v1/performance")return json({live:await metricsLive()});if(path==="/api/v1/market"||path==="/api/v1/signals"){const symbol=u.searchParams.get("symbol")||"BTCUSD",interval=Number(u.searchParams.get("interval")||60),p=await marketData(symbol,interval),x=indicators(p.candles),signals=STRATEGIES.map(s=>makeSignal(s,p.candles.length-1,p.candles,x));if(p.mode==="LIVE_PUBLIC_DATA")await persistSignals(symbol,interval,p.candles,signals,p.mode);return json({mode:p.mode,source:p.source,symbol,interval,candles:path.endsWith("/market")?p.candles:undefined,signals,summary:summarize(p.candles)})}return json({error:"API endpoint not found"},404)}
 if(path.startsWith("/api/auth/")){if(rateLimit(req,14,"auth"))return json({error:"Too many authentication requests. Try again later."},429);if(!dbReady||!db)return json({error:"Account storage is initializing. Try again shortly."},503);const body=method==="POST"?await req.json().catch(()=>({})):{};if(path==="/api/auth/signup"&&method==="POST"){const email=String(body.email||"").trim().toLowerCase(),password=String(body.password||"");if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||password.length<10||password.length>200)return json({error:"Enter a valid email and a password of at least 10 characters."},400);const consent=body.emailConsent===true,unsubscribeToken=crypto.randomUUID()+crypto.randomUUID(),hash=await Bun.password.hash(password),ref=String(body.referralCode||"").trim().toUpperCase(),source=String(body.marketingSource||"").slice(0,150),refRows=ref?await db.unsafe("SELECT id FROM users WHERE referral_code=$1 LIMIT 1",[ref]):[],code=crypto.randomUUID().replace(/-/g,"").slice(0,10).toUpperCase(),role=email===(Bun.env.SIGNALFORGE_ADMIN_EMAIL||"").trim().toLowerCase()?"admin":"user",ins=await db.unsafe("INSERT INTO users(email,password_hash,plan,role,trial_started_at,trial_ends_at,subscription_status,referral_code,referred_by,marketing_source,lifecycle_email_consent,lifecycle_consent_at,lifecycle_consent_ip,lifecycle_unsubscribe_token) VALUES($1,$2,'quant',$3,NOW(),NOW()+INTERVAL '30 days','trialing',$4,$5,$6,$7,CASE WHEN $7 THEN NOW() ELSE NULL END,$8,$9) ON CONFLICT(email) DO NOTHING RETURNING id,email,plan,role,trial_ends_at,subscription_status,referral_code",[email,hash,role,code,refRows[0]?.id||null,source,consent,req.headers.get("x-forwarded-for")?.split(",")[0]?.slice(0,80)||null,unsubscribeToken]);if(!ins.length)return json({error:"An account with this email already exists. Sign in instead."},409);await recordProductAction(ins[0].id,"account_created","signup:"+ins[0].id);await db.unsafe("INSERT INTO lifecycle_emails(user_id,email,template,scheduled_at) VALUES($1,$2,'welcome',NOW()) ON CONFLICT(user_id,template) DO NOTHING",[ins[0].id,email]);if(consent)await db.unsafe("INSERT INTO lifecycle_emails(user_id,email,template,scheduled_at) VALUES($1,$2,'day3',NOW()+INTERVAL '3 days'),($1,$2,'day7',NOW()+INTERVAL '7 days'),($1,$2,'day25',NOW()+INTERVAL '25 days') ON CONFLICT(user_id,template) DO NOTHING",[ins[0].id,email]);const token=crypto.randomUUID()+crypto.randomUUID();await db.unsafe("INSERT INTO user_sessions(token_hash,user_id,expires_at) VALUES($1,$2,NOW()+INTERVAL '30 days')",[await digest(token),ins[0].id]);return json({user:{...ins[0],trial_days_remaining:30},created:true,trial:{days:30,cardRequired:false},emailUpdates:consent},201,{"Set-Cookie":"sf_session="+token+"; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=2592000"})}
