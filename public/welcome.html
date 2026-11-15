@@ -430,6 +430,11 @@ body:before{background:radial-gradient(ellipse 44% 53% at 78% 20%,#303b502b,tran
 @media(max-width:760px){.container{width:calc(100% - 38px)}.header{height:67px}.hero{padding:0 0 49px}.hero-copy{padding:29px 0 21px;gap:11px}.hero h1{font-size:clamp(46px,10.8vw,65px);margin:12px 0 16px;line-height:1.035}.hero .lead{font-size:13px;line-height:1.78}.hero-summary-top{padding:11px 0}.hero-actions{margin-top:20px}.terminal-outer{margin-top:12px}.icp-entrances{display:none!important}.stage-heading{display:none}.hero-artline{display:none}.hero-notation{display:none}.hero-summary-top{display:none}.hero-caption{display:none}}
 @media(max-width:460px){.container{width:calc(100% - 30px)}.hero h1{font-size:clamp(43px,11vw,55px);margin:13px 0 12px}.hero .eyebrow{font-size:9px}.hero-actions{grid-template-columns:1fr 1fr;gap:9px}.hero-actions .btn{font-size:10px;min-height:46px;padding:10px 12px}.hero-copy{padding:27px 0 17px;gap:9px}.chart-shell{height:249px}.termbar{height:47px}}
 
+
+/* Responsive headline acceptance: avoid orphaning "it." on 1440–1680px desktops */
+@media(min-width:1051px){.hero h1{font-size:clamp(60px,5.12vw,82px);line-height:1.065;letter-spacing:-.085em}.hero-titleblock{min-width:0}.hero-copy{grid-template-columns:minmax(0,1.25fr) minmax(340px,.75fr)}}
+@media(min-width:1051px) and (max-width:1320px){.hero h1{font-size:clamp(57px,5vw,73px)}}
+
 </style>
 </head>
 <body>
