@@ -1077,3 +1077,31 @@ body[data-sf-surface="terminal"] .chartlegend{
  .sf-source-venue small{font-size:9px}
  .sf-mcp-live-readback{font-size:9px;max-width:100%}
 }
+
+
+/* v12 mobile navigation correction derived from actual Chromium screenshots:
+   A three-row desktop nav above a 5-tab dock is a broken product hierarchy.
+   The fixed dock/command palette is the single mobile cross-product router. */
+@media(max-width:780px){
+ body[data-sf-surface="radar"] .navlinks.sf-product-nav,
+ body[data-sf-surface="pulse"] .links.sf-product-nav,
+ body[data-sf-surface="developers"] header .sf-product-nav,
+ body[data-sf-surface="marketing"] header .sf-product-nav{
+  display:none!important;
+ }
+ body[data-sf-surface="radar"] nav[aria-label="Main navigation"]{
+  justify-content:space-between;min-height:52px;
+ }
+ body[data-sf-surface="radar"] .brand{font-size:17px;gap:9px}
+ body[data-sf-surface="pulse"] header nav.shell{
+  min-height:58px;display:flex;justify-content:space-between;align-items:center;
+ }
+ body[data-sf-surface="developers"] header .top .wrap,
+ body[data-sf-surface="developers"] header.top .wrap{
+  display:flex;align-items:center;justify-content:flex-start;min-height:57px;
+ }
+ body[data-sf-surface="marketing"] #menuToggle{display:none!important}
+ body[data-sf-surface="marketing"] .header .navbar{
+  display:flex;align-items:center;justify-content:space-between;
+ }
+}
