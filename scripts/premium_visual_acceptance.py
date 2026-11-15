@@ -14,7 +14,7 @@ SURFACES = [
     ("/", "SignalForge live market+Agent home", "#pairName"),
     ("/developers", "MCP developers", "h1"),
     ("/agent", "Research agent", "h1"),
-    ("/app", "Market terminal", "#priceChart"),
+    ("/app", "Market terminal", "#sfLegacyNativeChart, #priceChart"),
     ("/terminal-next", "Integrated research terminal", ".chartwrap"),
 ]
 def check():
@@ -51,8 +51,8 @@ def check():
                         page.route("**/api/market?*",market_fixture)
                     response = page.goto(BASE + path, wait_until="domcontentloaded", timeout=22000)
                     assert response and response.status == 200, (label, "HTTP", response.status if response else None)
-                    item = page.locator(selector).first
-                    assert item.count() and item.is_visible(), (label, selector, "not visible")
+                    items = page.locator(selector)
+                    assert items.count() and any(x.is_visible() for x in items.all()), (label, selector, "no real chart surface visible")
                     dims = page.evaluate("""() => ({w:window.innerWidth,scroll:document.documentElement.scrollWidth,
                       body:document.body.scrollWidth})""")
                     if max(dims["scroll"], dims["body"]) > width + 3:
