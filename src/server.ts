@@ -600,6 +600,7 @@ if(method==="GET"&&path==="/api/web3/pulse"){
   const rows=await db.unsafe("SELECT password_hash,stripe_subscription_id FROM users WHERE id=$1",[owner.id]);
   if(!rows.length||!await Bun.password.verify(input.password,rows[0].password_hash))return json({error:"ACCOUNT_PASSWORD_INVALID"},401);
   if(rows[0].stripe_subscription_id)return json({error:"ACTIVE_BILLING_MUST_BE_MANAGED_BEFORE_ACCOUNT_DELETION",billingPath:"/api/billing/portal"},409);
+  await db.unsafe("DELETE FROM product_events WHERE user_id=$1",[owner.id]);
   await db.unsafe("DELETE FROM users WHERE id=$1",[owner.id]);
   return json({deleted:true,scope:"OWN_ACCOUNT_AND_CASCADING_PRIVATE_DATA"},200,{"set-cookie":"sf_session=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0"});
  }
