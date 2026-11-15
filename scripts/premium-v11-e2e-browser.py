@@ -23,8 +23,8 @@ PUBLIC=[
  ("/research/00000000-0000-0000-0000-000000000001","public-card","research-card","#summary"),
 ]
 INTERNAL=[
- ("/admin/revenue","revenue-control","#cards"),
- ("/admin/company-floor","company-floor","#notice")
+ ("/admin/revenue","revenue-control","internal","#cards"),
+ ("/admin/company-floor","company-floor","internal","#notice")
 ]
 APP_VIEWS=["dashboard","scanner","strategies","backtest","trackrecord","community","models","api","pricing"]
 
