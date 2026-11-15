@@ -731,8 +731,16 @@ if(method==="GET"&&path==="/api/web3/pulse"){
   if(Number(req.headers.get("content-length")||0)>2048)return json({error:"PAYLOAD_TOO_LARGE"},413);
   const raw=await req.text();if(raw.length>2048)return json({error:"PAYLOAD_TOO_LARGE"},413);
   let body:any;try{body=JSON.parse(raw)}catch{return json({error:"INVALID_JSON"},400)}
-  const task=await newCustomerTask(db,owner.id,body?.prompt);
-  return "error" in task?json(task,400):json(task,202,{"x-content-type-options":"nosniff"});
+  const quota=await customerQuota(db,owner.id,"source");
+  if(!quota.eligible)return json({error:"SOURCE_RESEARCH_DAILY_LIMIT",used:quota.consumed,limit:quota.limit,checkoutPath:quota.entitlements.checkoutPath},429);
+  const requestedConversation=typeof body?.conversationId==="string"?body.conversationId:null;
+  if(requestedConversation&&!await ownsConversation(db,owner.id,requestedConversation))return json({error:"CONVERSATION_NOT_FOUND"},404);
+  const cid=requestedConversation||(await createCustomerConversation(db,owner.id,body?.prompt||"Market investigation")).id;
+  const modelQuota=await customerQuota(db,owner.id,"model");
+  const modelAllowed=body?.engine!=="source"&&modelGatewayStatus().configured&&modelQuota.eligible;
+  const task=await newCustomerTask(db,owner.id,body?.prompt,null,{conversationId:cid,modelEnabled:modelAllowed});
+  if(!("error" in task))await db.unsafe("UPDATE agent_conversations SET updated_at=NOW() WHERE id=$1 AND user_id=$2",[cid,owner.id]);
+  return "error" in task?json(task,400):json({...task,conversationId:cid,engine:modelAllowed?"INTELLIGENT_MODEL_REQUESTED":"DETERMINISTIC_SOURCE_ONLY",gateway:modelGatewayStatus().configured?"CONFIGURED":"NOT_CONFIGURED",modelQuota:{used:modelQuota.consumed,limit:modelQuota.limit}},202,{"x-content-type-options":"nosniff"});
  }
  if(path.startsWith("/api/agent/tasks/")){
   if(!dbReady||!db)return json({error:"RESEARCH_STORAGE_UNAVAILABLE"},503);
@@ -773,8 +781,9 @@ if(method==="GET"&&path==="/api/web3/pulse"){
   const check=compileMarketWorkPacket(prompt,crypto.randomUUID());
   if("error" in check)return json({error:check.error},400);
   const count=await db.unsafe("SELECT COUNT(*)::int AS n FROM sourcea_customer_schedules WHERE user_id=$1 AND active=true",[owner.id]);
-  if(count[0]?.n>=10)return json({error:"SCHEDULE_LIMIT_REACHED"},409);
-  const rows=await db.unsafe('INSERT INTO sourcea_customer_schedules(user_id,prompt,cadence_minutes,next_run_at) VALUES($1,$2,$3,NOW()+($3::integer*INTERVAL \'1 minute\')) RETURNING id::text AS id,next_run_at AS "nextRunAt"',[owner.id,prompt,cadence]);
+  const ent=await getCustomerEntitlements(db,owner.id);if(count[0]?.n>=ent.activeSchedules)return json({error:"SCHEDULE_LIMIT_REACHED",limit:ent.activeSchedules,checkoutPath:ent.checkoutPath},409);
+  const modelRequested=body?.engine!=="source"&&modelGatewayStatus().configured&&ent.modelResearchPerDay>0;
+  const rows=await db.unsafe('INSERT INTO sourcea_customer_schedules(user_id,prompt,cadence_minutes,intelligence_requested,next_run_at) VALUES($1,$2,$3,$4,NOW()+($3::integer*INTERVAL \'1 minute\')) RETURNING id::text AS id,next_run_at AS "nextRunAt"',[owner.id,prompt,cadence,modelRequested]);
   return json({id:rows[0].id,nextRunAt:rows[0].nextRunAt,status:"ACTIVE",cadenceMinutes:cadence},201);
  }
  if(path.startsWith("/api/agent/schedules/")&&method==="POST"){
@@ -953,10 +962,51 @@ async function start(){try{await initDb();console.log("Database schema ready")}c
   try{
    sourceaTick++;
    if(sourceaTick%20===1)await activateDueSchedules(db);
-   await drainSourceATasks(db,{execute:async(prompt:string)=>runMarketResearch(prompt,{
+   const marketDeps={
     pulse:()=>getWeb3NativePulse(),solana:researchSolanaToken,validateSolana:validSolanaAddress,
     kraken:async(symbol:string)=>{const d=await marketData(symbol,60,true);return {...d,summary:summarize(d.candles)}}
-   })});
+   };
+   await drainSourceATasks(db,{
+    execute:(prompt:string)=>runMarketResearch(prompt,marketDeps),
+    enrich:async(task:any,primary:any)=>{
+     const q=await customerQuota(db,task.userId,"model");
+     if(!q.eligible||!modelGatewayStatus().configured)return {intelligence:{schema:"signalforge.intelligence.v1",status:"SOURCE_ONLY_PLAN_OR_PROVIDER",modelExecuted:false},usage:{modelCalls:0,providerBilledUsd:null,modelChargeUsd:0,estimatedModelUsd:null}};
+     const plan=await selectMarketTools(task.prompt,primary.lane);
+     const extras:any[]=[];
+     const fixedPrompts:Record<string,string>={prediction:"Inspect Polymarket event market activity",perps:"Inspect Hyperliquid perpetual funding and open interest",kraken:"Analyze BTC Kraken OHLC",pulse:"Inspect current cross venue Web3 market activity",solana:"Inspect Solana token market data"};
+     for(const lane of plan.lanes||[]){
+      if(lane===primary.lane)continue;
+      if(lane==="solana")continue; // Never invent a Solana mint address.
+      const candidate=await runMarketResearch(fixedPrompts[lane]||fixedPrompts.pulse,marketDeps);
+      if(candidate.status==="SOURCE_OBSERVED")extras.push(candidate);
+     }
+     const memory=await customerMemoryContext(db,task.userId,task.conversationId||null);
+     const synthesis=await synthesizeMarketEvidence({prompt:task.prompt,observations:[primary,...extras],memory,planner:plan.planner});
+     const all=[...(plan.attempts||[]).map((x:any)=>({...x,phase:"PLANNING"})),...(synthesis.attempts||[]).map((x:any)=>({...x,phase:"SYNTHESIS"}))];
+     for(const x of all){
+      try{await db.unsafe("INSERT INTO agent_model_usage(user_id,task_id,phase,provider,model,response_id,status,input_tokens,output_tokens,estimated_usd) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
+       [task.userId,task.id,x.phase,x.provider||"unknown",x.model||"unknown",x.responseId||null,x.status,
+       x.usage?.inputTokens??null,x.usage?.outputTokens??null,x.usage?.estimatedUsd??null]);}
+      catch(error){console.error("Agent model usage ledger unavailable",String(error).slice(0,100))}
+     }
+     const metered=all.filter((x:any)=>x.usage&&x.status!=="FAILED");
+     const calls=metered.length;
+     const totalTokens=metered.reduce((n:number,x:any)=>n+Number(x.usage.totalTokens||0),0);
+     const estimatedUsd=calls&&metered.every((x:any)=>x.usage.estimatedUsd!==null)?Number(metered.reduce((n:number,x:any)=>n+Number(x.usage.estimatedUsd||0),0).toFixed(8)):null;
+     const intelligence={schema:"signalforge.intelligence.v1",status:synthesis.status,modelExecuted:synthesis.status==="MODEL_EXECUTED",
+      provider:synthesis.status==="MODEL_EXECUTED"?synthesis.provider:null,model:synthesis.status==="MODEL_EXECUTED"?synthesis.model:null,
+      output:synthesis.status==="MODEL_EXECUTED"?synthesis.output:null,
+      modelTrace:{planner:plan.planner?{provider:plan.planner.provider,model:plan.planner.model,responseId:plan.planner.responseId}:null,
+       synthesizedResponseId:synthesis.responseId||null,attempts:all.map((x:any)=>({phase:x.phase,status:x.status,provider:x.provider,model:x.model,usage:x.usage||null}))},
+      selectedLanes:plan.lanes,additionalResearch:extras,sourceDataImmutable:true,
+      independentlyVerifiedModelClaims:false,sourceOnlyFallback:synthesis.status!=="MODEL_EXECUTED"};
+     return {intelligence,usage:{modelCalls:calls,modelTokenCount:totalTokens,
+      modelChargeUsd:estimatedUsd,estimatedModelUsd:estimatedUsd,
+      providerBilledUsd:null,infrastructureCostUsd:null,totalSettledCostUsd:null,
+      billingEvidence:false,marketSourceToolCalls:1+extras.length,usageSource:"PROVIDER_REPORTED_TOKENS_ESTIMATED_RATES_NOT_SETTLED"}};
+    },
+    onComplete:async(task:any,result:any)=>{await recordMarketNotification(db,task,result,compareMarketObservations)}
+   });;
   }catch(e){console.error("SourceA customer task pump failure",String(e).slice(0,180))}
  }
  // Dedicated test worker injection exercises task claims without external
