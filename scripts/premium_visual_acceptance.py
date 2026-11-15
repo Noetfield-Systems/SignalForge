@@ -11,7 +11,7 @@ BASE = os.environ.get("VISUAL_BASE", "http://127.0.0.1:18180")
 CHROME = os.environ.get("CHROME", "/usr/bin/google-chrome")
 SIZES = {"desktop": (1512, 982), "mobile": (390, 844)}
 SURFACES = [
-    ("/", "SignalForge home", "h1"),
+    ("/", "SignalForge live market+Agent home", "#pairName"),
     ("/developers", "MCP developers", "h1"),
     ("/agent", "Research agent", "h1"),
     ("/app", "Market terminal", "#priceChart"),
@@ -28,7 +28,7 @@ def check():
                 errors = []
                 page.on("pageerror", lambda err: errors.append(str(err)[:180]))
                 for path, label, selector in SURFACES:
-                    if path == "/terminal-next":
+                    if path in ("/", "/terminal-next"):
                         # Browser fixture is test-only, never a production market-price claim.
                         now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
                         start = now - 85*3600
@@ -63,12 +63,17 @@ def check():
                           .filter(e=>e.right>innerWidth+1 || e.left< -1).slice(0,18)""")
                         print("VISUAL_OVERFLOW_ELEMENTS",label,kind,outliers)
                     assert max(dims["scroll"], dims["body"]) <= width + 3, (label, kind, "horizontal overflow",dims)
-                    if path == "/" and kind == "desktop":
-                        lines = page.locator(".hero h1").evaluate("""el => {
-                          const css = getComputedStyle(el); return el.getBoundingClientRect().height / parseFloat(css.lineHeight)
-                        }""")
-                        assert lines < 2.55, ("home", "orphaned headline", lines)
-                        assert page.locator("#candleChart").count() == 1
+                    if path == "/":
+                        assert page.locator("#pairName").is_visible(), ("home", "functional market pair not visible")
+                        assert page.locator("#agentPrompt").is_visible(), ("home", "working Agent prompt not visible")
+                        assert page.locator('[data-pane="agent"].active').count() == 1, ("home", "default Agent pane missing")
+                        assert page.locator("#inlineAgentResult").count() == 1, ("home", "source Agent integration absent")
+                        page.wait_for_selector("#sfNativeCandleChart canvas",timeout=12000,state="visible")
+                        if kind == "mobile":
+                            agent = page.locator(".rightpane").bounding_box()
+                            market = page.locator(".center").bounding_box()
+                            assert agent and market and agent["y"] < market["y"], ("mobile", "Agent not visible before long chart")
+                        print("PRODUCT_FIRST_FUNCTIONAL_HOME_PASS",kind)
                     if path == "/developers":
                         assert page.locator("#copyConfig").count() == 1
                         assert page.locator("#createKey").count() == 1
@@ -122,7 +127,7 @@ def check():
                     assert not errors, (label, kind, "client script error", errors[:3])
                     print("VISUAL_GEOMETRY_PASS", kind, label, dims["scroll"], "viewport", width)
                     errors.clear()
-                    if path == "/terminal-next":page.unroute("**/api/market?*")
+                    if path in ("/", "/terminal-next"):page.unroute("**/api/market?*")
                 page.close()
             print("SIGNALFORGE_PREMIUM_CHROMIUM_LAYOUT_ACCEPTED")
         finally:
