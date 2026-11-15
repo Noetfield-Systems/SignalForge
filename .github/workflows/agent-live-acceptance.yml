@@ -1,0 +1,84 @@
+name: SignalForge Market Agent external production acceptance
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/agent-live-acceptance.yml"
+      - "src/server.ts"
+      - "src/agent-research.ts"
+      - "public/agent.html"
+      - "public/research-card.html"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  externally-observed-agent:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      BASE: https://signalforge-web-production.up.railway.app
+    steps:
+      - name: Verify deployed premium Agent route and account-scoped endpoint denial
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 12); do
+            code=$(curl -sS --max-time 15 -o /tmp/agent.html -w "%{http_code}" "$BASE/agent" || true)
+            if test "$code" = "200" && grep -q 'id="researchForm"' /tmp/agent.html; then
+              echo "DEPLOYED_AGENT_WORKSPACE_VERIFIED attempt=$attempt"
+              break
+            fi
+            sleep 8
+          done
+          grep -q 'id="researchForm"' /tmp/agent.html
+          grep -q "DETERMINISTIC_SOURCE_ROUTER\|deterministic tool router" /tmp/agent.html
+          for route in history theses; do
+            code=$(curl -sS --max-time 15 -o "/tmp/agent-private-$route.json" -w "%{http_code}" "$BASE/api/agent/$route")
+            test "$code" = "401"
+            python3 - "$route" <<'PY'
+          import json,sys
+          x=json.load(open("/tmp/agent-private-"+sys.argv[1]+".json"))
+          assert x["error"]=="SIGN_IN_REQUIRED",x
+          PY
+          done
+          code=$(curl -sS --max-time 15 -o /tmp/agent-invalid.json -w "%{http_code}" -H 'content-type: application/json' -d '{"prompt":"x"}' "$BASE/api/agent/research")
+          test "$code" = "400"
+          python3 - <<'PY'
+          import json
+          assert json.load(open("/tmp/agent-invalid.json"))["error"]=="PROMPT_LENGTH_INVALID"
+          print("EXTERNAL_AUTH_AND_INPUT_BOUNDARY_VERIFIED")
+          PY
+      - name: Verify read-only market tool returns source-backed evidence or explicit outage
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 5); do
+            code=$(curl -sS --max-time 35 -o /tmp/agent-research.json -w "%{http_code}" \
+              -H 'content-type: application/json' -d '{"prompt":"Inspect Hyperliquid BTC funding and open interest"}' "$BASE/api/agent/research" || true)
+            if test "$code" = "200"; then
+              if python3 - <<'PY'
+          import json
+          d=json.load(open("/tmp/agent-research.json"))
+          assert d["schema"]=="signalforge.agent-research.v1",d
+          assert d["lane"]=="perps" and d["tool"]=="market.perps.research"
+          assert d["readOnly"] is True and d["financialExecution"] is False
+          assert d["independentlyVerified"] is False
+          assert d["model"]=="DETERMINISTIC_SOURCE_ROUTER"
+          assert d["mode"] in ("SOURCE_REPORTED","SOURCE_UNAVAILABLE")
+          assert d["status"] in ("SOURCE_OBSERVED","SOURCE_UNAVAILABLE")
+          if d["status"]=="SOURCE_OBSERVED":
+           assert len(d["evidence"])>=1
+           for e in d["evidence"]:
+            assert e["source"]=="Hyperliquid public Info API",e
+            assert e["sourceUrl"].startswith("https://app.hyperliquid.xyz/trade/")
+            assert e["observedAt"] and e["independentlyVerified"] is False
+           print("LIVE_AGENT_SOURCE_OBSERVED count="+str(len(d["evidence"])))
+          else:
+           assert not d["evidence"]
+           print("AGENT_RUNTIME_OK_PROVIDER_OUTAGE_EXPLICIT")
+          PY
+              then exit 0; fi
+            fi
+            sleep 8
+          done
+          echo "EXTERNAL_AGENT_RESEARCH_NOT_VERIFIED";cat /tmp/agent-research.json || true;exit 1
