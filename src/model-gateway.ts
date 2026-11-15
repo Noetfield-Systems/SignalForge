@@ -57,7 +57,7 @@ async function providerRequest(cfg:GatewayConfig,opts:{system:string;prompt:stri
  }
  if(isOpenAI&&!opts.plan){body.response_format={type:"json_object"}}
  if(isOpenAI&&opts.stream)body.stream_options={include_usage:true};
- const resp=await fetch(url,{method:"POST",headers,body:JSON.stringify(body),signal:AbortSignal.timeout(24000)});
+ const resp=await fetch(url,{method:"POST",headers,body:JSON.stringify(body),signal:AbortSignal.timeout(opts.plan?10000:20000)});
  if(!resp.ok){await resp.body?.cancel().catch(()=>{});throw Error("MODEL_PROVIDER_HTTP_"+resp.status)}
  if(!opts.stream){
   const d:any=await resp.json();
