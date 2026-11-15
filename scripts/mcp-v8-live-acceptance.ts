@@ -19,7 +19,7 @@ assert(html.includes('"/api/api-keys"'),"ACCOUNT_API_KEY_PATH_MISSING");
 const manifest=await get("/server.json"),wellKnown=await get("/.well-known/mcp/server.json");
 assert(manifest.status===200&&wellKnown.status===200,"REGISTRY_METADATA_NOT_ACCESSIBLE");
 const j=JSON.parse(manifest.text);
-assert(j.name==="io.github.noetfield-systems/signalforge","REGISTRY_NAMESPACE_MISMATCH");
+assert(j.name==="io.github.Noetfield-Systems/signalforge","REGISTRY_NAMESPACE_MISMATCH");
 assert(j.remotes?.[0]?.url===BASE+"/mcp","REGISTRY_REMOTE_MISMATCH");
 assert(JSON.parse(wellKnown.text).name===j.name,"WELL_KNOWN_MISMATCH");
 console.log("MCP_V8_DISTRIBUTION_PAGE_AND_MANIFEST_PASS");
