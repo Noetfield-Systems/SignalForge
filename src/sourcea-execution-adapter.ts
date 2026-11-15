@@ -39,7 +39,7 @@ export function compileMarketWorkPacket(prompt:unknown,taskId:string,scope:{mode
   taskId,skillId:skill.skillId,skillVersion:skill.version,lane,
   taskType:"READ_ONLY_MARKET_RESEARCH",prompt:intent.prompt,
   tool:"market."+lane+".research",runner:"SIGNALFORGE_LOCAL_READONLY",
-  allowedCapabilities:["read:market."+lane,...(scope.modelEnabled?["model:bounded_source_synthesis"]:[])],forbiddenCapabilities:[...skill.forbiddenCapabilities],
+  allowedCapabilities:["read:market."+lane,...(scope.modelEnabled?["model:bounded_source_synthesis",...Object.keys(SOURCES).filter(x=>x!==lane).map(x=>"read:market."+x)]:[])],forbiddenCapabilities:[...skill.forbiddenCapabilities],
   requiredEvidence:[...skill.resultEvidence],attemptLimit:2,
   limits:{maxPromptChars:900,maxAttempts:2,maxWallTimeMs:60000,externalSpendAuthorizedUsd:scope.modelEnabled?0.08:0},
   sourceProviders:SOURCES[lane],outputSchema:"sourcea.signalforge-research-artifact.v1",
