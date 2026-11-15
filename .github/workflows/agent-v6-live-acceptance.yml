@@ -1,0 +1,28 @@
+name: SignalForge v6 multi-session live acceptance
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/model-gateway.ts"
+      - "src/agent-customer.ts"
+      - "src/server.ts"
+      - "src/sourcea-task-runtime.ts"
+      - "src/sourcea-execution-adapter.ts"
+      - "public/agent.html"
+      - "scripts/agent-v6-live-acceptance.py"
+      - ".github/workflows/agent-v6-live-acceptance.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  independent-multisession-market-agent:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      BASE: https://signalforge-web-production.up.railway.app
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate external test program
+        run: python3 -m py_compile scripts/agent-v6-live-acceptance.py
+      - name: Verify production v6 market research, customer memory, second session, Forge monitor and receipt
+        run: python3 scripts/agent-v6-live-acceptance.py

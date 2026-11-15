@@ -8,6 +8,8 @@ import { compileSignalForgeCompany } from "../company-os/signalforge-autonomy.ts
 import { assessMarketSourceIntegrity } from "./market-source-integrity.ts";
 import { getWeb3NativePulse } from "./web3-native-pulse.ts";
 import { runMarketResearch } from "./agent-research.ts";
+import {modelGatewayStatus,selectMarketTools,synthesizeMarketEvidence} from "./model-gateway.ts";
+import {agentEntitlements,customerQuota,getCustomerEntitlements,createCustomerConversation,ownsConversation,conversationHistory,customerMemoryContext,customerNotificationFeed,recordMarketNotification} from "./agent-customer.ts";
 import {MARKET_RESEARCH_SKILL,compileMarketWorkPacket,verifyExecutionReceipt} from "./sourcea-execution-adapter.ts";
 import {newCustomerTask,getOwnedCustomerTask,listOwnedCustomerTasks,cancelOwnedCustomerTask,retryOwnedCustomerTask,drainSourceATasks,activateDueSchedules} from "./sourcea-task-runtime.ts";
 import { compareMarketObservations } from "./agent-compare.ts";
@@ -114,13 +116,26 @@ await db.unsafe("CREATE INDEX IF NOT EXISTS agent_theses_owner_idx ON agent_thes
 await db.unsafe("CREATE TABLE IF NOT EXISTS agent_public_cards(id UUID PRIMARY KEY DEFAULT gen_random_uuid(),user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,job_id BIGINT NOT NULL REFERENCES agent_jobs(id) ON DELETE CASCADE,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),UNIQUE(user_id,job_id))");
 
 await db.unsafe("CREATE TABLE IF NOT EXISTS sourcea_customer_schedules (id UUID PRIMARY KEY DEFAULT gen_random_uuid(),user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,prompt TEXT NOT NULL,cadence_minutes INTEGER NOT NULL CHECK(cadence_minutes>=60 AND cadence_minutes<=10080),active BOOLEAN NOT NULL DEFAULT TRUE,next_run_at TIMESTAMPTZ NOT NULL,last_queued_at TIMESTAMPTZ,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())");
+await db.unsafe("ALTER TABLE sourcea_customer_schedules ADD COLUMN IF NOT EXISTS intelligence_requested BOOLEAN NOT NULL DEFAULT FALSE");
+await db.unsafe("ALTER TABLE sourcea_customer_schedules ADD COLUMN IF NOT EXISTS monitor_title TEXT");
 await db.unsafe("CREATE INDEX IF NOT EXISTS sourcea_customer_schedules_due_idx ON sourcea_customer_schedules(next_run_at) WHERE active=true");
 await db.unsafe("CREATE TABLE IF NOT EXISTS sourcea_customer_tasks (id UUID PRIMARY KEY,user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,schedule_id UUID REFERENCES sourcea_customer_schedules(id) ON DELETE SET NULL,prompt TEXT NOT NULL,packet JSONB NOT NULL,status TEXT NOT NULL DEFAULT 'QUEUED' CHECK(status IN ('QUEUED','RUNNING','SUCCEEDED','FAILED','CANCELLED')),attempt_count INTEGER NOT NULL DEFAULT 0,cancel_requested BOOLEAN NOT NULL DEFAULT FALSE,lease_until TIMESTAMPTZ,started_at TIMESTAMPTZ,finished_at TIMESTAMPTZ,artifact JSONB,receipt JSONB,usage JSONB,last_error TEXT,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())");
+await db.unsafe("CREATE TABLE IF NOT EXISTS agent_conversations(id UUID PRIMARY KEY DEFAULT gen_random_uuid(),user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,title TEXT NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())");
+await db.unsafe("CREATE INDEX IF NOT EXISTS agent_conversations_owner_idx ON agent_conversations(user_id,updated_at DESC)");
+await db.unsafe("ALTER TABLE sourcea_customer_tasks ADD COLUMN IF NOT EXISTS conversation_id UUID REFERENCES agent_conversations(id) ON DELETE SET NULL");
+await db.unsafe("ALTER TABLE sourcea_customer_tasks ADD COLUMN IF NOT EXISTS model_requested BOOLEAN NOT NULL DEFAULT FALSE");
 await db.unsafe("ALTER TABLE sourcea_customer_tasks ADD COLUMN IF NOT EXISTS agent_job_id BIGINT REFERENCES agent_jobs(id) ON DELETE SET NULL");
 await db.unsafe("CREATE INDEX IF NOT EXISTS sourcea_customer_tasks_owner_idx ON sourcea_customer_tasks(user_id,created_at DESC)");
 await db.unsafe("CREATE INDEX IF NOT EXISTS sourcea_customer_tasks_queue_idx ON sourcea_customer_tasks(status,created_at) WHERE status IN ('QUEUED','RUNNING')");
 await db.unsafe("CREATE TABLE IF NOT EXISTS sourcea_task_events (id BIGSERIAL PRIMARY KEY,task_id UUID NOT NULL REFERENCES sourcea_customer_tasks(id) ON DELETE CASCADE,event TEXT NOT NULL,details JSONB NOT NULL DEFAULT '{}'::jsonb,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())");
 await db.unsafe("CREATE INDEX IF NOT EXISTS sourcea_task_events_task_idx ON sourcea_task_events(task_id,id)");
+await db.unsafe("CREATE TABLE IF NOT EXISTS agent_research_memories(id UUID PRIMARY KEY DEFAULT gen_random_uuid(),user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,note TEXT NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())");
+await db.unsafe("CREATE INDEX IF NOT EXISTS agent_research_memories_owner_idx ON agent_research_memories(user_id,created_at DESC)");
+await db.unsafe("CREATE TABLE IF NOT EXISTS agent_model_usage(id BIGSERIAL PRIMARY KEY,user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,task_id UUID NOT NULL REFERENCES sourcea_customer_tasks(id) ON DELETE CASCADE,phase TEXT NOT NULL,provider TEXT NOT NULL,model TEXT NOT NULL,response_id TEXT,status TEXT NOT NULL,input_tokens INTEGER,output_tokens INTEGER,estimated_usd NUMERIC(12,8),created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())");
+await db.unsafe("CREATE INDEX IF NOT EXISTS agent_model_usage_owner_idx ON agent_model_usage(user_id,created_at DESC)");
+await db.unsafe("CREATE TABLE IF NOT EXISTS agent_market_notifications(id UUID PRIMARY KEY DEFAULT gen_random_uuid(),user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,task_id UUID NOT NULL UNIQUE REFERENCES sourcea_customer_tasks(id) ON DELETE CASCADE,schedule_id UUID REFERENCES sourcea_customer_schedules(id) ON DELETE SET NULL,title TEXT NOT NULL,summary TEXT NOT NULL,source_links JSONB NOT NULL DEFAULT '[]'::jsonb,seen_at TIMESTAMPTZ,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())");
+await db.unsafe("CREATE INDEX IF NOT EXISTS agent_market_notifications_owner_idx ON agent_market_notifications(user_id,created_at DESC)");
+await db.unsafe("CREATE TABLE IF NOT EXISTS agent_public_monitors(id UUID PRIMARY KEY DEFAULT gen_random_uuid(),user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,schedule_id UUID NOT NULL REFERENCES sourcea_customer_schedules(id) ON DELETE CASCADE,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),UNIQUE(user_id,schedule_id))");
 dbReady=true;return true}
 function rateLimit(req:Request,limit=30,scope="general"){const ip=req.headers.get("x-forwarded-for")?.split(",")[0]||"unknown",now=Date.now(),v=rate.get(scope+":"+ip);if(!v||now-v.at>60000){rate.set(scope+":"+ip,{n:1,at:now});return false}v.n++;return v.n>limit}
 async function persistSignals(symbol:string,interval:number,c:any[],signals:any[],mode:string){if(!dbReady||!db||mode!=="LIVE_PUBLIC_DATA")return;const last=c[c.length-1];for(const s of signals){if(s.state!=="ACTIVE"||!["LONG","SHORT"].includes(s.direction))continue;const key=[symbol,interval,s.id,s.direction,last.time].join(":");await db.unsafe("INSERT INTO signal_events (signal_key,symbol,interval,strategy_id,strategy_name,direction,score,entry,stop,target1,target2,target3,entry_time,candle_time,reasoning,source) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15::jsonb,$16) ON CONFLICT(signal_key) DO NOTHING",[key,symbol,interval,s.id,s.name,s.direction,s.score,s.entry,s.stop,s.targets[0],s.targets[1],s.targets[2],Date.now(),last.time,db.json(s.reasons),"KRAKEN_PUBLIC_OHLC"])}await evaluateSignals(symbol,interval,c)}
@@ -604,6 +619,117 @@ if(method==="GET"&&path==="/api/web3/pulse"){
   await db.unsafe("DELETE FROM users WHERE id=$1",[owner.id]);
   return json({deleted:true,scope:"OWN_ACCOUNT_AND_CASCADING_PRIVATE_DATA"},200,{"set-cookie":"sf_session=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0"});
  }
+
+ // Customer intelligence, retention, and first Forge Studio monitor.
+ // All private resources are scoped to the authenticated SignalForge user.
+ if(path==="/api/agent/gateway"&&method==="GET")return json(modelGatewayStatus());
+ if(path==="/api/agent/entitlements"&&method==="GET"){
+  if(!dbReady||!db)return json({error:"DATABASE_UNAVAILABLE"},503);
+  const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+  const [source,model]=await Promise.all([customerQuota(db,owner.id,"source"),customerQuota(db,owner.id,"model")]);
+  const usage=await db.unsafe('SELECT COUNT(*)::int AS "modelCallRows",COALESCE(SUM(input_tokens),0)::bigint AS "inputTokens",COALESCE(SUM(output_tokens),0)::bigint AS "outputTokens",SUM(estimated_usd)::text AS "estimatedUsd" FROM agent_model_usage WHERE user_id=$1',[owner.id]);
+  return json({entitlements:source.entitlements,source:{used:source.consumed,limit:source.limit},model:{used:model.consumed,limit:model.limit},
+   gateway:modelGatewayStatus(),usage:usage[0],costSemantics:"Estimated token cost only if explicit current model rates configured. No payment settlement claimed."});
+ }
+ if(path==="/api/agent/conversations"&&["GET","POST"].includes(method)){
+  if(!dbReady||!db)return json({error:"DATABASE_UNAVAILABLE"},503);
+  const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+  if(method==="GET"){const items=await db.unsafe('SELECT id::text,title,created_at AS "createdAt",updated_at AS "updatedAt" FROM agent_conversations WHERE user_id=$1 ORDER BY updated_at DESC LIMIT 50',[owner.id]);return json({items,scope:"PRIVATE_CUSTOMER"});}
+  if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
+  let b:any;try{b=await req.json()}catch{return json({error:"INVALID_JSON"},400)}
+  if(typeof b?.title!=="string"||b.title.length<5||b.title.length>100)return json({error:"INVALID_CONVERSATION_TITLE"},400);
+  return json(await createCustomerConversation(db,owner.id,b.title),201);
+ }
+ if(path.startsWith("/api/agent/conversations/")&&method==="GET"){
+  if(!dbReady||!db)return json({error:"DATABASE_UNAVAILABLE"},503);
+  const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+  const id=path.split("/").at(-1)||"";const messages=await conversationHistory(db,owner.id,id);
+  return messages?json({conversationId:id,messages,scope:"PRIVATE_CUSTOMER"}):json({error:"CONVERSATION_NOT_FOUND"},404);
+ }
+ if(path==="/api/agent/memories"&&["GET","POST"].includes(method)){
+  if(!dbReady||!db)return json({error:"DATABASE_UNAVAILABLE"},503);
+  const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+  if(method==="GET"){const items=await db.unsafe('SELECT id::text,note,created_at AS "createdAt" FROM agent_research_memories WHERE user_id=$1 ORDER BY created_at DESC LIMIT 25',[owner.id]);return json({items,source:"USER_OPT_IN_NOT_INFERRED"});}
+  if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
+  if(Number(req.headers.get("content-length")||0)>900)return json({error:"PAYLOAD_TOO_LARGE"},413);
+  let b:any;try{b=await req.json()}catch{return json({error:"INVALID_JSON"},400)}
+  const note=typeof b?.note==="string"?b.note.trim():"";
+  if(note.length<8||note.length>600)return json({error:"INVALID_MEMORY_LENGTH"},400);
+  const ent=await getCustomerEntitlements(db,owner.id);
+  const count=await db.unsafe("SELECT COUNT(*)::int AS n FROM agent_research_memories WHERE user_id=$1",[owner.id]);
+  if(Number(count[0]?.n||0)>=ent.savedMemories)return json({error:"MEMORY_LIMIT",limit:ent.savedMemories,checkoutPath:ent.checkoutPath},409);
+  const r=await db.unsafe('INSERT INTO agent_research_memories(user_id,note) VALUES($1,$2) RETURNING id::text,created_at AS "createdAt"',[owner.id,note]);
+  return json({...r[0],note,scope:"PRIVATE_CUSTOMER"},201);
+ }
+ if(path.startsWith("/api/agent/memories/")&&method==="POST"){
+  if(!dbReady||!db)return json({error:"DATABASE_UNAVAILABLE"},503);
+  if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
+  const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+  const parts=path.split("/");if(parts.length!==6||parts[5]!=="remove"||!/^[a-f0-9-]{36}$/.test(parts[4]))return json({error:"INVALID_MEMORY_ID"},400);
+  const r=await db.unsafe("DELETE FROM agent_research_memories WHERE user_id=$1 AND id=$2 RETURNING id::text",[owner.id,parts[4]]);
+  return r.length?json({removed:true}):json({error:"MEMORY_NOT_FOUND"},404);
+ }
+ if(path==="/api/agent/notifications"&&method==="GET"){
+  if(!dbReady||!db)return json({error:"DATABASE_UNAVAILABLE"},503);
+  const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+  return json({items:await customerNotificationFeed(db,owner.id),delivery:"IN_APP_PERSISTENT",externalEmailSent:false});
+ }
+ if(path.startsWith("/api/agent/notifications/")&&method==="POST"){
+  if(!dbReady||!db)return json({error:"DATABASE_UNAVAILABLE"},503);
+  if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
+  const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+  const parts=path.split("/");if(parts.length!==6||parts[5]!=="seen"||!/^[a-f0-9-]{36}$/.test(parts[4]))return json({error:"INVALID_NOTIFICATION"},400);
+  const r=await db.unsafe("UPDATE agent_market_notifications SET seen_at=COALESCE(seen_at,NOW()) WHERE id=$1 AND user_id=$2 RETURNING id::text",[parts[4],owner.id]);
+  return r.length?json({seen:true}):json({error:"NOTIFICATION_NOT_FOUND"},404);
+ }
+ if(path==="/api/agent/forge"&&["GET","POST"].includes(method)){
+  if(!dbReady||!db)return json({error:"DATABASE_UNAVAILABLE"},503);
+  const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+  if(method==="GET"){const items=await db.unsafe('SELECT s.id::text,s.prompt,s.monitor_title AS title,s.cadence_minutes AS "cadenceMinutes",s.active,s.next_run_at AS "nextRunAt",s.last_queued_at AS "lastQueuedAt",p.id::text AS "sharedId" FROM sourcea_customer_schedules s LEFT JOIN agent_public_monitors p ON p.schedule_id=s.id AND p.user_id=s.user_id WHERE s.user_id=$1 AND s.monitor_title IS NOT NULL ORDER BY s.created_at DESC LIMIT 25',[owner.id]);return json({schema:"signalforge.forge-studio.v1",items});}
+  if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
+  if(Number(req.headers.get("content-length")||0)>1400)return json({error:"PAYLOAD_TOO_LARGE"},413);
+  let b:any;try{b=await req.json()}catch{return json({error:"INVALID_JSON"},400)}
+  const title=typeof b?.title==="string"?b.title.trim():"",prompt=typeof b?.prompt==="string"?b.prompt.trim():"",cadence=Number(b?.cadenceMinutes);
+  if(title.length<6||title.length>80||!Number.isInteger(cadence)||cadence<60||cadence>10080)return json({error:"INVALID_MONITOR_CONFIGURATION"},400);
+  const compiled=compileMarketWorkPacket(prompt,crypto.randomUUID());if("error" in compiled)return json({error:compiled.error},400);
+  const ent=await getCustomerEntitlements(db,owner.id);
+  const count=await db.unsafe("SELECT COUNT(*)::int AS n FROM sourcea_customer_schedules WHERE user_id=$1 AND active=true",[owner.id]);
+  if(Number(count[0]?.n||0)>=ent.activeSchedules)return json({error:"MONITOR_PLAN_LIMIT",limit:ent.activeSchedules,checkoutPath:ent.checkoutPath},409);
+  const modelReady=modelGatewayStatus().configured&&ent.modelResearchPerDay>0;
+  const r=await db.unsafe('INSERT INTO sourcea_customer_schedules(user_id,prompt,cadence_minutes,monitor_title,intelligence_requested,next_run_at) VALUES($1,$2,$3,$4,$5,NOW()+($3::integer*INTERVAL \'1 minute\')) RETURNING id::text AS id,next_run_at AS "nextRunAt"',[owner.id,prompt,cadence,title,modelReady]);
+  return json({id:r[0].id,title,nextRunAt:r[0].nextRunAt,modelRequested:modelReady,status:"ACTIVE",sourceLinked:true,shareStatus:"AFTER_FIRST_OBSERVED_RUN"},201);
+ }
+ if(path.startsWith("/api/agent/forge/public/")&&method==="GET"){
+  if(!dbReady||!db)return json({error:"DATABASE_UNAVAILABLE"},503);
+  const id=path.split("/").at(-1)||"";if(!/^[a-f0-9-]{36}$/.test(id))return json({error:"NOT_FOUND"},404);
+  const r=await db.unsafe('SELECT s.monitor_title AS title,s.prompt,s.cadence_minutes AS "cadenceMinutes",s.active,t.artifact,t.finished_at AS "lastObservedAt" FROM agent_public_monitors p JOIN sourcea_customer_schedules s ON p.schedule_id=s.id JOIN LATERAL(SELECT artifact,finished_at FROM sourcea_customer_tasks WHERE schedule_id=s.id AND user_id=s.user_id AND status=\'SUCCEEDED\' ORDER BY finished_at DESC LIMIT 1)t ON TRUE WHERE p.id=$1',[id]);
+  if(!r.length)return json({error:"NOT_FOUND"},404);
+  const x=r[0],o=agentPayload(x.artifact)?.sourceObservation;
+  return json({schema:"signalforge.public-market-monitor.v1",title:x.title,prompt:x.prompt,cadenceMinutes:x.cadenceMinutes,active:x.active,
+   lastObservedAt:x.lastObservedAt,evidence:(o?.evidence||[]).map((e:any)=>({venue:e.venue,label:e.label,source:e.source,sourceUrl:e.sourceUrl,observedAt:e.observedAt,values:e.values})),
+   independentlyVerified:false,tradeAuthority:false,sourceLinked:true});
+ }
+ if(path.startsWith("/api/agent/forge/")&&method==="POST"){
+  if(!dbReady||!db)return json({error:"DATABASE_UNAVAILABLE"},503);
+  if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
+  const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+  const parts=path.split("/");if(parts.length!==6||!["share","run"].includes(parts[5])||!/^[a-f0-9-]{36}$/.test(parts[4]))return json({error:"INVALID_MONITOR_ACTION"},400);
+  if(parts[5]==="run"){
+   const q=await customerQuota(db,owner.id,"source");if(!q.eligible)return json({error:"SOURCE_RESEARCH_DAILY_LIMIT",limit:q.limit},429);
+   const owned=await db.unsafe('SELECT id,prompt,active,intelligence_requested AS "modelRequested" FROM sourcea_customer_schedules WHERE id=$1 AND user_id=$2 AND monitor_title IS NOT NULL',[parts[4],owner.id]);
+   if(!owned.length)return json({error:"MONITOR_NOT_FOUND"},404);
+   if(!owned[0].active)return json({error:"MONITOR_DISABLED"},409);
+   const m=await customerQuota(db,owner.id,"model");
+   const task=await newCustomerTask(db,owner.id,owned[0].prompt,parts[4],{modelEnabled:owned[0].modelRequested===true&&m.eligible&&modelGatewayStatus().configured});
+   return "error" in task?json(task,400):json({...task,monitorId:parts[4],status:"QUEUED"},202);
+  }
+  const rows=await db.unsafe("SELECT id FROM sourcea_customer_schedules WHERE id=$1 AND user_id=$2 AND monitor_title IS NOT NULL",[parts[4],owner.id]);
+  if(!rows.length)return json({error:"MONITOR_NOT_FOUND"},404);
+  const executed=await db.unsafe("SELECT id,packet,artifact,receipt FROM sourcea_customer_tasks WHERE schedule_id=$1 AND user_id=$2 AND status='SUCCEEDED' ORDER BY finished_at DESC LIMIT 1",[parts[4],owner.id]);
+  if(!executed.length||!(await verifyExecutionReceipt(executed[0].packet,executed[0].artifact,executed[0].receipt)).valid)return json({error:"MONITOR_REQUIRES_VERIFIED_SOURCE_EXECUTION"},409);
+  const shared=await db.unsafe('INSERT INTO agent_public_monitors(user_id,schedule_id) VALUES($1,$2) ON CONFLICT(user_id,schedule_id) DO UPDATE SET schedule_id=EXCLUDED.schedule_id RETURNING id::text',[owner.id,parts[4]]);
+  return json({id:shared[0].id,path:"/api/agent/forge/public/"+shared[0].id,status:"EXPLICITLY_SHARED"},201);
+ }
  if(path==="/api/agent/skills"&&method==="GET")return json({schema:"sourcea.signalforge-skill-catalog.v1",skills:[MARKET_RESEARCH_SKILL],runtime:"SIGNALFORGE_LOCAL_READONLY",remoteSourceAExecutorConnected:false});
  if(path==="/api/agent/tasks"&&["GET","POST"].includes(method)){
   if(!dbReady||!db)return json({error:"RESEARCH_STORAGE_UNAVAILABLE"},503);
@@ -614,8 +740,16 @@ if(method==="GET"&&path==="/api/web3/pulse"){
   if(Number(req.headers.get("content-length")||0)>2048)return json({error:"PAYLOAD_TOO_LARGE"},413);
   const raw=await req.text();if(raw.length>2048)return json({error:"PAYLOAD_TOO_LARGE"},413);
   let body:any;try{body=JSON.parse(raw)}catch{return json({error:"INVALID_JSON"},400)}
-  const task=await newCustomerTask(db,owner.id,body?.prompt);
-  return "error" in task?json(task,400):json(task,202,{"x-content-type-options":"nosniff"});
+  const quota=await customerQuota(db,owner.id,"source");
+  if(!quota.eligible)return json({error:"SOURCE_RESEARCH_DAILY_LIMIT",used:quota.consumed,limit:quota.limit,checkoutPath:quota.entitlements.checkoutPath},429);
+  const requestedConversation=typeof body?.conversationId==="string"?body.conversationId:null;
+  if(requestedConversation&&!await ownsConversation(db,owner.id,requestedConversation))return json({error:"CONVERSATION_NOT_FOUND"},404);
+  const cid=requestedConversation||(await createCustomerConversation(db,owner.id,body?.prompt||"Market investigation")).id;
+  const modelQuota=await customerQuota(db,owner.id,"model");
+  const modelAllowed=body?.engine!=="source"&&modelGatewayStatus().configured&&modelQuota.eligible;
+  const task=await newCustomerTask(db,owner.id,body?.prompt,null,{conversationId:cid,modelEnabled:modelAllowed});
+  if(!("error" in task))await db.unsafe("UPDATE agent_conversations SET updated_at=NOW() WHERE id=$1 AND user_id=$2",[cid,owner.id]);
+  return "error" in task?json(task,400):json({...task,conversationId:cid,engine:modelAllowed?"INTELLIGENT_MODEL_REQUESTED":"DETERMINISTIC_SOURCE_ONLY",gateway:modelGatewayStatus().configured?"CONFIGURED":"NOT_CONFIGURED",modelQuota:{used:modelQuota.consumed,limit:modelQuota.limit}},202,{"x-content-type-options":"nosniff"});
  }
  if(path.startsWith("/api/agent/tasks/")){
   if(!dbReady||!db)return json({error:"RESEARCH_STORAGE_UNAVAILABLE"},503);
@@ -656,8 +790,9 @@ if(method==="GET"&&path==="/api/web3/pulse"){
   const check=compileMarketWorkPacket(prompt,crypto.randomUUID());
   if("error" in check)return json({error:check.error},400);
   const count=await db.unsafe("SELECT COUNT(*)::int AS n FROM sourcea_customer_schedules WHERE user_id=$1 AND active=true",[owner.id]);
-  if(count[0]?.n>=10)return json({error:"SCHEDULE_LIMIT_REACHED"},409);
-  const rows=await db.unsafe('INSERT INTO sourcea_customer_schedules(user_id,prompt,cadence_minutes,next_run_at) VALUES($1,$2,$3,NOW()+($3::integer*INTERVAL \'1 minute\')) RETURNING id::text AS id,next_run_at AS "nextRunAt"',[owner.id,prompt,cadence]);
+  const ent=await getCustomerEntitlements(db,owner.id);if(count[0]?.n>=ent.activeSchedules)return json({error:"SCHEDULE_LIMIT_REACHED",limit:ent.activeSchedules,checkoutPath:ent.checkoutPath},409);
+  const modelRequested=body?.engine!=="source"&&modelGatewayStatus().configured&&ent.modelResearchPerDay>0;
+  const rows=await db.unsafe('INSERT INTO sourcea_customer_schedules(user_id,prompt,cadence_minutes,intelligence_requested,next_run_at) VALUES($1,$2,$3,$4,NOW()+($3::integer*INTERVAL \'1 minute\')) RETURNING id::text AS id,next_run_at AS "nextRunAt"',[owner.id,prompt,cadence,modelRequested]);
   return json({id:rows[0].id,nextRunAt:rows[0].nextRunAt,status:"ACTIVE",cadenceMinutes:cadence},201);
  }
  if(path.startsWith("/api/agent/schedules/")&&method==="POST"){
@@ -836,10 +971,51 @@ async function start(){try{await initDb();console.log("Database schema ready")}c
   try{
    sourceaTick++;
    if(sourceaTick%20===1)await activateDueSchedules(db);
-   await drainSourceATasks(db,{execute:async(prompt:string)=>runMarketResearch(prompt,{
+   const marketDeps={
     pulse:()=>getWeb3NativePulse(),solana:researchSolanaToken,validateSolana:validSolanaAddress,
     kraken:async(symbol:string)=>{const d=await marketData(symbol,60,true);return {...d,summary:summarize(d.candles)}}
-   })});
+   };
+   await drainSourceATasks(db,{
+    execute:(prompt:string)=>runMarketResearch(prompt,marketDeps),
+    enrich:async(task:any,primary:any)=>{
+     const q=await customerQuota(db,task.userId,"model");
+     if(!q.eligible||!modelGatewayStatus().configured)return {intelligence:{schema:"signalforge.intelligence.v1",status:"SOURCE_ONLY_PLAN_OR_PROVIDER",modelExecuted:false},usage:{modelCalls:0,providerBilledUsd:null,modelChargeUsd:0,estimatedModelUsd:null}};
+     const plan=await selectMarketTools(task.prompt,primary.lane);
+     const extras:any[]=[];
+     const fixedPrompts:Record<string,string>={prediction:"Inspect Polymarket event market activity",perps:"Inspect Hyperliquid perpetual funding and open interest",kraken:"Analyze BTC Kraken OHLC",pulse:"Inspect current cross venue Web3 market activity",solana:"Inspect Solana token market data"};
+     for(const lane of plan.lanes||[]){
+      if(lane===primary.lane)continue;
+      if(lane==="solana")continue; // Never invent a Solana mint address.
+      const candidate=await runMarketResearch(fixedPrompts[lane]||fixedPrompts.pulse,marketDeps);
+      if(candidate.status==="SOURCE_OBSERVED")extras.push(candidate);
+     }
+     const memory=await customerMemoryContext(db,task.userId,task.conversationId||null);
+     const synthesis=await synthesizeMarketEvidence({prompt:task.prompt,observations:[primary,...extras],memory,planner:plan.planner});
+     const all=[...(plan.attempts||[]).map((x:any)=>({...x,phase:"PLANNING"})),...(synthesis.attempts||[]).map((x:any)=>({...x,phase:"SYNTHESIS"}))];
+     for(const x of all){
+      try{await db.unsafe("INSERT INTO agent_model_usage(user_id,task_id,phase,provider,model,response_id,status,input_tokens,output_tokens,estimated_usd) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
+       [task.userId,task.id,x.phase,x.provider||"unknown",x.model||"unknown",x.responseId||null,x.status,
+       x.usage?.inputTokens??null,x.usage?.outputTokens??null,x.usage?.estimatedUsd??null]);}
+      catch(error){console.error("Agent model usage ledger unavailable",String(error).slice(0,100))}
+     }
+     const metered=all.filter((x:any)=>x.usage&&x.status!=="FAILED");
+     const calls=metered.length;
+     const totalTokens=metered.reduce((n:number,x:any)=>n+Number(x.usage.totalTokens||0),0);
+     const estimatedUsd=calls&&metered.every((x:any)=>x.usage.estimatedUsd!==null)?Number(metered.reduce((n:number,x:any)=>n+Number(x.usage.estimatedUsd||0),0).toFixed(8)):null;
+     const intelligence={schema:"signalforge.intelligence.v1",status:synthesis.status,modelExecuted:synthesis.status==="MODEL_EXECUTED",
+      provider:synthesis.status==="MODEL_EXECUTED"?synthesis.provider:null,model:synthesis.status==="MODEL_EXECUTED"?synthesis.model:null,
+      output:synthesis.status==="MODEL_EXECUTED"?synthesis.output:null,
+      modelTrace:{planner:plan.planner?{provider:plan.planner.provider,model:plan.planner.model,responseId:plan.planner.responseId}:null,
+       synthesizedResponseId:synthesis.responseId||null,attempts:all.map((x:any)=>({phase:x.phase,status:x.status,provider:x.provider,model:x.model,usage:x.usage||null}))},
+      selectedLanes:plan.lanes,additionalResearch:extras,sourceDataImmutable:true,
+      independentlyVerifiedModelClaims:false,sourceOnlyFallback:synthesis.status!=="MODEL_EXECUTED"};
+     return {intelligence,usage:{modelCalls:calls,modelTokenCount:totalTokens,
+      modelChargeUsd:estimatedUsd,estimatedModelUsd:estimatedUsd,
+      providerBilledUsd:null,infrastructureCostUsd:null,totalSettledCostUsd:null,
+      billingEvidence:false,marketSourceToolCalls:1+extras.length,usageSource:"PROVIDER_REPORTED_TOKENS_ESTIMATED_RATES_NOT_SETTLED"}};
+    },
+    onComplete:async(task:any,result:any)=>{await recordMarketNotification(db,task,result,compareMarketObservations)}
+   });;
   }catch(e){console.error("SourceA customer task pump failure",String(e).slice(0,180))}
  }
  // Dedicated test worker injection exercises task claims without external
