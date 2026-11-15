@@ -89,6 +89,26 @@ def check():
                         page.locator('[data-pane="agent"]').click()
                         assert page.locator("#copyPrompt").is_visible()
                         assert page.locator("#inlineAgentResult").count() == 1
+                        # Test-only stub exercises the real in-terminal Agent UI; not an external user or provider proof.
+                        page.route("**/api/agent/research",
+                            lambda route: route.fulfill(status=200,content_type="application/json",
+                            body=json.dumps({"status":"SOURCE_OBSERVED","tool":"market.perps.research",
+                              "summary":"CI fixture only — bounded research UI functional.",
+                              "evidence":[{"venue":"Hyperliquid","label":"BTC",
+                                "sourceUrl":"https://app.hyperliquid.xyz/trade/BTC"}]})))
+                        page.locator("#agentPrompt").fill("Inspect Hyperliquid BTC funding")
+                        page.locator("#copyPrompt").click()
+                        page.wait_for_function("document.querySelector('#inlineAgentResult')?.textContent?.includes('CI fixture only')")
+                        assert page.locator("#inlineAgentResult a[href*='hyperliquid']").count() >= 1
+                        assert page.locator("#inlineAgentResult .sf-agent-continue").count() == 1
+                        page.unroute("**/api/agent/research")
+                        if kind == "mobile":
+                            page.locator("#sfNavToggle").click()
+                            assert page.locator("#sfNavToggle").get_attribute("aria-expanded") == "true"
+                            assert page.locator("#sfTerminalGlobalNav").is_visible()
+                            page.locator("#sfNavToggle").click()
+                        print("FIXTURE_ONLY_INLINE_AGENT_UI_PASS",kind)
+
                         assert page.evaluate("!!window.LightweightCharts && !!window.SFMarketChart")
                         page.wait_for_selector("#sfNativeCandleChart canvas",timeout=12000,state="visible")
                         assert page.locator("#chartState").inner_text().startswith("KRAKEN PUBLIC OHLC")
