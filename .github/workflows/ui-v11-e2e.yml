@@ -1,0 +1,83 @@
+name: SignalForge v11 complete UI/UX E2E quality gate
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "public/**"
+      - "src/server.ts"
+      - "scripts/premium-v11-e2e-browser.py"
+      - ".github/workflows/ui-v11-e2e.yml"
+  push:
+    branches: [main, "feat/signalforge-v11-unified-premium-ui-e2e-20261115"]
+    paths:
+      - "public/**"
+      - "src/server.ts"
+      - "scripts/premium-v11-e2e-browser.py"
+      - ".github/workflows/ui-v11-e2e.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  full-user-journey:
+    runs-on: ubuntu-latest
+    timeout-minutes: 13
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: signalforge_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d signalforge_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/signalforge_test
+      DATABASE_SSL: disable
+      NODE_ENV: test
+      PORT: 18182
+      VISUAL_BASE: http://127.0.0.1:18182
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.2.23
+      - name: Install exact runtime and Playwright
+        run: |
+          bun install --frozen-lockfile || bun install
+          python3 -m pip install --quiet --user playwright==1.58.0
+          CHROME=$(command -v google-chrome || command -v chromium || true)
+          test -n "$CHROME"
+          echo "CHROME=$CHROME" >> "$GITHUB_ENV"
+          python3 -m py_compile scripts/premium-v11-e2e-browser.py
+      - name: Launch actual SignalForge against disposable PostgreSQL
+        run: |
+          bun run src/server.ts > /tmp/sf-ui-v11-server.log 2>&1 &
+          for n in $(seq 1 45); do
+            if curl -fsS --max-time 3 "$VISUAL_BASE/api/health" > /tmp/sf-ui-v11-health.json && grep -q '"database":"connected"' /tmp/sf-ui-v11-health.json; then
+              cat /tmp/sf-ui-v11-health.json
+              exit 0
+            fi
+            sleep 1
+          done
+          tail -80 /tmp/sf-ui-v11-server.log
+          exit 1
+      - name: Exercise all public pages, 9 app views, mobile/desktop, real signup and deletion
+        run: python3 scripts/premium-v11-e2e-browser.py
+      - name: Upload browser screenshots for direct review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: signalforge-v11-cross-product-browser
+          path: artifacts/ui-v11/*.png
+          retention-days: 30
+          if-no-files-found: warn
+      - name: Show backend failures if present
+        if: failure()
+        run: tail -100 /tmp/sf-ui-v11-server.log || true
