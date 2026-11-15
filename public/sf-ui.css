@@ -258,3 +258,42 @@ body[data-sf-surface="internal"] main{padding-bottom:70px}
  .sf-command-backdrop{backdrop-filter:none}
  .sf-mobile-dock{backdrop-filter:none}
 }
+
+
+/* v11 contextual quick actions: actions navigate to actual working destinations. */
+.sf-v11-desk-strip,.sf-v11-agent-workflow,.sf-v11-token-actions,.sf-v11-pulse-tools,.sf-v11-developer-shortcuts,.sf-v11-research-actions{
+ display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;
+}
+.sf-v11-desk-strip,.sf-v11-agent-workflow,.sf-v11-pulse-tools{
+ padding:11px 13px;background:#111c24;border:1px solid #2d4545;border-radius:10px;
+ margin:13px 0 15px;min-width:0;
+}
+.sf-v11-desk-strip a,.sf-v11-agent-workflow a,.sf-v11-token-actions a,.sf-v11-pulse-tools a,.sf-v11-developer-shortcuts a,.sf-v11-research-actions a{
+ color:#b8e5cd;text-decoration:none;font:600 11px/1.4 var(--sf-font);padding:7px 2px;
+}
+.sf-v11-desk-strip a:hover,.sf-v11-agent-workflow a:hover,.sf-v11-token-actions a:hover,.sf-v11-pulse-tools a:hover,.sf-v11-developer-shortcuts a:hover,.sf-v11-research-actions a:hover{
+ color:#f2d69b;text-decoration:underline;text-underline-offset:4px;
+}
+.sf-v11-desk-strip button,.sf-v11-agent-workflow button,.sf-v11-research-actions button{
+ border:1px solid #496155;background:#1b2b28;border-radius:7px;padding:8px 11px;
+ color:#e2ecdf;font:11px var(--sf-font);
+}
+.sf-v11-desk-strip button{margin-left:auto}
+.sf-v11-agent-workflow{max-width:1100px}
+.sf-v11-token-actions{margin:10px 0 4px;padding:0}
+.sf-v11-pulse-tools{margin-bottom:17px}
+.sf-v11-developer-shortcuts{margin:15px 0 13px;gap:10px 16px}
+.sf-v11-research-actions{margin:12px 0 22px}
+.sf-v11-research-actions button{min-height:39px}
+@media(max-width:780px){
+ .sf-v11-desk-strip,.sf-v11-agent-workflow,.sf-v11-pulse-tools{padding:10px}
+ .sf-v11-desk-strip .sf-focus-chip,.sf-v11-agent-workflow .sf-focus-chip,.sf-v11-pulse-tools .sf-focus-chip{
+  flex:1 0 100%;justify-content:center;
+ }
+ .sf-v11-desk-strip a,.sf-v11-agent-workflow a,.sf-v11-token-actions a,.sf-v11-pulse-tools a{
+  min-height:40px;display:inline-flex;align-items:center;
+ }
+ .sf-v11-desk-strip button{margin-left:0}
+ body[data-sf-surface="terminal"] .pagehead{margin-top:16px}
+ body[data-sf-surface="terminal"] .pagehead h1{font-size:28px}
+}
