@@ -55,5 +55,5 @@ test("public Agent page, private job history, sourced thesis, owner-isolated sha
  expect(publicData.data).not.toHaveProperty("prompt");
  expect(publicData.data).not.toHaveProperty("user_id");
  const publicPage=await fetch(BASE+share.data.path);expect(publicPage.status).toBe(200);
- expect((await publicPage.text())).toContain("Evidence survives the headline");
+ expect((await publicPage.text())).toContain("Research with a trace.");
 },45000);
