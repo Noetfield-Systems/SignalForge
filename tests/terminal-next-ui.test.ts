@@ -19,7 +19,7 @@ test("premium terminal candidate is routed without replacing the existing termin
 test("terminal candidate preserves source honesty and mobile layout",async()=>{
   const html=await Bun.file(new URL("../public/terminal-next.html",import.meta.url)).text();
   expect(html).toContain('LIVE_PUBLIC_DATA');
-  expect(html).toContain('DEMO_DATA');
+  expect(html).toContain('DEMO / FALLBACK');
   expect(html).toContain('sourceMode');
   expect(html).toContain('fetchedAt');
   expect(html).toContain('@media(max-width:690px)');
