@@ -12,7 +12,7 @@ function fixture(){
 }
 test("Official MCP registry manifest describes the existing public remote, not a fabricated npm package",async()=>{
  const j=await Bun.file(new URL("../server.json",import.meta.url)).json();
- expect(j.name).toBe("io.github.noetfield-systems/signalforge");
+ expect(j.name).toBe("io.github.Noetfield-Systems/signalforge");
  expect(j.remotes).toEqual([{type:"streamable-http",url:BASE+"/mcp"}]);
  expect(j.packages).toBeUndefined();
  expect(j.version).toBe("1.0.0");
