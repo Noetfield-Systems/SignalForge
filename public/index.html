@@ -284,6 +284,7 @@ function drawChart(){
  // An unavailable provider retains the original source-labeled fallback.
  if(target&&mode==="LIVE_PUBLIC_DATA"&&window.SFMarketChart){
   try{
+   target.hidden=false; // Chart mounts into a measurable surface for ResizeObserver.
    if(!window.__sfLegacyChart)window.__sfLegacyChart=window.SFMarketChart.mount(target);
    const outcome=window.__sfLegacyChart?.setData(state.candles,mode);
    if(outcome?.rendered){
