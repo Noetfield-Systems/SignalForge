@@ -619,6 +619,108 @@ if(method==="GET"&&path==="/api/web3/pulse"){
   await db.unsafe("DELETE FROM users WHERE id=$1",[owner.id]);
   return json({deleted:true,scope:"OWN_ACCOUNT_AND_CASCADING_PRIVATE_DATA"},200,{"set-cookie":"sf_session=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0"});
  }
+
+ // Customer intelligence, retention, and first Forge Studio monitor.
+ // All private resources are scoped to the authenticated SignalForge user.
+ if(path==="/api/agent/gateway"&&method==="GET")return json(modelGatewayStatus());
+ if(path==="/api/agent/entitlements"&&method==="GET"){
+  if(!dbReady||!db)return json({error:"DATABASE_UNAVAILABLE"},503);
+  const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+  const [source,model]=await Promise.all([customerQuota(db,owner.id,"source"),customerQuota(db,owner.id,"model")]);
+  const usage=await db.unsafe('SELECT COUNT(*)::int AS "modelCallRows",COALESCE(SUM(input_tokens),0)::bigint AS "inputTokens",COALESCE(SUM(output_tokens),0)::bigint AS "outputTokens",SUM(estimated_usd)::text AS "estimatedUsd" FROM agent_model_usage WHERE user_id=$1',[owner.id]);
+  return json({entitlements:source.entitlements,source:{used:source.consumed,limit:source.limit},model:{used:model.consumed,limit:model.limit},
+   gateway:modelGatewayStatus(),usage:usage[0],costSemantics:"Estimated token cost only if explicit current model rates configured. No payment settlement claimed."});
+ }
+ if(path==="/api/agent/conversations"&&["GET","POST"].includes(method)){
+  if(!dbReady||!db)return json({error:"DATABASE_UNAVAILABLE"},503);
+  const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+  if(method==="GET"){const items=await db.unsafe('SELECT id::text,title,created_at AS "createdAt",updated_at AS "updatedAt" FROM agent_conversations WHERE user_id=$1 ORDER BY updated_at DESC LIMIT 50',[owner.id]);return json({items,scope:"PRIVATE_CUSTOMER"});}
+  if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
+  let b:any;try{b=await req.json()}catch{return json({error:"INVALID_JSON"},400)}
+  if(typeof b?.title!=="string"||b.title.length<5||b.title.length>100)return json({error:"INVALID_CONVERSATION_TITLE"},400);
+  return json(await createCustomerConversation(db,owner.id,b.title),201);
+ }
+ if(path.startsWith("/api/agent/conversations/")&&method==="GET"){
+  if(!dbReady||!db)return json({error:"DATABASE_UNAVAILABLE"},503);
+  const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+  const id=path.split("/").at(-1)||"";const messages=await conversationHistory(db,owner.id,id);
+  return messages?json({conversationId:id,messages,scope:"PRIVATE_CUSTOMER"}):json({error:"CONVERSATION_NOT_FOUND"},404);
+ }
+ if(path==="/api/agent/memories"&&["GET","POST"].includes(method)){
+  if(!dbReady||!db)return json({error:"DATABASE_UNAVAILABLE"},503);
+  const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+  if(method==="GET"){const items=await db.unsafe('SELECT id::text,note,created_at AS "createdAt" FROM agent_research_memories WHERE user_id=$1 ORDER BY created_at DESC LIMIT 25',[owner.id]);return json({items,source:"USER_OPT_IN_NOT_INFERRED"});}
+  if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
+  if(Number(req.headers.get("content-length")||0)>900)return json({error:"PAYLOAD_TOO_LARGE"},413);
+  let b:any;try{b=await req.json()}catch{return json({error:"INVALID_JSON"},400)}
+  const note=typeof b?.note==="string"?b.note.trim():"";
+  if(note.length<8||note.length>600)return json({error:"INVALID_MEMORY_LENGTH"},400);
+  const ent=await getCustomerEntitlements(db,owner.id);
+  const count=await db.unsafe("SELECT COUNT(*)::int AS n FROM agent_research_memories WHERE user_id=$1",[owner.id]);
+  if(Number(count[0]?.n||0)>=ent.savedMemories)return json({error:"MEMORY_LIMIT",limit:ent.savedMemories,checkoutPath:ent.checkoutPath},409);
+  const r=await db.unsafe('INSERT INTO agent_research_memories(user_id,note) VALUES($1,$2) RETURNING id::text,created_at AS "createdAt"',[owner.id,note]);
+  return json({...r[0],note,scope:"PRIVATE_CUSTOMER"},201);
+ }
+ if(path.startsWith("/api/agent/memories/")&&method==="POST"){
+  if(!dbReady||!db)return json({error:"DATABASE_UNAVAILABLE"},503);
+  if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
+  const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+  const parts=path.split("/");if(parts.length!==6||parts[5]!=="remove"||!/^[a-f0-9-]{36}$/.test(parts[4]))return json({error:"INVALID_MEMORY_ID"},400);
+  const r=await db.unsafe("DELETE FROM agent_research_memories WHERE user_id=$1 AND id=$2 RETURNING id::text",[owner.id,parts[4]]);
+  return r.length?json({removed:true}):json({error:"MEMORY_NOT_FOUND"},404);
+ }
+ if(path==="/api/agent/notifications"&&method==="GET"){
+  if(!dbReady||!db)return json({error:"DATABASE_UNAVAILABLE"},503);
+  const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+  return json({items:await customerNotificationFeed(db,owner.id),delivery:"IN_APP_PERSISTENT",externalEmailSent:false});
+ }
+ if(path.startsWith("/api/agent/notifications/")&&method==="POST"){
+  if(!dbReady||!db)return json({error:"DATABASE_UNAVAILABLE"},503);
+  if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
+  const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+  const parts=path.split("/");if(parts.length!==6||parts[5]!=="seen"||!/^[a-f0-9-]{36}$/.test(parts[4]))return json({error:"INVALID_NOTIFICATION"},400);
+  const r=await db.unsafe("UPDATE agent_market_notifications SET seen_at=COALESCE(seen_at,NOW()) WHERE id=$1 AND user_id=$2 RETURNING id::text",[parts[4],owner.id]);
+  return r.length?json({seen:true}):json({error:"NOTIFICATION_NOT_FOUND"},404);
+ }
+ if(path==="/api/agent/forge"&&["GET","POST"].includes(method)){
+  if(!dbReady||!db)return json({error:"DATABASE_UNAVAILABLE"},503);
+  const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+  if(method==="GET"){const items=await db.unsafe('SELECT s.id::text,s.prompt,s.monitor_title AS title,s.cadence_minutes AS "cadenceMinutes",s.active,s.next_run_at AS "nextRunAt",s.last_queued_at AS "lastQueuedAt",p.id::text AS "sharedId" FROM sourcea_customer_schedules s LEFT JOIN agent_public_monitors p ON p.schedule_id=s.id AND p.user_id=s.user_id WHERE s.user_id=$1 AND s.monitor_title IS NOT NULL ORDER BY s.created_at DESC LIMIT 25',[owner.id]);return json({schema:"signalforge.forge-studio.v1",items});}
+  if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
+  if(Number(req.headers.get("content-length")||0)>1400)return json({error:"PAYLOAD_TOO_LARGE"},413);
+  let b:any;try{b=await req.json()}catch{return json({error:"INVALID_JSON"},400)}
+  const title=typeof b?.title==="string"?b.title.trim():"",prompt=typeof b?.prompt==="string"?b.prompt.trim():"",cadence=Number(b?.cadenceMinutes);
+  if(title.length<6||title.length>80||!Number.isInteger(cadence)||cadence<60||cadence>10080)return json({error:"INVALID_MONITOR_CONFIGURATION"},400);
+  const compiled=compileMarketWorkPacket(prompt,crypto.randomUUID());if("error" in compiled)return json({error:compiled.error},400);
+  const ent=await getCustomerEntitlements(db,owner.id);
+  const count=await db.unsafe("SELECT COUNT(*)::int AS n FROM sourcea_customer_schedules WHERE user_id=$1 AND active=true",[owner.id]);
+  if(Number(count[0]?.n||0)>=ent.activeSchedules)return json({error:"MONITOR_PLAN_LIMIT",limit:ent.activeSchedules,checkoutPath:ent.checkoutPath},409);
+  const modelReady=modelGatewayStatus().configured&&ent.modelResearchPerDay>0;
+  const r=await db.unsafe('INSERT INTO sourcea_customer_schedules(user_id,prompt,cadence_minutes,monitor_title,intelligence_requested,next_run_at) VALUES($1,$2,$3,$4,$5,NOW()+($3::integer*INTERVAL \'1 minute\')) RETURNING id::text AS id,next_run_at AS "nextRunAt"',[owner.id,prompt,cadence,title,modelReady]);
+  return json({id:r[0].id,title,nextRunAt:r[0].nextRunAt,modelRequested:modelReady,status:"ACTIVE",sourceLinked:true,shareStatus:"AFTER_FIRST_OBSERVED_RUN"},201);
+ }
+ if(path.startsWith("/api/agent/forge/public/")&&method==="GET"){
+  if(!dbReady||!db)return json({error:"DATABASE_UNAVAILABLE"},503);
+  const id=path.split("/").at(-1)||"";if(!/^[a-f0-9-]{36}$/.test(id))return json({error:"NOT_FOUND"},404);
+  const r=await db.unsafe('SELECT s.monitor_title AS title,s.prompt,s.cadence_minutes AS "cadenceMinutes",s.active,t.artifact,t.finished_at AS "lastObservedAt" FROM agent_public_monitors p JOIN sourcea_customer_schedules s ON p.schedule_id=s.id JOIN LATERAL(SELECT artifact,finished_at FROM sourcea_customer_tasks WHERE schedule_id=s.id AND user_id=s.user_id AND status=\'SUCCEEDED\' ORDER BY finished_at DESC LIMIT 1)t ON TRUE WHERE p.id=$1',[id]);
+  if(!r.length)return json({error:"NOT_FOUND"},404);
+  const x=r[0],o=agentPayload(x.artifact)?.sourceObservation;
+  return json({schema:"signalforge.public-market-monitor.v1",title:x.title,prompt:x.prompt,cadenceMinutes:x.cadenceMinutes,active:x.active,
+   lastObservedAt:x.lastObservedAt,evidence:(o?.evidence||[]).map((e:any)=>({venue:e.venue,label:e.label,source:e.source,sourceUrl:e.sourceUrl,observedAt:e.observedAt,values:e.values})),
+   independentlyVerified:false,tradeAuthority:false,sourceLinked:true});
+ }
+ if(path.startsWith("/api/agent/forge/")&&method==="POST"){
+  if(!dbReady||!db)return json({error:"DATABASE_UNAVAILABLE"},503);
+  if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
+  const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+  const parts=path.split("/");if(parts.length!==6||parts[5]!=="share"||!/^[a-f0-9-]{36}$/.test(parts[4]))return json({error:"INVALID_MONITOR_ACTION"},400);
+  const rows=await db.unsafe("SELECT id FROM sourcea_customer_schedules WHERE id=$1 AND user_id=$2 AND monitor_title IS NOT NULL",[parts[4],owner.id]);
+  if(!rows.length)return json({error:"MONITOR_NOT_FOUND"},404);
+  const executed=await db.unsafe("SELECT id FROM sourcea_customer_tasks WHERE schedule_id=$1 AND user_id=$2 AND status='SUCCEEDED' AND receipt->'evaluation'->>'verdict'='PASS' LIMIT 1",[parts[4],owner.id]);
+  if(!executed.length)return json({error:"MONITOR_REQUIRES_OBSERVED_EXECUTION"},409);
+  const shared=await db.unsafe('INSERT INTO agent_public_monitors(user_id,schedule_id) VALUES($1,$2) ON CONFLICT(user_id,schedule_id) DO UPDATE SET schedule_id=EXCLUDED.schedule_id RETURNING id::text',[owner.id,parts[4]]);
+  return json({id:shared[0].id,path:"/api/agent/forge/public/"+shared[0].id,status:"EXPLICITLY_SHARED"},201);
+ }
  if(path==="/api/agent/skills"&&method==="GET")return json({schema:"sourcea.signalforge-skill-catalog.v1",skills:[MARKET_RESEARCH_SKILL],runtime:"SIGNALFORGE_LOCAL_READONLY",remoteSourceAExecutorConnected:false});
  if(path==="/api/agent/tasks"&&["GET","POST"].includes(method)){
   if(!dbReady||!db)return json({error:"RESEARCH_STORAGE_UNAVAILABLE"},503);
