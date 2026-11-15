@@ -30,12 +30,21 @@
 
 .sf-chart-ack{font:9px "IBM Plex Mono",monospace;color:#a5b5bd;white-space:nowrap}.sf-chart-ack a{color:#b8dbc9;text-decoration:underline;text-underline-offset:2px}
 @media(max-width:690px){.sf-chart-ack{font-size:8px}}
-</style><link rel="stylesheet" href="/assets/sf-ui.css"></head>
+</style><link rel="stylesheet" href="/assets/sf-ui.css"><style>
+.sf-mobile-nav-toggle{display:none}
+@media(max-width:690px){
+ .top{position:relative;z-index:21}
+ .sf-mobile-nav-toggle{display:inline-flex;margin-left:auto;border:1px solid #536052;border-radius:6px;background:#1d2925;color:#e9cb95;padding:8px 11px;font-size:11px}
+ .top .sf-product-nav{display:none;position:absolute;top:56px;left:0;right:0;max-width:none;margin:0;padding:13px;border:1px solid #33434c;border-radius:0 0 10px 10px;background:#111a22;box-shadow:0 20px 40px #0009;overflow:visible;z-index:22}
+ .top .sf-product-nav[data-open="true"]{display:flex;flex-direction:column;align-items:stretch;gap:6px}
+ .top .sf-product-nav a{font-size:13px;padding:12px 14px}
+}
+</style></head>
 <body>
 <div class="app">
  <header class="top">
   <a href="/" class="brand" aria-label="SignalForge home"><span class="brandlogo"></span><span class="brandname">signal<span>forge</span><b class="mono" style="font-size:9px;color:var(--gold);vertical-align:super;margin-left:3px">/</b></span></a>
-  <nav class="mainnav" data-sf-nav data-sf-orientation="horizontal" aria-label="Primary"><a href="/web3" class="navlink">Explore</a><a href="/app" class="navlink active">Terminal</a><a href="/agent" class="navlink">Market Agent</a><a href="/radar" class="navlink">Token Radar</a><a href="/app?view=community" class="navlink">Signal Rooms</a><a href="/developers" class="navlink">Developers</a></nav>
+  <button id="sfNavToggle" class="sf-mobile-nav-toggle" type="button" aria-expanded="false" aria-controls="sfTerminalGlobalNav" aria-label="Toggle product navigation">Explore</button><nav id="sfTerminalGlobalNav" class="mainnav" data-sf-nav data-sf-orientation="horizontal" aria-label="Primary"><a href="/web3" class="navlink">Explore</a><a href="/app" class="navlink active">Terminal</a><a href="/agent" class="navlink">Market Agent</a><a href="/radar" class="navlink">Token Radar</a><a href="/app?view=community" class="navlink">Signal Rooms</a><a href="/developers" class="navlink">Developers</a></nav>
   <div class="toptools"><button class="topsearch" id="cmdOpen" title="Search markets">⌕ &nbsp; Search markets <em>/</em></button><a class="topbutton" href="/app?view=pricing">Plans</a><a class="account-dot" href="/app?view=account" title="Account">SF</a></div>
  </header>
  <div class="tickerbar"><div class="tickertitle"><i class="blink"></i> MARKET SOURCES</div><div class="tick"><strong>BTC</strong><span id="tBTC">—</span><i id="dBTC" class="muted">—</i></div><div class="tick"><strong>ETH</strong><span id="tETH">—</span><i id="dETH" class="muted">—</i></div><div class="tick"><strong>SOL</strong><span id="tSOL">—</span><i id="dSOL" class="muted">—</i></div><div class="tick"><strong>XRP</strong><span id="tXRP">—</span><i id="dXRP" class="muted">—</i></div><span class="caps previewstamp" id="previewNote">VISUAL CANDIDATE / DATA PENDING</span></div>
@@ -116,6 +125,6 @@ all('[data-interval]').forEach(b=>b.onclick=()=>{state.interval=Number(b.dataset
   if(!observed)add("small","No live observations were substituted with demo data.");
  }catch(e){add("strong","RESEARCH UNAVAILABLE");add("p",String(e.message||"Could not inspect market source."))}
  finally{button.disabled=false;button.textContent="Run source research ↗"}
-};$('cmdOpen').onclick=()=>{$('marketFilter').focus()};$('fullChart').onclick=()=>{const c=document.querySelector('.chartcontainer');if(!document.fullscreenElement){c.requestFullscreen?.()}else document.exitFullscreen?.()};document.addEventListener('keydown',e=>{if(e.key==='/'&&!/INPUT|TEXTAREA/.test(document.activeElement?.tagName||'')){e.preventDefault();$('marketFilter').focus()}if(e.key==='Escape'){if(document.fullscreenElement)document.exitFullscreen();$('marketFilter').blur()}});renderMarkets();loadMarket();})()
+};$('cmdOpen').onclick=()=>{$('marketFilter').focus()};$('fullChart').onclick=()=>{const c=document.querySelector('.chartcontainer');if(!document.fullscreenElement){c.requestFullscreen?.()}else document.exitFullscreen?.()};document.addEventListener('keydown',e=>{if(e.key==='/'&&!/INPUT|TEXTAREA/.test(document.activeElement?.tagName||'')){e.preventDefault();$('marketFilter').focus()}if(e.key==='Escape'){if(document.fullscreenElement)document.exitFullscreen();$('marketFilter').blur()}});$('sfNavToggle').addEventListener('click',()=>{const nav=$('sfTerminalGlobalNav'),open=nav.dataset.open!=='true';nav.dataset.open=String(open);$('sfNavToggle').setAttribute('aria-expanded',String(open))});renderMarkets();loadMarket();})()
 </script>
 </body></html>
