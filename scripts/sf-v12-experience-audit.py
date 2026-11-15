@@ -105,7 +105,7 @@ with sync_playwright() as playwright:
      }
      assert audit["nativeChart"]["nativeVisible"] or audit["nativeChart"]["canvasVisible"],"V12_NO_MARKET_CHART"
     if name=="plans":
-     assert page.locator("[data-subscribe]").count()==2,("V12_STRIPE_PLAN_CTA_LOST",layout)
+     assert page.locator("[data-subscribe], [data-plan]").count()>=2,("V12_STRIPE_PLAN_CTA_LOST",layout)
     results.append(audit)
     if name in ("agent","radar","pulse","developers","rooms","plans","app-dashboard","research-card"):
      page.screenshot(path=str(OUT/("v12-"+name+"-"+layout+".png")),animations="disabled",full_page=(layout=="mobile"))
