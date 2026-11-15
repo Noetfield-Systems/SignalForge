@@ -193,6 +193,7 @@ if(m.active){const stop=el("button",null,"Disable");stop.type="button";stop.oncl
 wrap.append(row);root.append(wrap)}if(!root.children.length)root.append(el("p","subtle","No source monitors yet. Configure your first workflow."))}catch(e){$("forgeFeedback").textContent=e.message}}
 $("forgeForm").addEventListener("submit",async e=>{e.preventDefault();try{const d=await api("/api/agent/forge",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({title:$("forgeTitle").value,prompt:$("forgePrompt").value,cadenceMinutes:Number($("forgeCadence").value)})});$("forgeFeedback").textContent="Monitor created · "+d.id+" · Run now for first observation.";await loadForge();await loadSchedules()}catch(err){$("forgeFeedback").textContent=err.message}});
 loadGateway();
+const forwardedPrompt=new URLSearchParams(location.search).get("prompt");if(forwardedPrompt&&forwardedPrompt.length>=5&&forwardedPrompt.length<=900&&!prompt.value)prompt.value=forwardedPrompt;
 prompt.addEventListener("keydown",e=>{if(e.key==="Enter"&&(e.metaKey||e.ctrlKey)){e.preventDefault();form.requestSubmit()}});
 who();
 })();
