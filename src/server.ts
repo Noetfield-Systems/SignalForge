@@ -57,6 +57,7 @@ function demoCandles(symbol:string,interval:number){let seed=[...symbol].reduce(
 async function marketData(symbol:string,interval:number,force=false){if(!MARKETS[symbol])symbol="BTCUSD";if(![15,60,240].includes(interval))interval=60;const key=symbol+":"+interval,old=cache.get(key);if(!force&&old&&Date.now()-old.at<25000)return old.data;let mode="LIVE_PUBLIC_DATA",source="Kraken public OHLC",fallbackReason="",candles:any[]=[];try{const r=await fetch("https://api.kraken.com/0/public/OHLC?pair="+MARKETS[symbol].pair+"&interval="+interval,{signal:AbortSignal.timeout(8500),headers:{"user-agent":"SignalForge/0.2 market research"}});if(!r.ok)throw new Error("Kraken HTTP "+r.status);const j:any=await r.json();if(j.error&&j.error.length)throw new Error(j.error.join(", "));const k=Object.keys(j.result||{}).find(z=>z!=="last"),rows=k?j.result[k]:null;if(!Array.isArray(rows)||rows.length<100)throw new Error("Insufficient OHLC response");candles=rows.slice(0,-1).map((v:any[])=>({time:+v[0],open:+v[1],high:+v[2],low:+v[3],close:+v[4],volume:+v[6]})).filter((z:any)=>Number.isFinite(z.close))}catch(e:any){mode="DEMO_DATA";source="Deterministic fallback";fallbackReason=e?.message||"Market data unavailable";candles=demoCandles(symbol,interval)}const data={candles,mode,source,fallbackReason,symbol,interval,fetchedAt:new Date().toISOString()};cache.set(key,{at:Date.now(),data});return data}
 function summarize(c:any[]){const p=c[c.length-1],q=c[Math.max(0,c.length-25)]||p,x=indicators(c),recent=c.slice(-24);return{price:p.close,change24h:(p.close/q.close-1)*100,high24h:Math.max(...recent.map(z=>z.high)),low24h:Math.min(...recent.map(z=>z.low)),volume:p.volume,rsi:x.rsi.at(-1),ema20:x.e20.at(-1),ema50:x.e50.at(-1),atr:x.atr.at(-1),regime:x.e20.at(-1)>x.e50.at(-1)&&p.close>x.e20.at(-1)?"UPTREND":x.e20.at(-1)<x.e50.at(-1)&&p.close<x.e50.at(-1)?"DOWNTREND":"RANGE",lastTime:p.time}}
 function json(data:any,status=200,headers:any={}){return new Response(JSON.stringify(data),{status,headers:Object.assign({"content-type":"application/json; charset=utf-8","cache-control":"no-store"},headers)})}
+function agentPayload(value:any){if(typeof value==="string"){try{return JSON.parse(value)}catch{return {}}}return value&&typeof value==="object"?value:{}}
 async function digest(s:string){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,"0")).join("")}
 function cookie(req:Request,name:string){const c=req.headers.get("cookie")||"";const p=c.split(";").map(x=>x.trim()).find(x=>x.startsWith(name+"="));return p?p.slice(name.length+1):""}
 async function userFor(req:Request){if(!dbReady||!db)return null;const raw=cookie(req,"sf_session");if(!raw)return null;const h=await digest(raw),s=await db.unsafe("SELECT u.id FROM user_sessions s JOIN users u ON u.id=s.user_id WHERE s.token_hash=$1 AND s.expires_at>NOW()",[h]);if(!s.length)return null;const id=s[0].id;await db.unsafe("UPDATE users SET plan='explorer',subscription_status='expired',updated_at=NOW() WHERE id=$1 AND subscription_status='trialing' AND trial_ends_at<=NOW() AND stripe_subscription_id IS NULL",[id]);await db.unsafe("UPDATE users SET last_active_at=NOW() WHERE id=$1",[id]);const r=await db.unsafe("SELECT id,email,role,selected_plan,selected_period,trial_ends_at,stripe_customer_id,stripe_subscription_id,subscription_status,billing_risk_status,billing_current_period_end,cancel_at_period_end,referral_code,CASE WHEN billing_risk_status<>'clear' THEN 'explorer' WHEN subscription_status='active' THEN plan WHEN subscription_status='past_due' AND billing_current_period_end>NOW() THEN plan WHEN subscription_status='trialing' AND trial_ends_at>NOW() THEN 'quant' ELSE 'explorer' END AS plan,CASE WHEN subscription_status='trialing' AND trial_ends_at>NOW() THEN GREATEST(0,CEIL(EXTRACT(EPOCH FROM(trial_ends_at-NOW()))/86400))::int ELSE 0 END AS trial_days_remaining FROM users WHERE id=$1",[id]);return r[0]||null}
@@ -567,8 +568,8 @@ if(method==="GET"&&path==="/api/web3/pulse"){
   if(!dbReady||!db)return json({error:"RESEARCH_STORAGE_UNAVAILABLE"},503);
   const rows=await db.unsafe("SELECT j.status,j.mode,j.result,c.created_at AS \"publishedAt\" FROM agent_public_cards c JOIN agent_jobs j ON j.id=c.job_id AND j.user_id=c.user_id WHERE c.id=$1",[path.split("/").at(-1)]);
   if(!rows.length)return json({error:"CARD_NOT_FOUND"},404);
-  const j=rows[0];
-  return json({status:j.status,mode:j.mode,summary:j.result.summary,evidence:j.result.evidence,limitations:j.result.limitations,observedAt:j.result.observedAt,executedAt:j.result.executedAt,publishedAt:j.publishedAt,independentlyVerified:false});
+  const j=rows[0],evidence=agentPayload(j.result);
+  return json({status:j.status,mode:j.mode,summary:evidence.summary,evidence:evidence.evidence,limitations:evidence.limitations,observedAt:evidence.observedAt,executedAt:evidence.executedAt,publishedAt:j.publishedAt,independentlyVerified:false});
  }
  if(path==="/api/agent/research"){
   if(method!=="POST")return json({error:"METHOD_NOT_ALLOWED"},405);
@@ -586,7 +587,7 @@ if(method==="GET"&&path==="/api/web3/pulse"){
   const owner=await userFor(req);
   if(owner&&dbReady&&db&&result.status==="SOURCE_OBSERVED"){
    try{
-    const saved=await db.unsafe("INSERT INTO agent_jobs(user_id,prompt,tool,status,mode,result) VALUES($1,$2,$3,$4,$5,$6::jsonb) RETURNING id::text AS id",[owner.id,result.prompt,result.tool,result.status,result.mode,JSON.stringify(result)]);
+    const saved=await db.unsafe("INSERT INTO agent_jobs(user_id,prompt,tool,status,mode,result) VALUES($1,$2,$3,$4,$5,$6::text::jsonb) RETURNING id::text AS id",[owner.id,result.prompt,result.tool,result.status,result.mode,JSON.stringify(result)]);
     result.persistedJobId=saved[0].id;
     await recordProductAction(owner.id,"agent_research_completed","agent-research:"+owner.id+":"+saved[0].id);
    }catch(error){console.error("Agent research persistence failure",String(error).slice(0,100));result.storageStatus="UNAVAILABLE"}
@@ -597,7 +598,7 @@ if(method==="GET"&&path==="/api/web3/pulse"){
   if(!dbReady||!db)return json({error:"RESEARCH_STORAGE_UNAVAILABLE"},503);
   const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
   const items=await db.unsafe("SELECT id::text,prompt,tool,status,result,created_at AS \"createdAt\" FROM agent_jobs WHERE user_id=$1 ORDER BY id DESC LIMIT 40",[owner.id]);
-  return json({items,ownerScope:"AUTHENTICATED_PRIVATE"});
+  return json({items:items.map((item:any)=>({...item,result:agentPayload(item.result)})),ownerScope:"AUTHENTICATED_PRIVATE"});
  }
  if(path==="/api/agent/theses"&&["GET","POST"].includes(method)){
   if(!dbReady||!db)return json({error:"RESEARCH_STORAGE_UNAVAILABLE"},503);
