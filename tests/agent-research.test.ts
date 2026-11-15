@@ -48,3 +48,26 @@ test("public outage does not hallucinate any market data",async()=>{
  expect(r.status).toBe("SOURCE_UNAVAILABLE");
  expect(r.evidence).toHaveLength(0);
 });
+
+test("requested Hyperliquid symbol never inherits a different ranked instrument",async()=>{
+ const r:any=await runMarketResearch("Inspect Hyperliquid ETH funding",deps,()=>time);
+ expect(r.status).toBe("SOURCE_UNAVAILABLE");
+ expect(r.mode).toBe("SOURCE_UNAVAILABLE");
+ expect(r.requestedSymbol).toBe("ETH");
+ expect(r.evidence).toEqual([]);
+ expect(r.unavailableSources).toContain("perps:ETH:NOT_IN_RANKED_SNAPSHOT");
+ expect(r.summary).toContain("No unrelated market was substituted");
+ expect(r.financialExecution).toBe(false);
+});
+test("explicit Hyperliquid symbol uses only its matching actual observation",async()=>{
+ const base:any=await deps.pulse();
+ const eth={...base.perps.items[0],symbol:"ETH",markPx:3100,publicUrl:"https://app.hyperliquid.xyz/trade/ETH"};
+ const research:any=await runMarketResearch("Inspect Hyperliquid ETH funding",{
+  ...deps,pulse:async()=>({...base,perps:{state:"SOURCE_OBSERVED",items:[base.perps.items[0],eth]}})
+ },()=>time);
+ expect(research.status).toBe("SOURCE_OBSERVED");
+ expect(research.requestedSymbol).toBe("ETH");
+ expect(research.evidence).toHaveLength(1);
+ expect(research.evidence[0].label).toBe("ETH");
+ expect(research.evidence[0].sourceUrl).toContain("/ETH");
+});
