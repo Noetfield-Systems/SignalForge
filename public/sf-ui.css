@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap");
 /* SignalForge Product UI Foundation 2027
    A single source of truth for product navigation, typography, color roles,
    focus, action states and market chart chrome. Existing customer flows remain owners. */
@@ -947,4 +948,79 @@ body[data-sf-surface="internal"] tbody tr:hover{background:#1b3036}
   animation-duration:.01ms!important;transition-duration:.01ms!important;
   scroll-behavior:auto!important;
  }
+}
+
+
+/* v12 exact operational components, without a new renderer or dashboard. */
+.sf-legacy-native{
+ position:relative;width:100%;height:clamp(250px,30vw,398px);
+ border-radius:5px;overflow:hidden;isolation:isolate;background:#0d1721;
+ border:1px solid #293c41;
+}
+.sf-legacy-native[hidden],.chartcanvas[hidden]{display:none!important}
+body[data-sf-surface="terminal"] .chartwrap{padding:11px 12px 10px}
+body[data-sf-surface="terminal"] .chartcanvas{height:clamp(250px,30vw,398px)}
+body[data-sf-surface="terminal"] .chartmeta{padding-bottom:10px}
+body[data-sf-surface="terminal"] .chartlegend{
+ margin-top:7px;border-top:1px solid #2f464a;
+ font-family:var(--sf-numeric);font-size:10px;padding:10px 4px 2px;
+}
+.sf-agent-secondary{
+ margin:7px 0 17px;
+ border:1px solid #38534f;border-radius:11px;
+ padding:12px 13px 8px;background:#121f27;
+}
+.sf-agent-secondary-head{
+ display:flex;justify-content:space-between;gap:10px;
+ font:10px var(--sf-numeric);letter-spacing:.045em;color:#a6b9b5;
+}
+.sf-agent-secondary .suggest{margin:9px 0 5px;gap:8px}
+.sf-agent-secondary .sf-v11-agent-workflow{
+ margin:8px 0 0!important;border:0!important;border-top:1px solid #344949!important;
+ border-radius:0!important;box-shadow:none!important;
+ padding:10px 0 0!important;background:transparent!important;
+}
+.sf-agent-secondary .suggest button{min-height:36px}
+.sf-agent-secondary .sf-focus-chip{font-size:9px}
+.sf-view-navigation{
+ display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+ margin:12px 0 7px;padding:9px 13px;
+ border:1px solid #2f4647;border-radius:9px;background:#121e26;
+}
+.sf-view-navigation-title{
+ color:#b3c6c6;font:10px var(--sf-numeric);letter-spacing:.08em;
+}
+.sf-view-navigation-links{display:flex;flex-wrap:wrap;gap:7px 12px}
+.sf-view-navigation-links a{
+ display:inline-flex;align-items:center;min-height:28px;text-decoration:none;
+ font:600 11px var(--sf-font);color:#eacb98;
+}
+.sf-view-navigation-links a:hover{color:#98e8c4;text-decoration:underline}
+.sf-v12-public-action{
+ display:inline-flex;align-items:center;gap:10px;
+ border:1px solid #56735f;background:#173026;
+ color:#d6e9db;border-radius:7px;padding:8px 12px;
+ text-decoration:none;font:650 11px var(--sf-font);min-height:40px;
+}
+.sf-v12-public-action:hover{background:#233d30;border-color:#b69a69;color:#fff}
+.sf-v12-operational-meta{
+ display:flex;align-items:center;flex-wrap:wrap;gap:8px;
+ padding:10px 0;margin-top:8px;border-top:1px solid #30454c;
+ color:#b2c8c5;font:10px var(--sf-numeric);
+}
+.sf-v12-operational-meta span{
+ padding:5px 8px;border:1px solid #33514a;border-radius:5px;background:#162822;
+}
+.sf-v12-onboarding-note{font:11px/1.6 var(--sf-font);color:#a5bcb9;margin-top:8px}
+@media(max-width:760px){
+ .sf-agent-secondary{padding:10px}
+ .sf-agent-secondary-head span:last-child{display:none}
+ .sf-agent-secondary .sf-v11-agent-workflow{
+  gap:6px 13px;max-height:none;
+ }
+ .sf-agent-secondary .sf-focus-chip{display:none}
+ .sf-agent-secondary .suggest button{min-height:36px}
+ .sf-view-navigation{padding:10px 12px}
+ .sf-view-navigation-links{gap:5px 13px}
+ .sf-legacy-native,.chartcanvas{height:285px!important}
 }
