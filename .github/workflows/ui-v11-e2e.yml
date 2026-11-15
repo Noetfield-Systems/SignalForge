@@ -1,4 +1,4 @@
-name: SignalForge v11 complete UI/UX E2E quality gate
+name: SignalForge v12 complete instrument-grade UI/UX E2E
 on:
   pull_request:
     branches: [main]
@@ -6,6 +6,7 @@ on:
       - "public/**"
       - "src/server.ts"
       - "scripts/premium-v11-e2e-browser.py"
+      - "scripts/sf-v12-experience-audit.py"
       - ".github/workflows/ui-v11-e2e.yml"
   push:
     branches: [main, "feat/signalforge-v11-unified-premium-ui-e2e-20261115"]
@@ -13,6 +14,7 @@ on:
       - "public/**"
       - "src/server.ts"
       - "scripts/premium-v11-e2e-browser.py"
+      - "scripts/sf-v12-experience-audit.py"
       - ".github/workflows/ui-v11-e2e.yml"
   workflow_dispatch:
 
@@ -43,6 +45,7 @@ jobs:
       NODE_ENV: test
       PORT: 18182
       VISUAL_BASE: http://localhost:18182
+      SIGNALFORGE_ADMIN_EMAIL: sf-v12-ci-admin@signalforge.test
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
@@ -55,7 +58,7 @@ jobs:
           CHROME=$(command -v google-chrome || command -v chromium || true)
           test -n "$CHROME"
           echo "CHROME=$CHROME" >> "$GITHUB_ENV"
-          python3 -m py_compile scripts/premium-v11-e2e-browser.py
+          python3 -m py_compile scripts/premium-v11-e2e-browser.py scripts/sf-v12-experience-audit.py
       - name: Launch actual SignalForge against disposable PostgreSQL
         run: |
           bun run src/server.ts > /tmp/sf-ui-v11-server.log 2>&1 &
@@ -70,11 +73,13 @@ jobs:
           exit 1
       - name: Exercise all public pages, 9 app views, mobile/desktop, real signup and deletion
         run: python3 scripts/premium-v11-e2e-browser.py
+      - name: Audit every user-visible interactive surface and test-only private admin views
+        run: python3 scripts/sf-v12-experience-audit.py
       - name: Upload browser screenshots for direct review
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: signalforge-v11-cross-product-browser
+          name: signalforge-v12-whole-product-audit
           path: artifacts/ui-v11/*.png
           retention-days: 30
           if-no-files-found: warn
