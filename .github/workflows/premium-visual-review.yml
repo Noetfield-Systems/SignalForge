@@ -1,7 +1,17 @@
 name: SignalForge visual before and after review
 on:
   push:
-    branches: ["feat/signalforge-visual-system-v9"]
+    branches: [main, "feat/signalforge-visual-system-v9"]
+    paths:
+      - "public/**"
+      - "scripts/premium_visual_acceptance.py"
+      - ".github/workflows/premium-visual-review.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "public/**"
+      - "scripts/premium_visual_acceptance.py"
+      - ".github/workflows/premium-visual-review.yml"
   workflow_dispatch:
 permissions:
   contents: read
@@ -56,6 +66,12 @@ jobs:
             assert width>=380 and height>=800
             print("VISUAL_CAPTURE_OK",path.name,width,height,len(data))
           PY
+      - name: Install browser layout validation helper
+        run: python3 -m pip install --disable-pip-version-check --quiet --user playwright==1.58.0
+      - name: Verify responsive geometry, active controls and non-fabricated source labeling
+        env:
+          VISUAL_BASE: http://127.0.0.1:18180
+        run: python3 scripts/premium_visual_acceptance.py
       - name: Upload exact render screenshots
         uses: actions/upload-artifact@v4
         with:
