@@ -14,6 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <title>SignalForge — Forge What Moves the Market</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{color-scheme:dark;--bg:#070d11;--bg2:#0d171a;--surface:#101b1f;--surface2:#142126;--border:#294044;--border2:#203236;--text:#f0f5f2;--muted:#a5b6b7;--dim:#718b91;--green:#78e5b3;--green2:#2fb985;--gold:#f2cb88;--red:#e97883;--line:#26383c}
 *,*:before,*:after{box-sizing:border-box}
@@ -384,14 +385,69 @@ body:before{height:1350px;background:radial-gradient(ellipse at 58% 46%,#1e36302
  .term-controls{padding:7px 9px}
 }
 .icp-entrances{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding-top:14px;padding-bottom:5px}.icp-entrances a{display:flex;flex-direction:column;gap:5px;padding:13px 16px;border:1px solid #30443f;border-radius:10px;background:#10201e;color:#dceee9;min-width:0;text-decoration:none}.icp-entrances a:hover,.icp-entrances a:focus-visible{border-color:#8cdbb5}.icp-entrances strong{font-size:12px;letter-spacing:.06em}.icp-entrances span{font-size:11px;color:#9eb5af}@media(max-width:720px){.icp-entrances{grid-template-columns:1fr}}
+
+/* SignalForge 2027 — product-first visual system; charts retain genuine source rendering */
+:root{--bg:#090c11;--bg2:#101721;--surface:#121b23;--surface2:#19232b;--border:#303e49;--border2:#2a3641;--text:#f6f5ef;--muted:#a3b3be;--dim:#83939d;--green:#9ee8c7;--gold:#e9cb95;--line:#30404a;--display:"Manrope",ui-sans-serif,system-ui,sans-serif;--mono:"DM Mono",monospace}
+body{font-family:"Manrope",ui-sans-serif,system-ui,sans-serif;background:#090c11;line-height:1.65;-webkit-font-smoothing:antialiased}
+body:before{background:radial-gradient(ellipse 44% 53% at 78% 20%,#303b502b,transparent 80%),radial-gradient(ellipse 30% 35% at 14% 8%,#2b4a4321,transparent 80%);height:1250px}
+.container{width:min(1390px,calc(100% - 100px))}
+.header{height:78px;background:#0a0e14eb;border-bottom:1px solid #ffffff17;backdrop-filter:blur(21px)}
+.brand{font-family:"Manrope",sans-serif;font-weight:800;letter-spacing:-.065em;font-size:21px}
+.navlinks{gap:clamp(15px,2vw,30px);font-size:12px;letter-spacing:-.02em;color:#b0bec7}.navlinks a{white-space:nowrap}.navlinks a:hover{color:#f7f4ee}
+.navlogin{font-size:11px;border-color:#46525c;border-radius:7px;padding:10px 13px}.navright .btn{border-radius:7px}
+.hero{padding:15px 0 90px;background:radial-gradient(ellipse 46% 50% at 71% 4%,#24424f20,transparent 78%)}
+.hero-copy{grid-template-columns:minmax(0,1.16fr) minmax(330px,.84fr);column-gap:clamp(45px,6vw,120px);padding:45px 0 46px;row-gap:20px}
+.hero-artline{font-size:10px;color:#9cabb3;border-color:#32404b}.hero-titleblock{padding-top:3px}
+.hero h1{font:700 clamp(63px,6.1vw,101px)/1.02 "Manrope",sans-serif;letter-spacing:-.083em;margin:16px 0 21px;color:#f8f6ee}
+.hero h1 em{color:var(--gold);font-weight:700}
+.hero .eyebrow{font:500 10px "DM Mono",monospace;letter-spacing:.045em;color:#e3c99c}
+.hero-summary{padding-bottom:7px;align-self:center}.hero-summary-top{border-color:#44545e;color:#c7ad8e;padding-bottom:18px}
+.hero .lead{font:400 clamp(14px,1.08vw,17px)/1.85 "Manrope",sans-serif;color:#acbac3}
+.hero-actions{margin-top:29px;gap:11px}.hero-actions .btn{min-height:50px;border-radius:7px;font:700 11px "Manrope",sans-serif;padding:12px 18px}
+.hero-actions .btn:first-child{background:#e9cb95;color:#181a18;border-color:#e9cb95;box-shadow:0 14px 45px #e9cb9521}
+.hero-actions .btn:first-child:hover{background:#f4dcae}
+.hero-actions .btn.ghost{background:#19242c;border-color:#58635f;color:#edf1e9}
+.hero-caption{color:#99acb1;margin-top:23px}
+.hero-caption span:before{color:#9ee8c7}
+.hero-notation{font-size:10px;color:#8299a3}
+.terminal-outer:before{background:radial-gradient(ellipse at 42% 41%,#325e5a20,transparent 75%);filter:blur(30px)}
+.stage-heading{color:#bbc7c7}.stage-heading i{color:var(--gold)}
+.terminal{border:1px solid #43545d;border-radius:13px;overflow:hidden;background:#0d151d;box-shadow:0 40px 110px #0007,0 0 0 1px #ffffff04}
+.termbar{height:51px;background:#18232a;border-bottom:1px solid #3d4c53}
+.term-top,.term-controls{background:#111c24;border-color:#34454e}.termbody{background:#0d171d}.term-side{background:#121e25;border-color:#374850}.chart-shell{background:#0b151b}
+.term-bottom{background:#111b23}
+.icp-entrances{grid-template-columns:repeat(3,1fr);gap:13px;padding-top:22px;padding-bottom:35px}
+.icp-entrances a{min-height:100px;padding:19px 21px;border-color:#33414b;border-radius:10px;background:#131d25;transition:background .2s,transform .2s,border-color .2s}
+.icp-entrances a:hover{background:#192731;border-color:#a18f70;transform:translateY(-2px)}
+.icp-entrances strong{font:700 13px "Manrope",sans-serif;letter-spacing:-.02em;color:#edf2ec}.icp-entrances span{font-size:11px;color:#a0b0b9}
+.strip,.section{background:transparent}
+.section-head h2,.split-copy h2,.pricing-intro h2,.final h2{font-family:"Manrope",sans-serif;font-weight:700;letter-spacing:-.075em}
+.section-head p,.split-copy p,.pricing-intro p,.final p{font-family:"Manrope",sans-serif;color:#a6b9c1}
+.feature,.plan,.workstep{border-color:#344650;background:#131d25;border-radius:12px}
+.feature:hover{border-color:#6c7f84}
+@media(max-width:1320px){.container{width:calc(100% - 74px)}.hero h1{font-size:clamp(59px,5.8vw,85px)}}
+@media(max-width:1050px){.hero-copy{grid-template-columns:1fr;padding-top:39px;gap:19px}.hero-titleblock{max-width:850px}.hero-summary{max-width:690px;align-self:start}.hero h1{font-size:clamp(59px,8vw,85px)}.hero .lead{max-width:720px}.hero-actions{margin-top:19px}.hero{padding-bottom:60px}}
+@media(max-width:760px){.container{width:calc(100% - 38px)}.header{height:67px}.hero{padding:0 0 49px}.hero-copy{padding:29px 0 21px;gap:11px}.hero h1{font-size:clamp(46px,10.8vw,65px);margin:12px 0 16px;line-height:1.035}.hero .lead{font-size:13px;line-height:1.78}.hero-summary-top{padding:11px 0}.hero-actions{margin-top:20px}.terminal-outer{margin-top:12px}.icp-entrances{display:none!important}.stage-heading{display:none}.hero-artline{display:none}.hero-notation{display:none}.hero-summary-top{display:none}.hero-caption{display:none}}
+@media(max-width:460px){.container{width:calc(100% - 30px)}.hero h1{font-size:clamp(43px,11vw,55px);margin:13px 0 12px}.hero .eyebrow{font-size:9px}.hero-actions{grid-template-columns:1fr 1fr;gap:9px}.hero-actions .btn{font-size:10px;min-height:46px;padding:10px 12px}.hero-copy{padding:27px 0 17px;gap:9px}.chart-shell{height:249px}.termbar{height:47px}}
+
+
+/* Responsive headline acceptance: avoid orphaning "it." on 1440–1680px desktops */
+@media(min-width:1051px){.hero h1{font-size:clamp(60px,5.12vw,82px);line-height:1.065;letter-spacing:-.085em}.hero-titleblock{min-width:0}.hero-copy{grid-template-columns:minmax(0,1.25fr) minmax(340px,.75fr)}}
+@media(min-width:1051px) and (max-width:1320px){.hero h1{font-size:clamp(57px,5vw,73px)}}
+
+
+/* Exact visual regression fix: desktop halo must never expand mobile document width. */
+@media(max-width:760px){.terminal-outer:before{inset:-26px 0;max-width:100%}.terminal-outer{isolation:isolate}}
+
+@media(max-width:760px){.navright{flex-shrink:0;gap:6px}.navright>.btn{font-size:10px;padding:8px 10px;min-width:0}.navbar{gap:5px}}
 </style>
 </head>
 <body>
 <a href="#main" class="skip">Skip to content</a>
 <header class="header"><div class="container navbar">
  <a class="brand" href="/" aria-label="SignalForge home"><span class="emblem" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M4 26 15 6h6L10 26H4Zm11 0L26 6h3L18 26h-3Z" fill="currentColor"/><path d="M7 5h7l-3 5H4L7 5Z" fill="#76e0ac"/></svg></span>SignalForge</a>
- <nav class="navlinks" id="mainNav" aria-label="Main navigation"><a href="#markets">Markets</a><a href="/web3">Web3 Market Pulse</a><a href="/radar">Token Radar</a><a href="/agent">Market Agent Beta</a><a href="/developers">MCP for Developers</a><a href="#features">Signals &amp; Strategies</a><a href="#research">Research</a><a href="#pricing">Pricing</a></nav>
- <div class="navright"><a class="navlogin" href="/app">Open terminal</a><a class="btn small" href="/app?view=dashboard">Explore platform <span class="arrow" aria-hidden="true">↗</span></a><button class="menubtn" type="button" id="menuToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Toggle menu">☰</button></div>
+ <nav class="navlinks" id="mainNav" aria-label="Main navigation"><a href="/web3">Markets</a><a href="/radar">Token Radar</a><a href="/agent">Market Agent</a><a href="/developers">Developers</a><a href="#features">Strategies</a><a href="#pricing">Pricing</a></nav>
+ <div class="navright"><a class="navlogin" href="/app">Open terminal</a><a class="btn small" href="/app?view=dashboard">Launch app <span class="arrow" aria-hidden="true">↗</span></a><button class="menubtn" type="button" id="menuToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Toggle menu">☰</button></div>
 </div></header>
 <main id="main">
  <div class="container marquee"><span><b>Web3-native market intelligence</b> &nbsp; / &nbsp; Research · Explain · Validate</span><a href="/web3">Explore Web3 market flow ↗</a></div>
@@ -555,4 +611,4 @@ nav.querySelectorAll("a").forEach(a=>a.addEventListener("click",function(){nav.c
 window.addEventListener("resize",function(){if(currentCandles.length)paint()});
 load();
 }());
-</script></body></html>
+</script><script>(function(){var hero=document.querySelector("main .hero"),entrances=document.querySelector("main .icp-entrances");if(hero&&entrances)hero.insertAdjacentElement("afterend",entrances)})();</script></body></html>
