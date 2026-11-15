@@ -42,7 +42,7 @@ jobs:
       DATABASE_SSL: disable
       NODE_ENV: test
       PORT: 18182
-      VISUAL_BASE: http://127.0.0.1:18182
+      VISUAL_BASE: http://localhost:18182
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
