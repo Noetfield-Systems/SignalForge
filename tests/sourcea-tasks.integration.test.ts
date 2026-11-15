@@ -90,7 +90,7 @@ test("cancellation, bounded retry, source outage and schedule isolation",async()
  expect(noThird.status).toBe(409);
  expect((await call("/api/agent/tasks/"+id,{headers:{cookie:alice.cookie}})).data.attempts).toBe(2);
  const scheduled=await call("/api/agent/schedules",post(alice.cookie,{prompt,cadenceMinutes:60}));
- expect(scheduled.status).toBe(201);
+ if(scheduled.status!==201)console.error("SCHEDULE_TEST_DIAGNOSTIC",scheduled.data);expect(scheduled.status).toBe(201);
  const other=await call("/api/agent/schedules",{headers:{cookie:bob.cookie}});
  expect(other.data.items).toHaveLength(0);
  const sid=scheduled.data.id;
