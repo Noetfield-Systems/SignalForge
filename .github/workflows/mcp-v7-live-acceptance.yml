@@ -1,0 +1,28 @@
+name: SignalForge MCP v7 independent production acceptance
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/signalforge-mcp.ts"
+      - "src/signalforge-mcp-client.ts"
+      - "src/model-gateway.ts"
+      - "scripts/mcp-v7-live-acceptance.ts"
+      - ".github/workflows/mcp-v7-live-acceptance.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  live-mcp-client-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.2.23
+      - name: Install official MCP client and pinned dependencies
+        run: bun install
+      - name: Independent real external MCP v2 client and task execution
+        env:
+          BASE: https://signalforge-web-production.up.railway.app
+        run: bun run scripts/mcp-v7-live-acceptance.ts
