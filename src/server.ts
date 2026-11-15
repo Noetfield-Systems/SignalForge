@@ -642,7 +642,7 @@ if(method==="GET"&&path==="/api/web3/pulse"){
   if("error" in check)return json({error:check.error},400);
   const count=await db.unsafe("SELECT COUNT(*)::int AS n FROM sourcea_customer_schedules WHERE user_id=$1 AND active=true",[owner.id]);
   if(count[0]?.n>=10)return json({error:"SCHEDULE_LIMIT_REACHED"},409);
-  const rows=await db.unsafe('INSERT INTO sourcea_customer_schedules(user_id,prompt,cadence_minutes,next_run_at) VALUES($1,$2,$3,NOW()+($3*INTERVAL \'1 minute\')) RETURNING id::text AS id,next_run_at AS "nextRunAt"',[owner.id,prompt,cadence]);
+  const rows=await db.unsafe('INSERT INTO sourcea_customer_schedules(user_id,prompt,cadence_minutes,next_run_at) VALUES($1,$2,$3,NOW()+($3::integer*INTERVAL \'1 minute\')) RETURNING id::text AS id,next_run_at AS "nextRunAt"',[owner.id,prompt,cadence]);
   return json({id:rows[0].id,nextRunAt:rows[0].nextRunAt,status:"ACTIVE",cadenceMinutes:cadence},201);
  }
  if(path.startsWith("/api/agent/schedules/")&&method==="POST"){
