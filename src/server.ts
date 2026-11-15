@@ -8,6 +8,8 @@ import { compileSignalForgeCompany } from "../company-os/signalforge-autonomy.ts
 import { assessMarketSourceIntegrity } from "./market-source-integrity.ts";
 import { getWeb3NativePulse } from "./web3-native-pulse.ts";
 import { runMarketResearch } from "./agent-research.ts";
+import {MARKET_RESEARCH_SKILL,compileMarketWorkPacket,verifyExecutionReceipt} from "./sourcea-execution-adapter.ts";
+import {newCustomerTask,getOwnedCustomerTask,listOwnedCustomerTasks,cancelOwnedCustomerTask,retryOwnedCustomerTask,drainSourceATasks,activateDueSchedules} from "./sourcea-task-runtime.ts";
 import { compareMarketObservations } from "./agent-compare.ts";
 import { compileSourceRankedScanner, VALID_SCAN_INTERVALS } from "./scanner-research.ts";
 import productIdentity from "../strategy/PRODUCT-IDENTITY-SSOT-v3.json";
@@ -110,6 +112,15 @@ await db.unsafe("CREATE INDEX IF NOT EXISTS agent_jobs_parent_idx ON agent_jobs(
 await db.unsafe("CREATE TABLE IF NOT EXISTS agent_theses(id BIGSERIAL PRIMARY KEY,user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,job_id BIGINT NOT NULL REFERENCES agent_jobs(id) ON DELETE CASCADE,invalidation TEXT NOT NULL,source_snapshot JSONB NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),UNIQUE(user_id,job_id))");
 await db.unsafe("CREATE INDEX IF NOT EXISTS agent_theses_owner_idx ON agent_theses(user_id,id DESC)");
 await db.unsafe("CREATE TABLE IF NOT EXISTS agent_public_cards(id UUID PRIMARY KEY DEFAULT gen_random_uuid(),user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,job_id BIGINT NOT NULL REFERENCES agent_jobs(id) ON DELETE CASCADE,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),UNIQUE(user_id,job_id))");
+
+await db.unsafe("CREATE TABLE IF NOT EXISTS sourcea_customer_schedules (id UUID PRIMARY KEY DEFAULT gen_random_uuid(),user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,prompt TEXT NOT NULL,cadence_minutes INTEGER NOT NULL CHECK(cadence_minutes>=60 AND cadence_minutes<=10080),active BOOLEAN NOT NULL DEFAULT TRUE,next_run_at TIMESTAMPTZ NOT NULL,last_queued_at TIMESTAMPTZ,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())");
+await db.unsafe("CREATE INDEX IF NOT EXISTS sourcea_customer_schedules_due_idx ON sourcea_customer_schedules(next_run_at) WHERE active=true");
+await db.unsafe("CREATE TABLE IF NOT EXISTS sourcea_customer_tasks (id UUID PRIMARY KEY,user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,schedule_id UUID REFERENCES sourcea_customer_schedules(id) ON DELETE SET NULL,prompt TEXT NOT NULL,packet JSONB NOT NULL,status TEXT NOT NULL DEFAULT 'QUEUED' CHECK(status IN ('QUEUED','RUNNING','SUCCEEDED','FAILED','CANCELLED')),attempt_count INTEGER NOT NULL DEFAULT 0,cancel_requested BOOLEAN NOT NULL DEFAULT FALSE,lease_until TIMESTAMPTZ,started_at TIMESTAMPTZ,finished_at TIMESTAMPTZ,artifact JSONB,receipt JSONB,usage JSONB,last_error TEXT,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())");
+await db.unsafe("ALTER TABLE sourcea_customer_tasks ADD COLUMN IF NOT EXISTS agent_job_id BIGINT REFERENCES agent_jobs(id) ON DELETE SET NULL");
+await db.unsafe("CREATE INDEX IF NOT EXISTS sourcea_customer_tasks_owner_idx ON sourcea_customer_tasks(user_id,created_at DESC)");
+await db.unsafe("CREATE INDEX IF NOT EXISTS sourcea_customer_tasks_queue_idx ON sourcea_customer_tasks(status,created_at) WHERE status IN ('QUEUED','RUNNING')");
+await db.unsafe("CREATE TABLE IF NOT EXISTS sourcea_task_events (id BIGSERIAL PRIMARY KEY,task_id UUID NOT NULL REFERENCES sourcea_customer_tasks(id) ON DELETE CASCADE,event TEXT NOT NULL,details JSONB NOT NULL DEFAULT '{}'::jsonb,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())");
+await db.unsafe("CREATE INDEX IF NOT EXISTS sourcea_task_events_task_idx ON sourcea_task_events(task_id,id)");
 dbReady=true;return true}
 function rateLimit(req:Request,limit=30,scope="general"){const ip=req.headers.get("x-forwarded-for")?.split(",")[0]||"unknown",now=Date.now(),v=rate.get(scope+":"+ip);if(!v||now-v.at>60000){rate.set(scope+":"+ip,{n:1,at:now});return false}v.n++;return v.n>limit}
 async function persistSignals(symbol:string,interval:number,c:any[],signals:any[],mode:string){if(!dbReady||!db||mode!=="LIVE_PUBLIC_DATA")return;const last=c[c.length-1];for(const s of signals){if(s.state!=="ACTIVE"||!["LONG","SHORT"].includes(s.direction))continue;const key=[symbol,interval,s.id,s.direction,last.time].join(":");await db.unsafe("INSERT INTO signal_events (signal_key,symbol,interval,strategy_id,strategy_name,direction,score,entry,stop,target1,target2,target3,entry_time,candle_time,reasoning,source) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15::jsonb,$16) ON CONFLICT(signal_key) DO NOTHING",[key,symbol,interval,s.id,s.name,s.direction,s.score,s.entry,s.stop,s.targets[0],s.targets[1],s.targets[2],Date.now(),last.time,db.json(s.reasons),"KRAKEN_PUBLIC_OHLC"])}await evaluateSignals(symbol,interval,c)}
@@ -575,6 +586,89 @@ if(method==="GET"&&path==="/api/web3/pulse"){
   const j=rows[0],evidence=agentPayload(j.result);
   return json({status:j.status,mode:j.mode,summary:evidence.summary,evidence:evidence.evidence,limitations:evidence.limitations,observedAt:evidence.observedAt,executedAt:evidence.executedAt,publishedAt:j.publishedAt,independentlyVerified:false});
  }
+
+ // SignalForge owns the user and permission boundary; SourceA supplies only
+ // a versioned, portable evidence contract and the local execution adapter.
+ if(path==="/api/account/delete"&&method==="POST"){
+  if(!dbReady||!db)return json({error:"ACCOUNT_STORAGE_UNAVAILABLE"},503);
+  if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
+  const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+  if(Number(req.headers.get("content-length")||0)>512)return json({error:"PAYLOAD_TOO_LARGE"},413);
+  const raw=await req.text();if(raw.length>512)return json({error:"PAYLOAD_TOO_LARGE"},413);
+  let input:any;try{input=JSON.parse(raw)}catch{return json({error:"INVALID_JSON"},400)}
+  if(input?.confirm!=="DELETE"||typeof input?.password!=="string")return json({error:"EXPLICIT_ACCOUNT_DELETE_CONFIRMATION_REQUIRED"},400);
+  const rows=await db.unsafe("SELECT password_hash,stripe_subscription_id FROM users WHERE id=$1",[owner.id]);
+  if(!rows.length||!await Bun.password.verify(input.password,rows[0].password_hash))return json({error:"ACCOUNT_PASSWORD_INVALID"},401);
+  if(rows[0].stripe_subscription_id)return json({error:"ACTIVE_BILLING_MUST_BE_MANAGED_BEFORE_ACCOUNT_DELETION",billingPath:"/api/billing/portal"},409);
+  await db.unsafe("DELETE FROM product_events WHERE user_id=$1",[owner.id]);
+  await db.unsafe("DELETE FROM users WHERE id=$1",[owner.id]);
+  return json({deleted:true,scope:"OWN_ACCOUNT_AND_CASCADING_PRIVATE_DATA"},200,{"set-cookie":"sf_session=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0"});
+ }
+ if(path==="/api/agent/skills"&&method==="GET")return json({schema:"sourcea.signalforge-skill-catalog.v1",skills:[MARKET_RESEARCH_SKILL],runtime:"SIGNALFORGE_LOCAL_READONLY",remoteSourceAExecutorConnected:false});
+ if(path==="/api/agent/tasks"&&["GET","POST"].includes(method)){
+  if(!dbReady||!db)return json({error:"RESEARCH_STORAGE_UNAVAILABLE"},503);
+  const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+  if(method==="GET")return json({items:await listOwnedCustomerTasks(db,owner.id),scope:"CUSTOMER_PRIVATE",adapter:"sourcea.signalforge-execution.v1"});
+  if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
+  if(rateLimit(req,12,"customer-tasks"))return json({error:"TASK_RATE_LIMIT"},429,{"retry-after":"60"});
+  if(Number(req.headers.get("content-length")||0)>2048)return json({error:"PAYLOAD_TOO_LARGE"},413);
+  const raw=await req.text();if(raw.length>2048)return json({error:"PAYLOAD_TOO_LARGE"},413);
+  let body:any;try{body=JSON.parse(raw)}catch{return json({error:"INVALID_JSON"},400)}
+  const task=await newCustomerTask(db,owner.id,body?.prompt);
+  return "error" in task?json(task,400):json(task,202,{"x-content-type-options":"nosniff"});
+ }
+ if(path.startsWith("/api/agent/tasks/")){
+  if(!dbReady||!db)return json({error:"RESEARCH_STORAGE_UNAVAILABLE"},503);
+  const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+  const parts=path.split("/"),taskId=parts[4],action=parts[5]||"";
+  if(!/^[0-9a-f-]{36}$/.test(taskId)||parts.length>6)return json({error:"INVALID_TASK_ID"},400);
+  if(method==="GET"&&!action){
+   const task=await getOwnedCustomerTask(db,owner.id,taskId);
+   return task?json(task):json({error:"TASK_NOT_FOUND"},404);
+  }
+  if(method==="GET"&&action==="verify"){
+   const task=await getOwnedCustomerTask(db,owner.id,taskId);
+   if(!task)return json({error:"TASK_NOT_FOUND"},404);
+   if(task.status!=="SUCCEEDED"||!task.receipt||!task.artifact)return json({valid:false,reason:"NO_COMPLETED_RECEIPT",status:task.status},409);
+   const verdict=await verifyExecutionReceipt(task.packet,task.artifact,task.receipt);
+   return json({taskId,receiptHash:task.receipt.receiptHash,...verdict});
+  }
+  if(method==="POST"&&["cancel","retry"].includes(action)){
+   if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
+   const updated=action==="cancel"?await cancelOwnedCustomerTask(db,owner.id,taskId):await retryOwnedCustomerTask(db,owner.id,taskId);
+   return updated?json({taskId,status:action==="cancel"?"CANCELLED":"QUEUED",ok:true}):json({error:"TASK_NOT_FOUND_OR_STATE_NOT_ELIGIBLE"},409);
+  }
+  return json({error:"METHOD_NOT_ALLOWED"},405);
+ }
+ if(path==="/api/agent/schedules"&&["GET","POST"].includes(method)){
+  if(!dbReady||!db)return json({error:"RESEARCH_STORAGE_UNAVAILABLE"},503);
+  const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+  if(method==="GET"){
+   const rows=await db.unsafe('SELECT id::text,prompt,cadence_minutes AS "cadenceMinutes",active,next_run_at AS "nextRunAt",last_queued_at AS "lastQueuedAt",created_at AS "createdAt" FROM sourcea_customer_schedules WHERE user_id=$1 ORDER BY created_at DESC LIMIT 30',[owner.id]);
+   return json({items:rows,scope:"CUSTOMER_PRIVATE"});
+  }
+  if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
+  if(Number(req.headers.get("content-length")||0)>2048)return json({error:"PAYLOAD_TOO_LARGE"},413);
+  const raw=await req.text();if(raw.length>2048)return json({error:"PAYLOAD_TOO_LARGE"},413);
+  let body:any;try{body=JSON.parse(raw)}catch{return json({error:"INVALID_JSON"},400)}
+  const prompt=body?.prompt,cadence=Number(body?.cadenceMinutes);
+  if(!Number.isInteger(cadence)||cadence<60||cadence>10080)return json({error:"INVALID_CADENCE"},400);
+  const check=compileMarketWorkPacket(prompt,crypto.randomUUID());
+  if("error" in check)return json({error:check.error},400);
+  const count=await db.unsafe("SELECT COUNT(*)::int AS n FROM sourcea_customer_schedules WHERE user_id=$1 AND active=true",[owner.id]);
+  if(count[0]?.n>=10)return json({error:"SCHEDULE_LIMIT_REACHED"},409);
+  const rows=await db.unsafe('INSERT INTO sourcea_customer_schedules(user_id,prompt,cadence_minutes,next_run_at) VALUES($1,$2,$3,NOW()+($3::integer*INTERVAL \'1 minute\')) RETURNING id::text AS id,next_run_at AS "nextRunAt"',[owner.id,prompt,cadence]);
+  return json({id:rows[0].id,nextRunAt:rows[0].nextRunAt,status:"ACTIVE",cadenceMinutes:cadence},201);
+ }
+ if(path.startsWith("/api/agent/schedules/")&&method==="POST"){
+  if(!dbReady||!db)return json({error:"RESEARCH_STORAGE_UNAVAILABLE"},503);
+  if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
+  const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+  const parts=path.split("/");
+  if(parts.length!==6||parts[5]!=="disable"||!/^[0-9a-f-]{36}$/.test(parts[4]))return json({error:"INVALID_SCHEDULE_ACTION"},400);
+  const rows=await db.unsafe("UPDATE sourcea_customer_schedules SET active=false,updated_at=NOW() WHERE id=$1 AND user_id=$2 AND active=true RETURNING id::text",[parts[4],owner.id]);
+  return rows.length?json({ok:true,status:"DISABLED"}):json({error:"SCHEDULE_NOT_FOUND"},404);
+ }
  if(path==="/api/agent/research"){
   if(method!=="POST")return json({error:"METHOD_NOT_ALLOWED"},405);
   if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
@@ -661,7 +755,7 @@ if(method==="GET"&&path==="/api/web3/pulse"){
  }
 if(path==="/")return new Response(SIGNALFORGE_MARKETING_HTML,{headers:{"content-type":"text/html; charset=utf-8","cache-control":"no-cache","x-content-type-options":"nosniff"}});if(path==="/app"||path==="/index.html")return new Response(HTML,{headers:{"content-type":"text/html; charset=utf-8","cache-control":"no-cache"}});
 if(path.startsWith("/api/v1/")){if(method!=="GET")return json({error:"Read-only API. Use GET."},405);const key=await apiKeyFor(req);if(!key)return json({error:"Valid developer API key required. Send Authorization: Bearer sf_live_…"},401);if(key.rateLimited)return json({error:"API key rate limit exceeded. Limit: 120 requests per minute."},429);if(key.plan==="explorer")return json({error:"Developer API access requires Pro or Quant Desk."},403);if(path==="/api/v1/strategies")return json({strategies:STRATEGIES});if(path==="/api/v1/performance")return json({live:await metricsLive()});if(path==="/api/v1/market"||path==="/api/v1/signals"){const symbol=u.searchParams.get("symbol")||"BTCUSD",interval=Number(u.searchParams.get("interval")||60),p=await marketData(symbol,interval),x=indicators(p.candles),signals=STRATEGIES.map(s=>makeSignal(s,p.candles.length-1,p.candles,x));if(p.mode==="LIVE_PUBLIC_DATA")await persistSignals(symbol,interval,p.candles,signals,p.mode);return json({mode:p.mode,source:p.source,symbol,interval,candles:path.endsWith("/market")?p.candles:undefined,signals,summary:summarize(p.candles)})}return json({error:"API endpoint not found"},404)}
-if(path.startsWith("/api/auth/")){if(rateLimit(req,14,"auth"))return json({error:"Too many authentication requests. Try again later."},429);if(!dbReady||!db)return json({error:"Account storage is initializing. Try again shortly."},503);const body=method==="POST"?await req.json().catch(()=>({})):{};if(path==="/api/auth/signup"&&method==="POST"){const email=String(body.email||"").trim().toLowerCase(),password=String(body.password||"");if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||password.length<10||password.length>200)return json({error:"Enter a valid email and a password of at least 10 characters."},400);const consent=body.emailConsent===true,unsubscribeToken=crypto.randomUUID()+crypto.randomUUID(),hash=await Bun.password.hash(password),ref=String(body.referralCode||"").trim().toUpperCase(),source=String(body.marketingSource||"").slice(0,150),refRows=ref?await db.unsafe("SELECT id FROM users WHERE referral_code=$1 LIMIT 1",[ref]):[],code=crypto.randomUUID().replace(/-/g,"").slice(0,10).toUpperCase(),role=email===(Bun.env.SIGNALFORGE_ADMIN_EMAIL||"").trim().toLowerCase()?"admin":"user",ins=await db.unsafe("INSERT INTO users(email,password_hash,plan,role,trial_started_at,trial_ends_at,subscription_status,referral_code,referred_by,marketing_source,lifecycle_email_consent,lifecycle_consent_at,lifecycle_consent_ip,lifecycle_unsubscribe_token) VALUES($1,$2,'quant',$3,NOW(),NOW()+INTERVAL '30 days','trialing',$4,$5,$6,$7,CASE WHEN $7 THEN NOW() ELSE NULL END,$8,$9) ON CONFLICT(email) DO NOTHING RETURNING id,email,plan,role,trial_ends_at,subscription_status,referral_code",[email,hash,role,code,refRows[0]?.id||null,source,consent,req.headers.get("x-forwarded-for")?.split(",")[0]?.slice(0,80)||null,unsubscribeToken]);if(!ins.length)return json({error:"An account with this email already exists. Sign in instead."},409);await recordProductAction(ins[0].id,"account_created","signup:"+ins[0].id);await db.unsafe("INSERT INTO lifecycle_emails(user_id,email,template,scheduled_at) VALUES($1,$2,'welcome',NOW()) ON CONFLICT(user_id,template) DO NOTHING",[ins[0].id,email]);if(consent)await db.unsafe("INSERT INTO lifecycle_emails(user_id,email,template,scheduled_at) VALUES($1,$2,'day3',NOW()+INTERVAL '3 days'),($1,$2,'day7',NOW()+INTERVAL '7 days'),($1,$2,'day25',NOW()+INTERVAL '25 days') ON CONFLICT(user_id,template) DO NOTHING",[ins[0].id,email]);const token=crypto.randomUUID()+crypto.randomUUID();await db.unsafe("INSERT INTO user_sessions(token_hash,user_id,expires_at) VALUES($1,$2,NOW()+INTERVAL '30 days')",[await digest(token),ins[0].id]);return json({user:{...ins[0],trial_days_remaining:30},created:true,trial:{days:30,cardRequired:false},emailUpdates:consent},201,{"Set-Cookie":"sf_session="+token+"; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=2592000"})}
+if(path.startsWith("/api/auth/")){if(rateLimit(req,14,"auth"))return json({error:"Too many authentication requests. Try again later."},429);if(!dbReady||!db)return json({error:"Account storage is initializing. Try again shortly."},503);const body=method==="POST"?await req.json().catch(()=>({})):{};if(path==="/api/auth/signup"&&method==="POST"){const email=String(body.email||"").trim().toLowerCase(),password=String(body.password||"");if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||password.length<10||password.length>200)return json({error:"Enter a valid email and a password of at least 10 characters."},400);const consent=body.emailConsent===true,unsubscribeToken=crypto.randomUUID()+crypto.randomUUID(),hash=await Bun.password.hash(password),ref=String(body.referralCode||"").trim().toUpperCase(),source=String(body.marketingSource||"").slice(0,150),refRows=ref?await db.unsafe("SELECT id FROM users WHERE referral_code=$1 LIMIT 1",[ref]):[],code=crypto.randomUUID().replace(/-/g,"").slice(0,10).toUpperCase(),role=email===(Bun.env.SIGNALFORGE_ADMIN_EMAIL||"").trim().toLowerCase()?"admin":"user",ins=await db.unsafe("INSERT INTO users(email,password_hash,plan,role,trial_started_at,trial_ends_at,subscription_status,referral_code,referred_by,marketing_source,lifecycle_email_consent,lifecycle_consent_at,lifecycle_consent_ip,lifecycle_unsubscribe_token) VALUES($1,$2,'quant',$3,NOW(),NOW()+INTERVAL '30 days','trialing',$4,$5,$6,$7,CASE WHEN $7 THEN NOW() ELSE NULL END,$8,$9) ON CONFLICT(email) DO NOTHING RETURNING id,email,plan,role,trial_ends_at,subscription_status,referral_code",[email,hash,role,code,refRows[0]?.id||null,source,consent,req.headers.get("x-forwarded-for")?.split(",")[0]?.slice(0,80)||null,unsubscribeToken]);if(!ins.length)return json({error:"An account with this email already exists. Sign in instead."},409);await recordProductAction(ins[0].id,"account_created","signup:"+ins[0].id);if(!email.endsWith("@signalforge.invalid"))await db.unsafe("INSERT INTO lifecycle_emails(user_id,email,template,scheduled_at) VALUES($1,$2,'welcome',NOW()) ON CONFLICT(user_id,template) DO NOTHING",[ins[0].id,email]);if(consent)await db.unsafe("INSERT INTO lifecycle_emails(user_id,email,template,scheduled_at) VALUES($1,$2,'day3',NOW()+INTERVAL '3 days'),($1,$2,'day7',NOW()+INTERVAL '7 days'),($1,$2,'day25',NOW()+INTERVAL '25 days') ON CONFLICT(user_id,template) DO NOTHING",[ins[0].id,email]);const token=crypto.randomUUID()+crypto.randomUUID();await db.unsafe("INSERT INTO user_sessions(token_hash,user_id,expires_at) VALUES($1,$2,NOW()+INTERVAL '30 days')",[await digest(token),ins[0].id]);return json({user:{...ins[0],trial_days_remaining:30},created:true,trial:{days:30,cardRequired:false},emailUpdates:consent},201,{"Set-Cookie":"sf_session="+token+"; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=2592000"})}
 if(path==="/api/auth/login"&&method==="POST"){const email=String(body.email||"").trim().toLowerCase(),rows=await db.unsafe("SELECT id,email,password_hash FROM users WHERE email=$1",[email]);if(!rows.length||!(await Bun.password.verify(String(body.password||""),rows[0].password_hash)))return json({error:"Email or password is incorrect."},401);const token=crypto.randomUUID()+crypto.randomUUID();await db.unsafe("INSERT INTO user_sessions(token_hash,user_id,expires_at) VALUES($1,$2,NOW()+INTERVAL '30 days')",[await digest(token),rows[0].id]);return json({user:await userFor(new Request("http://local",{headers:{cookie:"sf_session="+token}}))},200,{"Set-Cookie":"sf_session="+token+"; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=2592000"})}
 if(path==="/api/auth/me"&&method==="GET")return json({user:await userFor(req)});
 if(path==="/api/auth/logout"&&method==="POST"){const raw=cookie(req,"sf_session");if(raw)await db.unsafe("DELETE FROM user_sessions WHERE token_hash=$1",[await digest(raw)]);return json({ok:true},200,{"Set-Cookie":"sf_session=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0"})}}
@@ -736,6 +830,21 @@ if(path==="/api/billing/portal"){
 if(path==="/api/checkout"&&method==="POST"){if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);const user=await userFor(req);if(!user)return json({error:"Create an account before checkout."},401);const b=await req.json().catch(()=>({}));return stripeCheckout(user,String(b.plan||"pro"),String(b.period||"month"))}
 if(path==="/api/model-forecast"&&method==="POST"){const b=await req.json().catch(()=>({})),model=MODELS.find(x=>x[0].toLowerCase()===String(b.model||"").toLowerCase());if(!model)return json({error:"Unknown model."},400);const endpoint=Bun.env[model[3]];if(!endpoint)return json({error:model[0]+" endpoint is not configured.",status:"NOT_CONNECTED"},503);const symbol=String(b.symbol||"BTCUSD"),interval=Number(b.interval||60),pack=await marketData(symbol,interval);const r=await fetch(endpoint,{method:"POST",headers:{"content-type":"application/json","authorization":Bun.env[model[3].replace("_URL","_TOKEN")]?"Bearer "+Bun.env[model[3].replace("_URL","_TOKEN")]:""},body:JSON.stringify({symbol,interval,candles:pack.candles.slice(-256)}),signal:AbortSignal.timeout(15000)});if(!r.ok)return json({error:"Model endpoint returned HTTP "+r.status},502);return json({model:model[0],result:await r.json(),source:"Configured external inference endpoint"})}
 return json({error:"Not found"},404)}
-async function start(){try{await initDb();console.log("Database schema ready")}catch(e:any){console.error("Database initialization failed",e?.message||e);dbReady=false}Bun.serve({port:PORT,fetch:async(req)=>{try{if(req.method==="POST"&&rateLimit(req,90))return json({error:"Rate limit exceeded."},429);return await handler(req)}catch(e:any){console.error("Request error",e?.stack||e);return json({error:"Request failed",detail:Bun.env.NODE_ENV==="development"?e?.message:undefined},500)}}});console.log("SIGNALFORGE v0.4.0 listening on "+PORT);try{const email="sf-selftest-"+Date.now()+"@signalforge.invalid",signup=await handler(new Request("http://local/api/auth/signup",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({email,password:"SignalForge#LaunchTest2026",marketingSource:"production_selftest",emailConsent:true})})),j:any=await signup.json(),raw=signup.headers.get("set-cookie")||"",ck=raw.split(";")[0],ref=await handler(new Request("http://local/api/referral",{headers:{cookie:ck}})),trial=await handler(new Request("http://local/api/auth/me",{headers:{cookie:ck}})),checkout=await handler(new Request("http://local/api/checkout",{method:"POST",headers:{cookie:ck,"content-type":"application/json"},body:JSON.stringify({plan:"pro",period:"month"})})),bj:any=await checkout.json(),me:any=await trial.json();const lifecycle=j.user?.id?await db.unsafe("SELECT template FROM lifecycle_emails WHERE user_id=$1 ORDER BY template",[j.user.id]):[];console.log("SELFTEST lifecycle-queue",lifecycle.length,lifecycle.map((x:any)=>x.template).join(","),j.user?.id?"consent accepted":"no user");if(j.user?.id)await db.unsafe("DELETE FROM users WHERE id=$1",[j.user.id]);console.log("SELFTEST launch-trial",signup.status,me.user?.subscription_status,me.user?.trial_days_remaining,ref.status,checkout.status,bj.saved===true,"no charge; temporary user purged")}catch(e:any){console.error("SELFTEST launch-trial failed",e?.message||e)}}
+async function start(){try{await initDb();console.log("Database schema ready")}catch(e:any){console.error("Database initialization failed",e?.message||e);dbReady=false}Bun.serve({port:PORT,fetch:async(req)=>{try{if(req.method==="POST"&&rateLimit(req,90))return json({error:"Rate limit exceeded."},429);return await handler(req)}catch(e:any){console.error("Request error",e?.stack||e);return json({error:"Request failed",detail:(Bun.env.NODE_ENV==="development"||Bun.env.NODE_ENV==="test")?e?.message:undefined},500)}}});let sourceaTick=0;
+ async function sourceaPump(){
+  if(!dbReady||!db)return;
+  try{
+   sourceaTick++;
+   if(sourceaTick%20===1)await activateDueSchedules(db);
+   await drainSourceATasks(db,{execute:async(prompt:string)=>runMarketResearch(prompt,{
+    pulse:()=>getWeb3NativePulse(),solana:researchSolanaToken,validateSolana:validSolanaAddress,
+    kraken:async(symbol:string)=>{const d=await marketData(symbol,60,true);return {...d,summary:summarize(d.candles)}}
+   })});
+  }catch(e){console.error("SourceA customer task pump failure",String(e).slice(0,180))}
+ }
+ // Dedicated test worker injection exercises task claims without external
+ // markets; production always activates the durable local queue pump.
+ if(Bun.env.NODE_ENV!=="test"){setInterval(sourceaPump,3000);void sourceaPump();}
+ console.log("SIGNALFORGE v0.4.0 listening on "+PORT);try{const email="sf-selftest-"+Date.now()+"@signalforge.invalid",signup=await handler(new Request("http://local/api/auth/signup",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({email,password:"SignalForge#LaunchTest2026",marketingSource:"production_selftest",emailConsent:true})})),j:any=await signup.json(),raw=signup.headers.get("set-cookie")||"",ck=raw.split(";")[0],ref=await handler(new Request("http://local/api/referral",{headers:{cookie:ck}})),trial=await handler(new Request("http://local/api/auth/me",{headers:{cookie:ck}})),checkout=await handler(new Request("http://local/api/checkout",{method:"POST",headers:{cookie:ck,"content-type":"application/json"},body:JSON.stringify({plan:"pro",period:"month"})})),bj:any=await checkout.json(),me:any=await trial.json();const lifecycle=j.user?.id?await db.unsafe("SELECT template FROM lifecycle_emails WHERE user_id=$1 ORDER BY template",[j.user.id]):[];console.log("SELFTEST lifecycle-queue",lifecycle.length,lifecycle.map((x:any)=>x.template).join(","),j.user?.id?"consent accepted":"no user");if(j.user?.id)await db.unsafe("DELETE FROM users WHERE id=$1",[j.user.id]);console.log("SELFTEST launch-trial",signup.status,me.user?.subscription_status,me.user?.trial_days_remaining,ref.status,checkout.status,bj.saved===true,"no charge; temporary user purged")}catch(e:any){console.error("SELFTEST launch-trial failed",e?.message||e)}}
 
 start();

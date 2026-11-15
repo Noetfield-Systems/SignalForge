@@ -1,0 +1,26 @@
+name: SignalForge v5 SourceA live execution acceptance
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/sourcea-execution-adapter.ts"
+      - "src/sourcea-task-runtime.ts"
+      - "src/server.ts"
+      - "public/agent.html"
+      - "scripts/sourcea-v5-live-acceptance.py"
+      - ".github/workflows/sourcea-v5-live-acceptance.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  independent-real-source-customer-flow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      BASE: https://signalforge-web-production.up.railway.app
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile external acceptance harness
+        run: python3 -m py_compile scripts/sourcea-v5-live-acceptance.py
+      - name: Verify real SourceA-compatible source execution, receipt and disposable account cleanup
+        run: python3 scripts/sourcea-v5-live-acceptance.py
