@@ -1,0 +1,39 @@
+name: SignalForge v10 live product-first browser acceptance
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/server.ts"
+      - "public/terminal-next.html"
+      - "public/sf-ui.js"
+      - "scripts/product-first-live-browser.py"
+      - ".github/workflows/product-first-live-browser.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  real-production-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      SIGNALFORGE_LIVE_BASE: https://signalforge-web-production.up.railway.app
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Chromium automation helper
+        run: |
+          python3 -m pip install --disable-pip-version-check --quiet --user playwright==1.58.0
+          CHROME=$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)
+          test -n "$CHROME"
+          echo "CHROME=$CHROME" >> "$GITHUB_ENV"
+      - name: Independently exercise actual Railway homepage with real market and Agent calls
+        run: python3 scripts/product-first-live-browser.py
+      - name: Upload direct Production desktop/mobile screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: signalforge-v10-real-production-home
+          path: artifacts/product-first-live/*.png
+          if-no-files-found: warn
+          retention-days: 30
