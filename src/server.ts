@@ -9,6 +9,7 @@ import { assessMarketSourceIntegrity } from "./market-source-integrity.ts";
 import { getWeb3NativePulse } from "./web3-native-pulse.ts";
 import { runMarketResearch } from "./agent-research.ts";
 import {modelGatewayStatus,selectMarketTools,synthesizeMarketEvidence} from "./model-gateway.ts";
+import {awardObservedResearchParticipation,genesisHistory,publishVerifiedResearchToRooms} from "./agent-genesis.ts";
 import {agentEntitlements,customerQuota,getCustomerEntitlements,createCustomerConversation,ownsConversation,conversationHistory,customerMemoryContext,customerNotificationFeed,recordMarketNotification} from "./agent-customer.ts";
 import {MARKET_RESEARCH_SKILL,compileMarketWorkPacket,verifyExecutionReceipt} from "./sourcea-execution-adapter.ts";
 import {newCustomerTask,getOwnedCustomerTask,listOwnedCustomerTasks,cancelOwnedCustomerTask,retryOwnedCustomerTask,drainSourceATasks,activateDueSchedules} from "./sourcea-task-runtime.ts";
@@ -136,6 +137,10 @@ await db.unsafe("CREATE INDEX IF NOT EXISTS agent_model_usage_owner_idx ON agent
 await db.unsafe("CREATE TABLE IF NOT EXISTS agent_market_notifications(id UUID PRIMARY KEY DEFAULT gen_random_uuid(),user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,task_id UUID NOT NULL UNIQUE REFERENCES sourcea_customer_tasks(id) ON DELETE CASCADE,schedule_id UUID REFERENCES sourcea_customer_schedules(id) ON DELETE SET NULL,title TEXT NOT NULL,summary TEXT NOT NULL,source_links JSONB NOT NULL DEFAULT '[]'::jsonb,seen_at TIMESTAMPTZ,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())");
 await db.unsafe("CREATE INDEX IF NOT EXISTS agent_market_notifications_owner_idx ON agent_market_notifications(user_id,created_at DESC)");
 await db.unsafe("CREATE TABLE IF NOT EXISTS agent_public_monitors(id UUID PRIMARY KEY DEFAULT gen_random_uuid(),user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,schedule_id UUID NOT NULL REFERENCES sourcea_customer_schedules(id) ON DELETE CASCADE,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),UNIQUE(user_id,schedule_id))");
+await db.unsafe("CREATE TABLE IF NOT EXISTS signalforge_genesis_points (id UUID PRIMARY KEY DEFAULT gen_random_uuid(),user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,source_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,event_key TEXT NOT NULL UNIQUE,points INTEGER NOT NULL CHECK(points>0 AND points<=25),reason TEXT NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())");
+await db.unsafe("CREATE INDEX IF NOT EXISTS signalforge_genesis_points_owner_idx ON signalforge_genesis_points(user_id,created_at DESC)");
+await db.unsafe("ALTER TABLE community_posts ADD COLUMN IF NOT EXISTS agent_task_id UUID REFERENCES sourcea_customer_tasks(id) ON DELETE SET NULL");
+await db.unsafe("CREATE UNIQUE INDEX IF NOT EXISTS community_posts_agent_task_idx ON community_posts(agent_task_id)");
 dbReady=true;return true}
 function rateLimit(req:Request,limit=30,scope="general"){const ip=req.headers.get("x-forwarded-for")?.split(",")[0]||"unknown",now=Date.now(),v=rate.get(scope+":"+ip);if(!v||now-v.at>60000){rate.set(scope+":"+ip,{n:1,at:now});return false}v.n++;return v.n>limit}
 async function persistSignals(symbol:string,interval:number,c:any[],signals:any[],mode:string){if(!dbReady||!db||mode!=="LIVE_PUBLIC_DATA")return;const last=c[c.length-1];for(const s of signals){if(s.state!=="ACTIVE"||!["LONG","SHORT"].includes(s.direction))continue;const key=[symbol,interval,s.id,s.direction,last.time].join(":");await db.unsafe("INSERT INTO signal_events (signal_key,symbol,interval,strategy_id,strategy_name,direction,score,entry,stop,target1,target2,target3,entry_time,candle_time,reasoning,source) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15::jsonb,$16) ON CONFLICT(signal_key) DO NOTHING",[key,symbol,interval,s.id,s.name,s.direction,s.score,s.entry,s.stop,s.targets[0],s.targets[1],s.targets[2],Date.now(),last.time,db.json(s.reasons),"KRAKEN_PUBLIC_OHLC"])}await evaluateSignals(symbol,interval,c)}
@@ -623,6 +628,11 @@ if(method==="GET"&&path==="/api/web3/pulse"){
  // Customer intelligence, retention, and first Forge Studio monitor.
  // All private resources are scoped to the authenticated SignalForge user.
  if(path==="/api/agent/gateway"&&method==="GET")return json(modelGatewayStatus());
+ if(path==="/api/agent/genesis"&&method==="GET"){
+  if(!dbReady||!db)return json({error:"DATABASE_UNAVAILABLE"},503);
+  const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+  return json(await genesisHistory(db,owner.id));
+ }
  if(path==="/api/agent/entitlements"&&method==="GET"){
   if(!dbReady||!db)return json({error:"DATABASE_UNAVAILABLE"},503);
   const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
@@ -766,6 +776,13 @@ if(method==="GET"&&path==="/api/web3/pulse"){
    if(task.status!=="SUCCEEDED"||!task.receipt||!task.artifact)return json({valid:false,reason:"NO_COMPLETED_RECEIPT",status:task.status},409);
    const verdict=await verifyExecutionReceipt(task.packet,task.artifact,task.receipt);
    return json({taskId,receiptHash:task.receipt.receiptHash,...verdict});
+  }
+  if(method==="POST"&&action==="publish-room"){
+   if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
+   if(rateLimit(req,6,"agent-room-publish"))return json({error:"COMMUNITY_PUBLISH_RATE_LIMIT"},429);
+   const outcome=await publishVerifiedResearchToRooms(db,owner.id,taskId);
+   const {status,...body}=outcome;
+   return json(body,status);
   }
   if(method==="POST"&&["cancel","retry"].includes(action)){
    if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
@@ -1014,7 +1031,10 @@ async function start(){try{await initDb();console.log("Database schema ready")}c
       providerBilledUsd:null,infrastructureCostUsd:null,totalSettledCostUsd:null,
       billingEvidence:false,marketSourceToolCalls:1+extras.length,usageSource:"PROVIDER_REPORTED_TOKENS_ESTIMATED_RATES_NOT_SETTLED"}};
     },
-    onComplete:async(task:any,result:any)=>{await recordMarketNotification(db,task,result,compareMarketObservations)}
+    onComplete:async(task:any,result:any)=>{
+     await recordMarketNotification(db,task,result,compareMarketObservations);
+     try{await awardObservedResearchParticipation(db,task.userId,task.id)}catch(error){console.error("Genesis qualification recording unavailable",String(error).slice(0,130))}
+    }
    });;
   }catch(e){console.error("SourceA customer task pump failure",String(e).slice(0,180))}
  }
