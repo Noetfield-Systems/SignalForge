@@ -126,7 +126,8 @@ with sync_playwright() as playwright:
    p.wait_for_function("!document.querySelector('#view-community').classList.contains('hidden')",timeout=9000)
    assert p.locator("#roomNew").is_visible(),"COMMUNITY_ACTION_NOT_VISIBLE"
    p.locator("#roomNew").click()
-   assert p.locator("#roomComposer").is_visible(),"COMMUNITY_COMPOSER_NOT_WORKING"
+   # The Rooms button performs an asynchronous session check before opening.
+   p.locator("#roomComposer").wait_for(state="visible",timeout=9000)
    p.locator("#roomClose").click()
    print("V11_AUTHENTICATED_ROOM_COMPOSER_PASS")
    p.goto(BASE+"/agent",wait_until="domcontentloaded")
