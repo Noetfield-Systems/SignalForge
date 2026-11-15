@@ -725,8 +725,8 @@ if(method==="GET"&&path==="/api/web3/pulse"){
   }
   const rows=await db.unsafe("SELECT id FROM sourcea_customer_schedules WHERE id=$1 AND user_id=$2 AND monitor_title IS NOT NULL",[parts[4],owner.id]);
   if(!rows.length)return json({error:"MONITOR_NOT_FOUND"},404);
-  const executed=await db.unsafe("SELECT id FROM sourcea_customer_tasks WHERE schedule_id=$1 AND user_id=$2 AND status='SUCCEEDED' AND receipt->'evaluation'->>'verdict'='PASS' LIMIT 1",[parts[4],owner.id]);
-  if(!executed.length)return json({error:"MONITOR_REQUIRES_OBSERVED_EXECUTION"},409);
+  const executed=await db.unsafe("SELECT id,packet,artifact,receipt FROM sourcea_customer_tasks WHERE schedule_id=$1 AND user_id=$2 AND status='SUCCEEDED' ORDER BY finished_at DESC LIMIT 1",[parts[4],owner.id]);
+  if(!executed.length||!(await verifyExecutionReceipt(executed[0].packet,executed[0].artifact,executed[0].receipt)).valid)return json({error:"MONITOR_REQUIRES_VERIFIED_SOURCE_EXECUTION"},409);
   const shared=await db.unsafe('INSERT INTO agent_public_monitors(user_id,schedule_id) VALUES($1,$2) ON CONFLICT(user_id,schedule_id) DO UPDATE SET schedule_id=EXCLUDED.schedule_id RETURNING id::text',[owner.id,parts[4]]);
   return json({id:shared[0].id,path:"/api/agent/forge/public/"+shared[0].id,status:"EXPLICITLY_SHARED"},201);
  }
