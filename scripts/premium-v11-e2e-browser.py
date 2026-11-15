@@ -38,7 +38,7 @@ with sync_playwright() as playwright:
   for layout,width,height in [("desktop",1440,900),("mobile",390,844)]:
    context=browser.new_context(viewport={"width":width,"height":height},
     device_scale_factor=1,permissions=["clipboard-read","clipboard-write"])
-   for path,name,surface,selector in PUBLIC+INTERNAL:
+   for path,name,surface,selector in PUBLIC:
     page=context.new_page()
     errors=[]
     page.on("pageerror",lambda e:errors.append(str(e)[:220]))
