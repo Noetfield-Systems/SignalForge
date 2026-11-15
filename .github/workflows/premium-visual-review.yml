@@ -1,10 +1,11 @@
 name: SignalForge visual before and after review
 on:
   push:
-    branches: [main, "feat/signalforge-visual-system-v9"]
+    branches: [main, "feat/signalforge-visual-system-v9", "feat/sf27-ui-foundation-lwc-chart-v2"]
     paths:
       - "public/**"
       - "scripts/premium_visual_acceptance.py"
+      - "package.json"
       - ".github/workflows/premium-visual-review.yml"
   pull_request:
     branches: [main]
@@ -54,11 +55,13 @@ jobs:
           capture agent-mobile http://127.0.0.1:18180/agent 390 844
           capture terminal-desktop http://127.0.0.1:18180/app 1512 982
           capture terminal-mobile http://127.0.0.1:18180/app 390 844
+          capture next-terminal-desktop http://127.0.0.1:18180/terminal-next 1512 982
+          capture next-terminal-mobile http://127.0.0.1:18180/terminal-next 390 844
           python3 - <<'PY'
           from pathlib import Path
           import struct
           files=list(Path("artifacts/premium").glob("*.png"))
-          assert len(files)==8
+          assert len(files)==10
           for path in files:
             data=path.read_bytes()
             assert data[:8]==bytes.fromhex('89504e470d0a1a0a')
