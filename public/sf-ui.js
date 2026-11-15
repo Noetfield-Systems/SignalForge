@@ -1,7 +1,7 @@
 /* SignalForge shared product navigation. A single data model, no parallel app router. */
 (()=>{"use strict";
 const routes=[
-  {id:"terminal",label:"Terminal",url:"/terminal-next",matches:["/terminal-next","/app","/index.html"]},
+  {id:"terminal",label:"Terminal",url:"/",matches:["/","/terminal-next","/app","/index.html"]},
   {id:"agent",label:"Market Agent",url:"/agent",matches:["/agent"]},
   {id:"radar",label:"Token Radar",url:"/radar",matches:["/radar","/tokens/solana/"]},
   {id:"pulse",label:"Market Pulse",url:"/web3",matches:["/web3"]},

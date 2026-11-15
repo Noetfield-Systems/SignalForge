@@ -49,7 +49,7 @@ This repository is now the **canonical SignalForge product source**. It is inten
 | --- | --- | --- |
 | Web server, research API, authentication, Signal Rooms, Postgres schema, Company OS snapshot | `src/server.ts` | Railway service `signalforge-web` |
 | Premium market terminal + Signal Rooms UI | `public/index.html` | served by web app |
-| Premium source-aware candlestick landing | `public/welcome.html` | served at `/`, `/welcome` and `/start` |
+| Premium source-aware candlestick landing | `public/welcome.html` | served at `/welcome` and `/start` (live interactive product terminal is `/`) |
 | Growth and Stripe webhook worker | `services/growth-assets/railway-function.ts` | existing independent Railway Function, source imported |
 | Lifecycle email worker | `services/lifecycle-worker/railway-function.ts` | existing independent Railway Function, source imported |
 | Portfolio mission, business-priority Goalkeeper, governance and execution | `Noetfield-Systems/sina_founder_os` | Sina Founder OS, not reimplemented here |

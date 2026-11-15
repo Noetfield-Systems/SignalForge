@@ -3,7 +3,7 @@ import {expect,test} from "bun:test";
 test("premium terminal candidate is routed without replacing the existing terminal",async()=>{
   const server=await Bun.file(new URL("../src/server.ts",import.meta.url)).text();
   const html=await Bun.file(new URL("../public/terminal-next.html",import.meta.url)).text();
-  expect(server).toContain('if(path==="/terminal-next")');
+  expect(server).toContain('if(path==="/terminal-next"||path==="/")');
   expect(server).toContain('if(path==="/app"||path==="/index.html")');
   expect(html).toContain('/api/market?symbol=');
   expect(html).toContain('data-symbol');

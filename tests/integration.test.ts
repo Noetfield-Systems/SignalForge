@@ -60,17 +60,21 @@ test("real database community lifecycle, security boundaries and Company OS cont
 
   let publicHome=await fetch(BASE+"/");
   expect(publicHome.status).toBe(200);
-  const landingHtml = await publicHome.text();
-  expect(landingHtml).toContain("The market is alive.");
-  expect(landingHtml).toContain("Forge what moves it.");
-  expect(landingHtml).toContain("Start today with source-linked Polymarket events");
-  expect(landingHtml).toContain("SignalForge");
-  expect(landingHtml).toContain("href=\"/radar\"");
-  expect(landingHtml).toContain("href=\"/app\"");
+  const liveWorkspaceHtml = await publicHome.text();
+  expect(liveWorkspaceHtml).toContain('id="pairName"');
+  expect(liveWorkspaceHtml).toContain('id="agentPrompt"');
+  expect(liveWorkspaceHtml).toContain('id="inlineAgentResult"');
+  expect(liveWorkspaceHtml).toContain('/assets/lightweight-charts.js');
+  expect(liveWorkspaceHtml).toContain('if(location.pathname==="/")viewPane("agent")');
+  expect(liveWorkspaceHtml).toContain('href="/app?view=community"');
+  expect(liveWorkspaceHtml).toContain('href="/developers"');
 
   let welcome=await fetch(BASE+"/welcome");
   expect(welcome.status).toBe(200);
   const welcomeHtml = await welcome.text();
+  expect(welcomeHtml).toContain("The market is alive.");
+  expect(welcomeHtml).toContain("Forge what moves it.");
+  expect(welcomeHtml).toContain("Start today with source-linked Polymarket events");
   expect(welcomeHtml).toContain("SignalForge");
   expect(welcomeHtml).toContain("Research the token.");
   expect(welcomeHtml).toContain("CAD $29");
