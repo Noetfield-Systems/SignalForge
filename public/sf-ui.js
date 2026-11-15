@@ -170,11 +170,72 @@ function createMobileDock(){
  more.addEventListener("click",()=>setOpen(true));dock.append(more);
  document.body.append(dock);
 }
+
+/* v12: user-facing source synapse. One read from existing Kraken-backed API.
+   No fake source badges, proxy backend or invented metrics. Never holds up UI. */
+function mountSynapse(surface){
+ if(!["agent","radar","pulse","developers","marketing","research-card"].includes(surface))return;
+ const main=document.querySelector("main");
+ if(!main||main.querySelector(".sf-synapse"))return;
+ const rail=node("aside","sf-synapse");
+ rail.setAttribute("aria-label","Live crypto market provenance");
+ const eyebrow=node("div","sf-synapse-identity");
+ eyebrow.append(node("span","sf-synapse-symbol","◈"),node("span","sf-synapse-label","SIGNALFORGE / MARKET NETWORK"));
+ const market=node("div","sf-synapse-market");
+ const ticker=node("span","sf-synapse-ticker","BTC / USD");
+ const price=node("strong","sf-synapse-price","—");
+ const change=node("span","sf-synapse-change","");
+ market.append(ticker,price,change);
+ const provenance=node("div","sf-synapse-provenance");
+ const live=node("span","sf-synapse-status","CHECKING SOURCE");
+ live.setAttribute("role","status");live.setAttribute("aria-live","polite");
+ const original=node("a","sf-synapse-go","↗ TERMINAL");
+ original.href="/";original.setAttribute("aria-label","Open live Bitcoin market terminal");
+ provenance.append(live,original);
+ rail.append(eyebrow,market,provenance);
+ const top=main.querySelector(".top");
+ if(surface==="agent"&&top)top.insertAdjacentElement("afterend",rail);
+ else main.prepend(rail);
+ // The endpoint already exists and computes current Kraken source state.
+ // Only issue this optional enhancement on visible pages; keep all original
+ // research, auth and billing routes entirely independent of this request.
+ const controller=typeof AbortController!=="undefined"?new AbortController():null;
+ const timeout=controller?setTimeout(()=>controller.abort(),18000):null;
+ fetch("/api/market?symbol=BTCUSD&interval=60",{
+  credentials:"same-origin",headers:{"accept":"application/json"},
+  ...(controller?{signal:controller.signal}:{})
+ }).then(async r=>{
+  if(!r.ok)throw Error("SOURCE_HTTP_"+r.status);
+  return await r.json();
+ }).then(data=>{
+  const liveMode=data?.mode==="LIVE_PUBLIC_DATA";
+  const p=Number(data?.summary?.price),d=Number(data?.summary?.change24h);
+  if(!liveMode||!Number.isFinite(p)||p<=0){
+   live.textContent=data?.mode==="DEMO_DATA"?"SOURCE OFFLINE · NO LIVE QUOTE":"SOURCE UNAVAILABLE";
+   live.dataset.mode="unavailable";return;
+  }
+  price.textContent=new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maximumFractionDigits:2}).format(p);
+  if(Number.isFinite(d)){
+   change.textContent=(d>0?"+":"")+d.toFixed(2)+"%";
+   change.dataset.sign=d<0?"negative":"positive";
+  }
+  live.textContent="KRAKEN / PUBLIC OHLC";live.dataset.mode="observed";
+  const latest=data?.candles?.[data.candles.length-1];
+  const t=Number(latest?.time);
+  if(Number.isFinite(t)&&t>0){
+   const date=new Date(t<100000000000?t*1000:t);
+   if(!Number.isNaN(date.getTime()))live.title="Latest observed candle: "+date.toISOString();
+  }
+ }).catch(()=>{
+  live.textContent="SOURCE UNAVAILABLE";live.dataset.mode="unavailable";
+ }).finally(()=>{if(timeout)clearTimeout(timeout)});
+}
 function initialize(){
  document.querySelectorAll("[data-sf-nav]").forEach(el=>mountNav(el));
  const surface=document.body.dataset.sfSurface;
  if(!surface||surface==="internal")return;
  createDialog();createLauncher();createMobileDock();
+ mountSynapse(surface);
  document.querySelectorAll("[data-sf-open]").forEach(el=>el.addEventListener("click",()=>setOpen(true)));
  window.SFUI.openCommand=()=>setOpen(true);
 }
