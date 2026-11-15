@@ -31,6 +31,10 @@ test("public Agent page, private job history, sourced thesis, owner-isolated sha
  const rows=await db.unsafe("INSERT INTO agent_jobs(user_id,prompt,tool,status,mode,result) VALUES($1,$2,'market.prediction.research','SOURCE_OBSERVED','SOURCE_REPORTED',$3::jsonb) RETURNING id::text",[alice.id,"Test fixture only",JSON.stringify(fixture)]);const jobId=rows[0].id;
  const own=await call("/api/agent/history",{headers:{cookie:alice.cookie}});
  expect(own.response.status).toBe(200);expect(own.data.items.find((x:any)=>x.id===jobId)).toBeTruthy();
+ expect((await call("/api/agent/recheck",json("",{jobId}))).response.status).toBe(401);
+ expect((await call("/api/agent/recheck",json(bob.cookie,{jobId}))).response.status).toBe(404);
+ expect((await call("/api/agent/recheck",json(alice.cookie,{jobId},"https://evil.invalid"))).response.status).toBe(403);
+ expect((await call("/api/agent/recheck",json(alice.cookie,{jobId:"bad"}))).response.status).toBe(400);
  const other=await call("/api/agent/history",{headers:{cookie:bob.cookie}});
  expect(other.data.items.find((x:any)=>x.id===jobId)).toBeUndefined();
  expect((await call("/api/agent/theses",json(bob.cookie,{jobId,invalidation:"Source contradicts hypothesis"}))).response.status).toBe(409);
