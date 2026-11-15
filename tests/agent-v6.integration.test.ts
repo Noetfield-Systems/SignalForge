@@ -61,6 +61,7 @@ test("persistent private research survives signout, sign-in and new device cooki
  const followUp=await call("/api/agent/tasks",post(login.cookie,{prompt:"Inspect Hyperliquid BTC funding compared with our prior research",conversationId:cid,engine:"source"}));
  expect(followUp.status).toBe(202);expect(followUp.data.conversationId).toBe(cid);
  expect((await call("/api/agent/conversations/"+cid,{headers:{cookie:login.cookie}})).data.messages.length).toBe(2);
+ expect((await call("/api/agent/tasks/"+followUp.data.taskId+"/cancel",post(login.cookie,{}))).status).toBe(200);
 },45000);
 test("Forge Studio monitor runs in existing queue, source-changed alert persists and sharing is opt-in",async()=>{
  const a=await signup(),b=await signup();
