@@ -29,8 +29,8 @@ export async function awardObservedResearchParticipation(db:Db,userId:string,tas
 }
 export async function genesisHistory(db:Db,userId:string){
  const r=await db.unsafe('SELECT id::text,points,reason,created_at AS "createdAt" FROM signalforge_genesis_points WHERE user_id=$1 ORDER BY created_at DESC LIMIT 80',[userId]);
- const earned=r.reduce((n,x)=>n+Number(x.points||0),0);
- const qualifiedReferralCount=r.filter(x=>x.reason==="QUALIFIED_REFERRED_RESEARCH").length;
+ const totals=await db.unsafe("SELECT COALESCE(SUM(points),0)::int AS points,COUNT(*) FILTER(WHERE reason='QUALIFIED_REFERRED_RESEARCH')::int AS qualified FROM signalforge_genesis_points WHERE user_id=$1",[userId]);
+ const earned=Number(totals[0]?.points||0),qualifiedReferralCount=Number(totals[0]?.qualified||0);
  return {schema:GENESIS_LEDGER_SCHEMA,points:earned,qualifiedReferralCount,events:r,
   unit:"NONCASH_INTERNAL_POINTS",convertibleToCash:false,transferable:false,tokenIssued:false,claimOpen:false,marketValue:null,treasuryEffect:false,
   evidenceTier:"ACCOUNT_ACTIVITY_AND_SOURCE_RECEIPT_NOT_HUMAN_IDENTITY_VERIFIED"};
