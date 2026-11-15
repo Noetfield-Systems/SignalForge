@@ -27,7 +27,7 @@ jobs:
           CHROME=$(command -v google-chrome || command -v chromium || true)
           test -n "$CHROME"
           echo "CHROME=$CHROME" >> "$GITHUB_ENV"
-      - name: Wait for exact main SHA production rollout
+      - name: Verify public Railway HTTP health before production audit
         shell: bash
         run: |
           python3 - <<'PY'
