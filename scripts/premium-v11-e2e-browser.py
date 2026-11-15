@@ -113,7 +113,7 @@ with sync_playwright() as playwright:
    p.locator("#authPassword").fill(password)
    p.locator("#authSubmit").click()
    p.wait_for_function("document.querySelector('#authModal')&&!document.querySelector('#authModal').classList.contains('open')",timeout=14000)
-   signed=p.request.get(BASE+"/api/auth/me")
+   signed=context.request.get(BASE+"/api/auth/me")
    assert signed.status==200
    account=signed.json().get("user")
    assert account and account["email"]==email,("SIGNUP_NOT_PERSISTED",account)
@@ -133,7 +133,7 @@ with sync_playwright() as playwright:
    print("V11_AGENT_FORGE_TASK_MEMORY_COMPONENTS_PRESENT")
   finally:
    # End-to-end deletion, not merely a logout or orphaned seeded user.
-   response=p.request.post(BASE+"/api/account/delete",
+   response=context.request.post(BASE+"/api/account/delete",
     data=json.dumps({"confirm":"DELETE","password":password}),
     headers={"content-type":"application/json"})
    assert response.status==200,("TEST_ACCOUNT_CLEANUP_FAILED",response.status,response.text()[:500])
