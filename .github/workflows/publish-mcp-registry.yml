@@ -51,7 +51,7 @@ jobs:
           set -euo pipefail
           python3 - <<'PY'
           import json,urllib.parse,urllib.request,time
-          name="io.github.noetfield-systems/signalforge"
+          name="io.github.Noetfield-Systems/signalforge"
           url="https://registry.modelcontextprotocol.io/v0.1/servers?search="+urllib.parse.quote(name,safe="")
           for attempt in range(8):
               try:

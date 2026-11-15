@@ -1,6 +1,6 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.noetfield-systems/signalforge",
+  "name": "io.github.Noetfield-Systems/signalforge",
   "title": "SignalForge Market Intelligence",
   "description": "Source-linked crypto research tools, market observations and user-owned agent tasks.",
   "version": "1.0.0",
