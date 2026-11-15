@@ -9,6 +9,7 @@ import { assessMarketSourceIntegrity } from "./market-source-integrity.ts";
 import { getWeb3NativePulse } from "./web3-native-pulse.ts";
 import { runMarketResearch } from "./agent-research.ts";
 import {modelGatewayStatus,selectMarketTools,synthesizeMarketEvidence} from "./model-gateway.ts";
+import {makeSignalForgeMcpHandler} from "./signalforge-mcp.ts";
 import {awardObservedResearchParticipation,genesisHistory,publishVerifiedResearchToRooms} from "./agent-genesis.ts";
 import {agentEntitlements,customerQuota,getCustomerEntitlements,createCustomerConversation,ownsConversation,conversationHistory,customerMemoryContext,customerNotificationFeed,recordMarketNotification} from "./agent-customer.ts";
 import {MARKET_RESEARCH_SKILL,compileMarketWorkPacket,verifyExecutionReceipt} from "./sourcea-execution-adapter.ts";
@@ -272,7 +273,38 @@ if(path==="/api/community/moderation"&&method==="POST"){if(!viewer||viewer.role!
 return json({error:"Not found"},404)
 }
 
-async function handler(req:Request){const u=new URL(req.url),path=u.pathname,method=req.method;if(method==="GET"&&(path==="/welcome"||path==="/start"))return new Response(SIGNALFORGE_MARKETING_HTML,{headers:{"content-type":"text/html; charset=utf-8","cache-control":"public,max-age=300","x-content-type-options":"nosniff"}});if(method==="OPTIONS")return new Response(null,{status:204,headers:{"Access-Control-Allow-Origin":u.origin,"Access-Control-Allow-Credentials":"true","Access-Control-Allow-Headers":"content-type,authorization","Access-Control-Allow-Methods":"GET,POST,OPTIONS"}});if(path==="/api/health"){let database=false;try{if(dbReady&&db){await db.unsafe("SELECT 1");database=true}}catch{}return json({ok:true,service:"SIGNALFORGE",version:"0.4.0",database:database?"connected":"not_ready",marketData:"Kraken public OHLC",mode:"read-only signals; no broker execution",now:new Date().toISOString()})}
+async function signalforgeMcpRoute(req:Request){
+ const host=new URL(req.url),origin=req.headers.get("origin");
+ if(req.method!=="POST")return new Response(null,{status:405,headers:{"allow":"POST","cache-control":"no-store"}});
+ // Remote MCP clients commonly send no Origin. Reject untrusted browser origins.
+ if(origin){
+  let o:URL;try{o=new URL(origin)}catch{return json({error:"INVALID_ORIGIN"},403)}
+  const expected=new URL(BASE_URL);
+  const localTest=Bun.env.NODE_ENV==="test"&&["localhost","127.0.0.1"].includes(o.hostname);
+  if(!localTest&&(o.protocol!=="https:"||o.origin!==expected.origin))return json({error:"INVALID_ORIGIN"},403);
+ }
+ if(rateLimit(req,25,"mcp-protocol"))return json({error:"MCP_PUBLIC_RATE_LIMIT"},429,{"retry-after":"60"});
+ const rawAuth=req.headers.get("authorization")||"";
+ if(rawAuth&&!/^Bearer sf_live_[a-z0-9]+$/.test(rawAuth))return json({error:"INVALID_MCP_AUTHORIZATION"},401);
+ const principal=rawAuth?await apiKeyFor(req):null;
+ if(rawAuth&&!principal)return json({error:"MCP_API_KEY_INVALID_OR_REVOKED"},401);
+ if(principal?.rateLimited)return json({error:"MCP_API_KEY_RATE_LIMITED"},429,{"retry-after":"60"});
+ const instance=makeSignalForgeMcpHandler({
+  principal,db,dbReady,
+  research:async prompt=>runMarketResearch(prompt,{
+   pulse:async()=>{if(!web3PulseCache||Date.now()-web3PulseCache.at>45000)web3PulseCache={at:Date.now(),result:await getWeb3NativePulse()};return web3PulseCache.result},
+   solana:researchSolanaToken,validateSolana:validSolanaAddress,
+   kraken:async symbol=>{const pack=await marketData(symbol,60);return {...pack,summary:summarize(pack.candles)}}
+  }),
+  quota:(userId,type)=>customerQuota(db!,userId,type),
+  newTask:newCustomerTask,getTask:getOwnedCustomerTask,cancelTask:cancelOwnedCustomerTask,
+  modelConfigured:()=>modelGatewayStatus().configured
+ });
+ const out=await instance.fetch(req);
+ const headers=new Headers(out.headers);headers.set("cache-control","no-store");headers.set("x-content-type-options","nosniff");
+ return new Response(out.body,{status:out.status,headers});
+}
+async function handler(req:Request){const u=new URL(req.url),path=u.pathname,method=req.method;if(path==="/mcp")return signalforgeMcpRoute(req);if(method==="GET"&&(path==="/welcome"||path==="/start"))return new Response(SIGNALFORGE_MARKETING_HTML,{headers:{"content-type":"text/html; charset=utf-8","cache-control":"public,max-age=300","x-content-type-options":"nosniff"}});if(method==="OPTIONS")return new Response(null,{status:204,headers:{"Access-Control-Allow-Origin":u.origin,"Access-Control-Allow-Credentials":"true","Access-Control-Allow-Headers":"content-type,authorization","Access-Control-Allow-Methods":"GET,POST,OPTIONS"}});if(path==="/api/health"){let database=false;try{if(dbReady&&db){await db.unsafe("SELECT 1");database=true}}catch{}return json({ok:true,service:"SIGNALFORGE",version:"0.4.0",database:database?"connected":"not_ready",marketData:"Kraken public OHLC",mode:"read-only signals; no broker execution",now:new Date().toISOString()})}
 if(method==="GET"&&path==="/robots.txt"){
  const origin=BASE_URL.replace(/\/$/,"");
  return new Response("User-agent: *\nAllow: /radar\nAllow: /tokens/solana/\nDisallow: /api/\nDisallow: /app\nDisallow: /admin\nSitemap: "+origin+"/sitemap.xml\n",{headers:{"content-type":"text/plain; charset=utf-8","cache-control":"public,max-age=3600"}});
