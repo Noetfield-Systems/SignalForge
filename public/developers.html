@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#070d11">
+<title>SignalForge MCP · Market Intelligence for AI Agents</title>
+<meta name="description" content="Connect real, source-linked Kraken, Hyperliquid, Polymarket and Solana market intelligence to your AI agent using SignalForge's remote MCP server.">
+<meta property="og:title" content="SignalForge MCP — Market intelligence for every AI agent">
+<meta property="og:description" content="Four real market research tools, one remote MCP endpoint, optional private execution with evidence receipts.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<link rel="canonical" href="https://signalforge-web-production.up.railway.app/developers">
+<style>
+:root{color-scheme:dark;--bg:#070d11;--panel:#101b1f;--panel2:#142126;--text:#f0f5f2;--muted:#a5b6b7;--gold:#f2cb88;--mint:#78e5b3;--line:#2a4244}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--text);background:radial-gradient(ellipse at 75% 2%,#1a473b55,transparent 40%),var(--bg);font:15px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:inherit;text-decoration:none}button{font:inherit;cursor:pointer}a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
+.wrap{max-width:1190px;padding:0 30px;margin:auto}.top{border-bottom:1px solid #ffffff19;background:#070d11cb;backdrop-filter:blur(15px);position:sticky;top:0;z-index:4}.top .wrap{display:flex;gap:20px;align-items:center;justify-content:space-between;min-height:73px}.brand{font-size:23px;letter-spacing:-.07em;font-weight:750}.brand i{font-style:normal;color:var(--gold)}nav{display:flex;gap:26px;align-items:center;color:var(--muted);font-size:13px}nav a:hover{color:var(--gold)}
+.eyebrow{font:700 11px/1.4 ui-monospace,monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}.hero{padding:92px 0 68px;display:grid;grid-template-columns:1.2fr .8fr;gap:55px;align-items:center}
+h1{font-size:clamp(43px,5.7vw,79px);letter-spacing:-.075em;line-height:1.05;font-weight:650;margin:18px 0 24px}h1 em{font-style:normal;color:var(--gold)}.lead{font-size:18px;line-height:1.8;color:#b4c5c0;max-width:620px}.actions{display:flex;gap:11px;flex-wrap:wrap;margin-top:30px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;border-radius:9px;border:1px solid #5a6d68;padding:12px 18px;color:var(--text);background:var(--panel2);font-weight:650;font-size:13px}.btn.primary{background:var(--gold);border-color:var(--gold);color:#131713}.btn:hover{filter:brightness(1.11)}button:disabled{opacity:.55;cursor:not-allowed}
+.terminal{border:1px solid #4b6d60;background:linear-gradient(143deg,#172a2b,#0a1518);border-radius:17px;box-shadow:0 30px 85px #0009;overflow:hidden}.termhead{padding:15px 21px;display:flex;justify-content:space-between;border-bottom:1px solid var(--line);font:12px ui-monospace,monospace;color:#a7c0b8}.live{color:var(--mint)}.termrows{padding:12px 23px 24px}.termrow{padding:14px 0;border-bottom:1px solid #30454380;font:13px ui-monospace,monospace;display:flex;justify-content:space-between;gap:15px}.termrow:last-child{border:0}.termrow span:first-child{color:#b9d2c8}.termrow span:last-child{color:var(--mint)}.termfoot{border-top:1px solid var(--line);padding:16px 22px;color:#9facab;font-size:12px}
+section.block{padding:43px 0 60px;border-top:1px solid var(--line)}.split{display:flex;align-items:end;justify-content:space-between;gap:25px;margin-bottom:30px}h2{font-size:clamp(28px,3.1vw,43px);line-height:1.15;letter-spacing:-.055em;margin:12px 0 0}.note{font-size:13px;color:var(--muted);max-width:570px}.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.card{background:linear-gradient(145deg,#152428,#0c171b);border:1px solid #2c4545;border-radius:12px;padding:21px;min-width:0}.card .no{color:var(--gold);font:11px ui-monospace,monospace}.card h3{font-size:16px;letter-spacing:-.03em;margin:22px 0 8px}.card p{color:#9fb5b2;font-size:13px;line-height:1.65;margin:0}.badge{display:inline-block;border:1px solid #356452;background:#17352a;color:var(--mint);padding:4px 8px;border-radius:6px;font:11px ui-monospace,monospace}
+.builder{display:grid;grid-template-columns:1.12fr .88fr;gap:16px}.surface{background:var(--panel);border:1px solid #2e4546;border-radius:13px;padding:24px;min-width:0}.surface h3{font-size:19px;margin:0 0 8px}.surface p{color:var(--muted);font-size:13px;margin:0 0 20px}.code{background:#080f13;border:1px solid #273b3d;border-radius:10px;padding:19px 16px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;color:#cde2d8;font:12px/1.8 ui-monospace,SFMono-Regular,monospace;min-height:94px}.line{display:flex;gap:9px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin:14px 0 5px}.muted{color:var(--muted);font-size:12px}.hint{color:#d2e8db;border-left:3px solid var(--mint);padding:10px 15px;background:#15291e;margin:16px 0;font-size:12px}.danger{color:#f3b4b8}.list{display:grid;gap:15px;margin:19px 0;padding:0;list-style:none;color:#c9d9d2;font-size:13px}.list li:before{content:"✓";color:var(--mint);margin-right:11px}.keycode{background:#071512;border:1px solid #4a8a6d;padding:15px;border-radius:10px;font:12px/1.7 ui-monospace,monospace;overflow-wrap:anywhere;user-select:all}.legal{font-size:12px;color:#829994;padding:31px 0 55px;border-top:1px solid var(--line)}.legal a{color:var(--gold)}.toolcaps{margin-top:20px;display:flex;gap:7px;flex-wrap:wrap}.toolcaps span{font:11px ui-monospace,monospace;color:#a3b6b1;border:1px solid #395051;padding:5px 9px;border-radius:6px}
+@media(max-width:900px){.hero{grid-template-columns:1fr;padding-top:60px}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.builder{grid-template-columns:1fr}nav{gap:12px}}
+@media(max-width:570px){.wrap{padding:0 19px}.top .wrap{min-height:64px}nav a:nth-child(2){display:none}.hero{padding:46px 0 42px;gap:29px}h1{font-size:47px}.lead{font-size:15px}.cards{grid-template-columns:1fr}.card h3{margin-top:12px}.split{display:block}.surface{padding:18px}.termrow{font-size:11px}.btn{font-size:12px;padding:11px 13px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style></head><body>
+<a class="skip" href="#main" style="position:absolute;left:-9999px">Skip to content</a>
+<header class="top"><div class="wrap"><a href="/" class="brand"><i>◈</i> SignalForge</a><nav aria-label="Primary"><a href="/agent">Agent Workspace</a><a href="/web3">Explore Markets</a><a href="/app?view=pricing">Pricing</a></nav></div></header>
+<main id="main" class="wrap">
+<div class="hero"><div><div class="eyebrow">SIGNALFORGE / DEVELOPER NETWORK / MCP</div><h1>Market intelligence.<br><em>Inside your agent.</em></h1>
+<p class="lead">Connect source-linked crypto market research to Claude, Cursor, or any compatible MCP client. Explore Kraken, Hyperliquid, Polymarket and Solana through one working remote endpoint.</p>
+<div class="actions"><a class="btn primary" href="#connect">Connect your agent ↗</a><a class="btn" href="/agent">Explore research workspace</a></div>
+<div class="toolcaps"><span>Streamable HTTP</span><span>Read-only public tools</span><span>Source timestamps</span><span>No wallet required</span></div>
+</div><div class="terminal"><div class="termhead"><span>signalforge / mcp</span><span class="live">● REMOTE SERVER</span></div><div class="termrows">
+<div class="termrow"><span>market_snapshot</span><span>Kraken</span></div><div class="termrow"><span>analyze_perps</span><span>Hyperliquid</span></div><div class="termrow"><span>research_prediction_market</span><span>Polymarket</span></div><div class="termrow"><span>inspect_solana_token</span><span>Solana</span></div></div>
+<div class="termfoot">Real sources when providers respond. No synthetic live data, order execution or guaranteed market outcomes.</div></div></div>
+<section class="block"><div class="split"><div><div class="eyebrow">01 / TOOLS</div><h2>Four markets. One interface.</h2></div><p class="note">A tool call provides the original venue URL and observation time. A source outage is reported as unavailable, not replaced with fabricated research.</p></div>
+<div class="cards">
+<article class="card"><span class="no">01 / CANDLES</span><h3>Kraken OHLC</h3><p>Completed candles, market indicators, and public source context.</p></article>
+<article class="card"><span class="no">02 / PERPETUALS</span><h3>Hyperliquid Pulse</h3><p>Source-reported funding and open interest in ranked market observations.</p></article>
+<article class="card"><span class="no">03 / EVENTS</span><h3>Polymarket Research</h3><p>Inspect public prediction-market activity and liquidity context.</p></article>
+<article class="card"><span class="no">04 / TOKEN RESEARCH</span><h3>Solana Liquidity</h3><p>Address-based token and pool observations from public sources.</p></article>
+</div></section>
+<section class="block" id="connect"><div class="split"><div><div class="eyebrow">02 / INSTALL</div><h2>One URL. Ready for agents.</h2></div><p class="note">The public tools need no account. Private customer tasks require a personal API key issued to an eligible Pro or Quant account.</p></div>
+<div class="builder">
+<div class="surface"><h3>Remote MCP endpoint</h3><p>Add this URL as a remote MCP server in a compatible AI host. Or use the JSON configuration in clients that support it.</p>
+<div class="code" id="endpoint">https://signalforge-web-production.up.railway.app/mcp</div><div class="line"><span class="badge">Public research · no key</span><button class="btn" id="copyUrl" type="button">Copy endpoint</button></div>
+<div class="eyebrow" style="margin-top:24px">CURSOR / MCP CONFIG</div><pre class="code" id="publicConfig">{
+  "mcpServers": {
+    "signalforge": {
+      "url": "https://signalforge-web-production.up.railway.app/mcp"
+    }
+  }
+}</pre>
+<button class="btn" id="copyConfig" type="button">Copy configuration</button>
+<p style="margin-top:20px">Other hosts may use a Connectors or Integrations screen instead of a JSON file. Use the same HTTPS endpoint.</p></div>
+<div class="surface"><h3>Private research tasks</h3><p>Unlock user-owned tasks, job status, cancel, and verifiable research receipts. This uses your existing SignalForge billing entitlement.</p>
+<ul class="list"><li>Create or sign in to your SignalForge account</li><li>Activate an eligible Pro or Quant entitlement</li><li>Generate a personal API key here</li><li>Add it as a Bearer token in your MCP client</li></ul>
+<div class="hint" id="accountStatus" role="status">Checking your signed-in account…</div>
+<button class="btn primary" id="createKey" type="button" hidden>Generate one-time API key</button>
+<a class="btn" id="accessLink" href="/app?view=pricing">Open plans and account ↗</a>
+<div id="secretArea" hidden><p class="muted">Your key is shown only once. Never paste it into public chats or code repositories.</p><div class="keycode" id="oneTimeKey"></div>
+<div class="line"><button type="button" class="btn" id="copyKey">Copy key</button><button type="button" class="btn" id="copyPrivateConfig">Copy private MCP config</button></div></div>
+</div></div></section>
+<section class="block"><div class="split"><div><div class="eyebrow">03 / WHAT YOUR AGENT CAN DO</div><h2>From market question to evidence.</h2></div></div>
+<div class="cards"><article class="card"><span class="no">READ</span><h3>Discover real markets</h3><p>Ask about public market observations and inspect exact source URLs.</p></article>
+<article class="card"><span class="no">QUEUE</span><h3>Start research tasks</h3><p>Private API users can queue a source-only job without building a new executor.</p></article>
+<article class="card"><span class="no">VERIFY</span><h3>Inspect receipts</h3><p>Check persisted SourceA-compatible artifact integrity. Digests are not exchange signatures.</p></article>
+<article class="card"><span class="no">REPEAT</span><h3>Continue in SignalForge</h3><p>Return to saved tasks, Thesis Vault and monitoring workflows in the web workspace.</p></article></div>
+<div class="actions"><a class="btn primary" href="/agent">Try SignalForge Agent ↗</a><a class="btn" href="/app?view=pricing">Explore Pro / Quant</a></div></section>
+<footer class="legal">SignalForge · Source-linked market research. Provider-reported observations may be delayed. Public tools do not execute trades, manage wallets, or independently verify exchange data. Model inference and paid settlements require separate runtime evidence. <a href="/">SignalForge home</a> · <a href="/server.json">Registry metadata</a>.</footer>
+</main>
+<script>
+(function(){
+"use strict";
+var endpoint="https://signalforge-web-production.up.railway.app/mcp",key=null;
+var $=function(id){return document.getElementById(id)};
+function copy(text,button){navigator.clipboard.writeText(text).then(function(){var prev=button.textContent;button.textContent="Copied";setTimeout(function(){button.textContent=prev},1500)}).catch(function(){button.textContent="Copy failed"})}
+$("copyUrl").addEventListener("click",function(){copy(endpoint,this)});
+$("copyConfig").addEventListener("click",function(){copy($("publicConfig").textContent.trim(),this)});
+$("copyKey").addEventListener("click",function(){if(key)copy(key,this)});
+$("copyPrivateConfig").addEventListener("click",function(){if(key)copy(JSON.stringify({mcpServers:{signalforge:{url:endpoint,headers:{Authorization:"Bearer "+key}}}},null,2),this)});
+async function status(){
+ try{
+  var r=await fetch("/api/auth/me",{credentials:"same-origin",cache:"no-store"});
+  if(!r.ok){$("accountStatus").textContent="Sign in to create a personal developer API key.";return}
+  var data=await r.json(),u=data.user||{};
+  var plan=u.plan||"explorer";
+  if(plan==="explorer"){$("accountStatus").textContent="Your Explorer access includes the public MCP tools. Pro or Quant is needed for private tasks.";return}
+  $("accountStatus").textContent="Eligible "+plan+" account. Generate a scoped API key for private research tasks.";
+  $("createKey").hidden=false;$("accessLink").hidden=true;
+ }catch{$("accountStatus").textContent="Account status is unavailable. Public tools remain accessible."}
+}
+$("createKey").addEventListener("click",async function(){
+ this.disabled=true;$("accountStatus").textContent="Creating key with your existing account permissions…";
+ try{
+  var r=await fetch("/api/api-keys",{method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},body:"{}"});
+  var data=await r.json();
+  if(!r.ok||!data.apiKey)throw Error(data.error||"Unable to issue key");
+  key=data.apiKey;$("oneTimeKey").textContent=key;$("secretArea").hidden=false;
+  $("accountStatus").textContent="Key generated. Copy it now; it will not be shown again.";
+ }catch(e){$("accountStatus").textContent=String(e.message||"Key issuance failed");this.disabled=false}
+});
+status();
+})();
+</script>
+</body></html>
