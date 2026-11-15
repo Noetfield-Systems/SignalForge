@@ -35,7 +35,11 @@ jobs:
             sleep 8
           done
           grep -q 'id="researchForm"' /tmp/agent.html
-          grep -q "DETERMINISTIC_SOURCE_ROUTER\|deterministic tool router" /tmp/agent.html
+          # v9 premium UX replaced legacy router copy. Assert live engine choices
+          # and truthful gateway status instead of obsolete presentation text.
+          grep -q 'id="engineChoice"' /tmp/agent.html
+          grep -q 'value="source"' /tmp/agent.html
+          grep -q 'id="modelStatus"' /tmp/agent.html
           for route in history theses; do
             code=$(curl -sS --max-time 15 -o "/tmp/agent-private-$route.json" -w "%{http_code}" "$BASE/api/agent/$route")
             test "$code" = "401"
