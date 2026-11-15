@@ -99,6 +99,13 @@ test("cancellation, bounded retry, source outage and schedule isolation",async()
  const queued=await activateDueSchedules(db);expect(queued.scheduled).toBeGreaterThan(0);
  const scheduleTasks=await call("/api/agent/tasks",{headers:{cookie:alice.cookie}});
  expect(scheduleTasks.data.items.some((x:any)=>x.scheduleId===sid)).toBe(true);
+ const falseDelete=await call("/api/account/delete",post(alice.cookie,{confirm:"DELETE",password:"bad"}));
+ expect(falseDelete.status).toBe(401);
+ expect((await call("/api/account/delete",post(alice.cookie,{confirm:"DELETE",password:"TempTestPassword#2026"},"https://evil.invalid"))).status).toBe(403);
  const disabled=await call("/api/agent/schedules/"+sid+"/disable",post(alice.cookie,{}));
  expect(disabled.status).toBe(200);expect(disabled.data.status).toBe("DISABLED");
+ const deleted=await call("/api/account/delete",post(alice.cookie,{confirm:"DELETE",password:"TempTestPassword#2026"}));
+ expect(deleted.status).toBe(200);expect(deleted.data.deleted).toBe(true);
+ expect((await call("/api/agent/tasks",{headers:{cookie:alice.cookie}})).status).toBe(401);
+
 },45000);
