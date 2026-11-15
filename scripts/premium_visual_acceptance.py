@@ -30,6 +30,13 @@ def check():
                     assert item.count() and item.is_visible(), (label, selector, "not visible")
                     dims = page.evaluate("""() => ({w:window.innerWidth,scroll:document.documentElement.scrollWidth,
                       body:document.body.scrollWidth})""")
+                    if max(dims["scroll"], dims["body"]) > width + 3:
+                        outliers = page.evaluate("""() => [...document.querySelectorAll("*")]
+                          .map(el=>({tag:el.tagName,cls:String(el.className||"").slice(0,60),
+                            id:el.id||"",left:Math.round(el.getBoundingClientRect().left),
+                            right:Math.round(el.getBoundingClientRect().right)}))
+                          .filter(e=>e.right>innerWidth+1 || e.left< -1).slice(0,18)""")
+                        print("VISUAL_OVERFLOW_ELEMENTS",label,kind,outliers)
                     assert max(dims["scroll"], dims["body"]) <= width + 3, (label, kind, "horizontal overflow",dims)
                     if path == "/" and kind == "desktop":
                         lines = page.locator(".hero h1").evaluate("""el => {
