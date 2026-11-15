@@ -18,7 +18,7 @@ test("real chart library hosted by existing server not an external fake demo",as
  for(const asset of ["/assets/lightweight-charts.js","/assets/sf-market-chart.js","/assets/sf-ui.js","/assets/sf-ui.css"])expect(server).toContain(asset);
  expect(html).toContain("/assets/lightweight-charts.js");
  expect(html).toContain("https://www.tradingview.com/");
- expect(html).toContain('id="sfNativeCandleChart"');
+ expect(html).toContain('const hostId="sfNativeCandleChart"');
  expect(html).toContain('mode!=="LIVE_PUBLIC_DATA"');
  expect(html).toContain("sfChart.setData(state.candles,mode)");
  expect(html).toContain('"/api/agent/research"');
