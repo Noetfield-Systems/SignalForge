@@ -105,8 +105,8 @@ async function providerRequest(cfg:GatewayConfig,opts:{system:string;prompt:stri
  if(!all.trim())throw Error("MODEL_STREAM_EMPTY");
  return {text:all,toolInput:null,usage:usageFromProvider(cfg,usage),responseId,streamed:true};
 }
-export async function selectMarketTools(prompt:string,primary:string,call:(cfg:GatewayConfig,opts:any)=>Promise<ModelCall>=providerRequest){
- const configs=sourceEnv(),errors:string[]=[],attempts:any[]=[];
+export async function selectMarketTools(prompt:string,primary:string,call:(cfg:GatewayConfig,opts:any)=>Promise<ModelCall>=providerRequest,env:Record<string,string|undefined>=Bun.env){
+ const configs=sourceEnv(env),errors:string[]=[],attempts:any[]=[];
  if(!configs.length)return {lanes:[primary],planner:null,attempts,error:"MODEL_NOT_CONFIGURED"};
  for(const cfg of configs){
   try{
@@ -132,8 +132,8 @@ export function validateGroundedSynthesis(raw:string,evidence:any[]){
  return {ok:true,analysis:j.analysis,claims:j.claims.map((c:any)=>({sourceId:c.sourceId,insight:c.insight})),
   watchPoints:j.watchPoints,limitations:j.limitations} as const;
 }
-export async function synthesizeMarketEvidence(input:{prompt:string;observations:any[];memory?:string[];planner?:any},call:(cfg:GatewayConfig,opts:any)=>Promise<ModelCall>=providerRequest){
- const configs=sourceEnv(),attempts:any[]=[];
+export async function synthesizeMarketEvidence(input:{prompt:string;observations:any[];memory?:string[];planner?:any},call:(cfg:GatewayConfig,opts:any)=>Promise<ModelCall>=providerRequest,env:Record<string,string|undefined>=Bun.env){
+ const configs=sourceEnv(env),attempts:any[]=[];
  const evidence=input.observations.flatMap((r:any)=>Array.isArray(r?.evidence)?r.evidence:[]).slice(0,10);
  if(!evidence.length)return {status:"NO_OBSERVATIONS",attempts,output:null,usage:null};
  if(!configs.length)return {status:"NOT_CONFIGURED",attempts,output:null,usage:null};
