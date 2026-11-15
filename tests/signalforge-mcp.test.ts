@@ -2,6 +2,7 @@ import {test,expect} from "bun:test";
 import {Client,StreamableHTTPClientTransport} from "@modelcontextprotocol/client";
 import {makeSignalForgeMcpHandler} from "../src/signalforge-mcp.ts";
 import {modelGatewayStatus,selectMarketTools} from "../src/model-gateway.ts";
+import {runMarketResearch} from "../src/agent-research.ts";
 
 function source(prompt:string){
  const lane=prompt.includes("Hyperliquid")?"perps":prompt.includes("Polymarket")?"prediction":prompt.includes("Solana")?"solana":"kraken";
@@ -69,3 +70,27 @@ test("DeepSeek structured planning uses actual adapter dispatch contracts, no mo
  expect(result.lanes).toEqual(["perps","prediction"]);
  expect(cfgs).toEqual(["deepseek"]);
 });
+
+test("MCP reports an explicit missing instrument instead of misattributing another asset",async()=>{
+ const at="2026-11-14T20:00:00.000Z";
+ const upstream={
+  pulse:async()=>({observedAt:at,perps:{state:"SOURCE_OBSERVED",items:[
+   {symbol:"BTC",markPx:99000,fundingRateRaw:0.001,source:"Hyperliquid public Info API",publicUrl:"https://app.hyperliquid.xyz/trade/BTC",observedAt:at}
+  ]}}),solana:async()=>({status:"SOURCE_UNAVAILABLE"}),
+  kraken:async()=>({mode:"DEMO_DATA"}),validateSolana:()=>false
+ };
+ const deps:any={principal:null,dbReady:false,db:null,
+  research:(prompt:string)=>runMarketResearch(prompt,upstream),
+  quota:async()=>({eligible:false}),newTask:async()=>null,getTask:async()=>null,cancelTask:async()=>false,modelConfigured:()=>false
+ };
+ const client=await connect(makeSignalForgeMcpHandler(deps));
+ try{
+  const returned=await client.callTool({name:"analyze_perps",arguments:{symbol:"ETH"}});
+  const result=contentValue(returned);
+  expect(returned.isError).toBe(true);
+  expect(result.status).toBe("SOURCE_UNAVAILABLE");
+  expect(result.observations).toEqual([]);
+  expect(result.summary).toContain("No unrelated market was substituted");
+  expect(result.unavailableSources).toContain("perps:ETH:NOT_IN_RANKED_SNAPSHOT");
+ }finally{await client.close()}
+},18000);

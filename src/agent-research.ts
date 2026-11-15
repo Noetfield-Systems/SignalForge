@@ -71,13 +71,20 @@ export async function runMarketResearch(input:unknown,deps:MarketDeps,clock=()=>
    const group=p?.[key];
    if(group?.state!=="SOURCE_OBSERVED"){unavailable.push(key);continue}
    let items=Array.isArray(group.items)?group.items:[];
-   if(key==="perps"&&symbol){const filtered=items.filter((x:any)=>x.symbol?.toUpperCase()===symbol);if(filtered.length)items=filtered}
+   if(key==="perps"&&symbol){
+    // Ranked public pulse is not an exhaustive Hyperliquid instrument catalogue.
+    // Never silently substitute unrelated symbols when an explicit asset is requested.
+    const matching=items.filter((x:any)=>typeof x.symbol==="string"&&x.symbol.toUpperCase()===symbol);
+    if(!matching.length){unavailable.push("perps:"+symbol+":NOT_IN_RANKED_SNAPSHOT");continue}
+    items=matching;
+   }
    const venue=key==="prediction"?"Polymarket":"Hyperliquid";
    evidence.push(...items.slice(0,lane==="pulse"?3:5).map((x:any)=>point(x,venue)));
   }
   const good=evidence.length>0;
   return {...base,status:good?"SOURCE_OBSERVED":"SOURCE_UNAVAILABLE",mode:good?"SOURCE_REPORTED":"SOURCE_UNAVAILABLE",
-   summary:good?"Retrieved "+evidence.length+" source-reported "+(lane==="pulse"?"cross-venue":lane)+" observations. These are current ranked snapshots, not predictions or an independent validation of an event.":"No usable public source observations are available.",
+   summary:good?"Retrieved "+evidence.length+" source-reported "+(lane==="pulse"?"cross-venue":lane)+" observations. These are current ranked snapshots, not predictions or an independent validation of an event.":lane==="perps"&&symbol?"The requested Hyperliquid "+symbol+" market was not present in the available ranked snapshot. No unrelated market was substituted.":"No usable public source observations are available.",
+   requestedSymbol:lane==="perps"?symbol:null,
    evidence,observedAt:observed(p?.observedAt),unavailableSources:unavailable,
    limitations:["Market data are provider-reported and may be delayed.","Top-ranked events are not necessarily a semantic answer to every research question.","No market transaction was executed."],
    deepLink:lane==="perps"?"/web3#perps":"/web3#prediction"};
