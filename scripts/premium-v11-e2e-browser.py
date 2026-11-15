@@ -111,8 +111,12 @@ with sync_playwright() as playwright:
   try:
    p.locator("#authEmail").fill(email)
    p.locator("#authPassword").fill(password)
-   p.locator("#authSubmit").click()
-   p.wait_for_function("document.querySelector('#authModal')&&!document.querySelector('#authModal').classList.contains('open')",timeout=14000)
+   with p.expect_response(lambda r: "/api/auth/signup" in r.url,timeout=14000) as completed:
+    p.locator("#authSubmit").click()
+   signup_response=completed.value
+   print("V11_SIGNUP_HTTP",signup_response.status)
+   assert signup_response.status==201,("BROWSER_SIGNUP_REJECTED",signup_response.status,signup_response.text()[:350])
+   p.wait_for_function("document.querySelector('#authModal')&&!document.querySelector('#authModal').classList.contains('open')",timeout=10000)
    signed=context.request.get(BASE+"/api/auth/me")
    assert signed.status==200
    account=signed.json().get("user")
