@@ -1,5 +1,9 @@
 name: SignalForge Market Agent external production acceptance
 on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/agent-live-acceptance.yml"
   push:
     branches: [main]
     paths:
