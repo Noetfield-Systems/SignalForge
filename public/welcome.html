@@ -435,6 +435,9 @@ body:before{background:radial-gradient(ellipse 44% 53% at 78% 20%,#303b502b,tran
 @media(min-width:1051px){.hero h1{font-size:clamp(60px,5.12vw,82px);line-height:1.065;letter-spacing:-.085em}.hero-titleblock{min-width:0}.hero-copy{grid-template-columns:minmax(0,1.25fr) minmax(340px,.75fr)}}
 @media(min-width:1051px) and (max-width:1320px){.hero h1{font-size:clamp(57px,5vw,73px)}}
 
+
+/* Exact visual regression fix: desktop halo must never expand mobile document width. */
+@media(max-width:760px){.terminal-outer:before{inset:-26px 0;max-width:100%}.terminal-outer{isolation:isolate}}
 </style>
 </head>
 <body>
