@@ -1,0 +1,64 @@
+name: SignalForge visual before and after review
+on:
+  push:
+    branches: ["feat/signalforge-visual-system-v9"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  visual-benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.2.23
+      - name: Prepare visual test environment
+        run: |
+          bun install
+          mkdir -p artifacts/premium
+          CHROME=$(command -v google-chrome || command -v chromium || true)
+          test -n "$CHROME"
+          echo "CHROME=$CHROME" >> "$GITHUB_ENV"
+          PORT=18180 NODE_ENV=production bun run src/server.ts > /tmp/sf-visual-app.log 2>&1 &
+          for n in $(seq 1 30); do
+            if curl -fsS --max-time 3 http://127.0.0.1:18180/api/health > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/sf-visual-app.log
+          exit 1
+      - name: Screenshot real product routes on Chromium desktop + mobile
+        run: |
+          set -euo pipefail
+          capture(){
+            local name="$1" url="$2" width="$3" height="$4"
+            "$CHROME" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --hide-scrollbars --force-device-scale-factor=1 --virtual-time-budget=3900 --window-size="$width,$height" --screenshot="artifacts/premium/$name.png" "$url" > /tmp/chrome-"$name".log 2>&1
+            test -s "artifacts/premium/$name.png"
+          }
+          capture home-desktop http://127.0.0.1:18180/ 1512 982
+          capture home-mobile http://127.0.0.1:18180/ 390 844
+          capture developers-desktop http://127.0.0.1:18180/developers 1512 982
+          capture developers-mobile http://127.0.0.1:18180/developers 390 844
+          capture agent-desktop http://127.0.0.1:18180/agent 1512 982
+          capture agent-mobile http://127.0.0.1:18180/agent 390 844
+          capture terminal-desktop http://127.0.0.1:18180/app 1512 982
+          capture terminal-mobile http://127.0.0.1:18180/app 390 844
+          python3 - <<'PY'
+          from pathlib import Path
+          import struct
+          files=list(Path("artifacts/premium").glob("*.png"))
+          assert len(files)==8
+          for path in files:
+            data=path.read_bytes()
+            assert data[:8]==bytes.fromhex('89504e470d0a1a0a')
+            width,height=struct.unpack(">II",data[16:24])
+            assert width>=380 and height>=800
+            print("VISUAL_CAPTURE_OK",path.name,width,height,len(data))
+          PY
+      - name: Upload exact render screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: signalforge-premium-visual-benchmark
+          path: artifacts/premium/*.png
+          retention-days: 30
