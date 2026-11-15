@@ -826,8 +826,9 @@ async function start(){try{await initDb();console.log("Database schema ready")}c
    })});
   }catch(e){console.error("SourceA customer task pump failure",String(e).slice(0,180))}
  }
- setInterval(sourceaPump,3000);
- void sourceaPump();
+ // Dedicated test worker injection exercises task claims without external
+ // markets; production always activates the durable local queue pump.
+ if(Bun.env.NODE_ENV!=="test"){setInterval(sourceaPump,3000);void sourceaPump();}
  console.log("SIGNALFORGE v0.4.0 listening on "+PORT);try{const email="sf-selftest-"+Date.now()+"@signalforge.invalid",signup=await handler(new Request("http://local/api/auth/signup",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({email,password:"SignalForge#LaunchTest2026",marketingSource:"production_selftest",emailConsent:true})})),j:any=await signup.json(),raw=signup.headers.get("set-cookie")||"",ck=raw.split(";")[0],ref=await handler(new Request("http://local/api/referral",{headers:{cookie:ck}})),trial=await handler(new Request("http://local/api/auth/me",{headers:{cookie:ck}})),checkout=await handler(new Request("http://local/api/checkout",{method:"POST",headers:{cookie:ck,"content-type":"application/json"},body:JSON.stringify({plan:"pro",period:"month"})})),bj:any=await checkout.json(),me:any=await trial.json();const lifecycle=j.user?.id?await db.unsafe("SELECT template FROM lifecycle_emails WHERE user_id=$1 ORDER BY template",[j.user.id]):[];console.log("SELFTEST lifecycle-queue",lifecycle.length,lifecycle.map((x:any)=>x.template).join(","),j.user?.id?"consent accepted":"no user");if(j.user?.id)await db.unsafe("DELETE FROM users WHERE id=$1",[j.user.id]);console.log("SELFTEST launch-trial",signup.status,me.user?.subscription_status,me.user?.trial_days_remaining,ref.status,checkout.status,bj.saved===true,"no charge; temporary user purged")}catch(e:any){console.error("SELFTEST launch-trial failed",e?.message||e)}}
 
 start();
