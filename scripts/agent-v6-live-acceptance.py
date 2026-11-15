@@ -75,6 +75,10 @@ try:
     assert first["usage"]["modelCalls"]==0
     code,verified=req(client,"/api/agent/tasks/"+started["taskId"]+"/verify")
     assert code==200 and verified["valid"] is True,(code,verified)
+    code,points=req(client,"/api/agent/genesis")
+    assert code==200 and points["schema"]=="signalforge.genesis-noncash-ledger.v1",(code,points)
+    assert points["points"]==0 and points["tokenIssued"] is False and points["marketValue"] is None,(code,points)
+    print("V6_LIVE_TEST_ACCOUNT_GENESIS_EXCLUDED_NO_FAKE_POINTS")
     print("V6_LIVE_REAL_HYPERLIQUID_TASK_RECEIPT_PASS")
     code,logout=req(client,"/api/auth/logout",{},"POST")
     assert code==200,(code,logout)
