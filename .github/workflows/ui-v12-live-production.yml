@@ -1,0 +1,55 @@
+name: SignalForge v12 complete external Production Chromium audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - "public/**"
+      - "src/server.ts"
+      - "scripts/sf-v12-experience-audit.py"
+      - ".github/workflows/ui-v12-live-production.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect-real-railway:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      VISUAL_BASE: https://signalforge-web-production.up.railway.app
+      # No test admin or account creation in real customer database.
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Chromium automation
+        run: |
+          python3 -m pip install --quiet --user playwright==1.58.0
+          CHROME=$(command -v google-chrome || command -v chromium || true)
+          test -n "$CHROME"
+          echo "CHROME=$CHROME" >> "$GITHUB_ENV"
+      - name: Verify public Railway HTTP health before production audit
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import time,urllib.request
+          url="https://signalforge-web-production.up.railway.app/api/health"
+          for i in range(30):
+           try:
+            with urllib.request.urlopen(url,timeout=12) as r:
+             if r.status==200:
+              print("PRODUCTION_HTTP_HEALTH_PASS",i+1)
+              break
+           except Exception as e: print("HEALTH_RETRY",type(e).__name__)
+           time.sleep(5)
+          else: raise SystemExit("PRODUCTION_HEALTH_UNAVAILABLE")
+          PY
+      - name: Independently inspect 36 public real production screens with no fixtures
+        run: python3 scripts/sf-v12-experience-audit.py
+      - name: Upload 36 authentic Railway screenshots and component findings
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: signalforge-v12-real-production-visual-audit
+          path: artifacts/ui-v11/v12-*
+          if-no-files-found: warn
+          retention-days: 30
