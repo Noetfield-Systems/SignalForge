@@ -1024,3 +1024,56 @@ body[data-sf-surface="terminal"] .chartlegend{
  .sf-view-navigation-links{gap:5px 13px}
  .sf-legacy-native,.chartcanvas{height:285px!important}
 }
+
+
+.sf-venue-connectivity{display:grid;gap:7px}
+.sf-venue-connectivity>.kicker{margin-bottom:6px}
+.sf-source-venue{
+ display:grid;grid-template-columns:9px minmax(90px,.66fr) minmax(0,1fr);
+ align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid #354d50;
+}
+.sf-source-led{
+ width:7px;height:7px;border:1px solid #8adab7;border-radius:50%;
+ background:#91d4ae;box-shadow:0 0 13px #79a48b50;
+}
+.sf-source-venue strong{
+ font-family:var(--sf-display);font-size:13px;letter-spacing:-.025em;
+}
+.sf-source-venue small{
+ font:10px/1.4 var(--sf-numeric);color:#adc4bf;text-align:right;
+}
+.sf-venue-connectivity p{
+ font-size:11px!important;line-height:1.6;
+ color:#acbdc5!important;margin:9px 0 0!important;
+}
+.sf-mcp-live-readback{
+ display:inline-flex;align-items:center;gap:7px;font:10px/1.55 var(--sf-numeric);
+ letter-spacing:.025em;border:1px solid #455952;background:#16261e;color:#b0d5c4;
+ border-radius:7px;margin:12px 0 6px;padding:7px 12px;
+}
+.sf-mcp-live-readback::before{content:"";width:7px;height:7px;border-radius:50%;background:#8b9b92}
+.sf-mcp-live-readback[data-state="verified"]{color:#b3ecc8;border-color:#5f8d78}
+.sf-mcp-live-readback[data-state="verified"]::before{background:#8fe2b4}
+.sf-mcp-live-readback[data-state="unavailable"]{color:#e1c69a;border-color:#856b4f}
+.sf-mcp-live-readback[data-state="unavailable"]::before{background:#d9ac7c}
+.sf-research-receipt{
+ display:grid;grid-template-columns:1.3fr .9fr 1fr;gap:8px;
+ margin:17px 0;padding:11px 14px;border-radius:9px;
+ border:1px solid #43665c;background:#162920;
+}
+.sf-research-receipt span{
+ font:10px/1.5 var(--sf-numeric);color:#bfe4d3;overflow-wrap:anywhere;
+}
+.sf-research-receipt span:first-child{
+ font-weight:650;color:#edce96;
+}
+.sf-research-empty{
+ color:#a6c3c2;font-size:13px;
+ padding:20px;background:#14212a;border:1px solid #3c5355;border-radius:8px;
+}
+@media(max-width:760px){
+ .sf-research-receipt{grid-template-columns:1fr;gap:7px}
+ .sf-source-venue{grid-template-columns:8px minmax(90px,.75fr) minmax(0,1fr)}
+ .sf-source-venue small{font-size:9px}
+ .sf-mcp-live-readback{font-size:9px;max-width:100%}
+}
