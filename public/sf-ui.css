@@ -1187,3 +1187,31 @@ body[data-sf-surface="terminal"] .sf-admin .sf-metric{
  body[data-sf-surface="terminal"] #view-pricing .sf-plan{min-height:0}
  body[data-sf-surface="terminal"] #view-pricing .sf-plan ul{min-height:0}
 }
+
+
+/* Mobile scanner: fixed 1fr columns were sized by intrinsic select contents
+   and produced a 409px document at 390px viewport in actual Chromium. */
+@media(max-width:750px){
+ body[data-sf-surface="terminal"] #view-scanner,
+ body[data-sf-surface="terminal"] #view-scanner .sf-scan-toolbar,
+ body[data-sf-surface="terminal"] #view-scanner .pagehead{
+  min-width:0;max-width:100%;
+ }
+ body[data-sf-surface="terminal"] #view-scanner .sf-scan-toolbar{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+ }
+ body[data-sf-surface="terminal"] #view-scanner .sf-scan-toolbar>label{
+  min-width:0;max-width:100%;
+ }
+ body[data-sf-surface="terminal"] #view-scanner .sf-scan-toolbar select,
+ body[data-sf-surface="terminal"] #view-scanner .sf-scan-toolbar input{
+  min-width:0;width:100%;max-width:100%;
+ }
+ body[data-sf-surface="terminal"] #view-scanner .tablewrap{
+  width:100%;max-width:100%;overflow-x:auto;
+ }
+ body[data-sf-surface="terminal"] #view-scanner .sf-scan-meta{
+  overflow-wrap:anywhere;
+ }
+}
