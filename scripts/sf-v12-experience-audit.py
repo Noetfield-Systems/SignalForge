@@ -60,8 +60,14 @@ with sync_playwright() as playwright:
     page=context.new_page()
     errors=[]
     page.on("pageerror",lambda err:errors.append(str(err)[:240]))
-    response=page.goto(BASE+route,wait_until="domcontentloaded",timeout=30000)
+    response=page.goto(BASE+route,wait_until="load" if name in ("app-dashboard","scanner","strategies","backtest","trackrecord","rooms","models","api","plans") else "domcontentloaded",timeout=30000)
     assert response and response.status==200,("V12_PUBLIC_ROUTE_FAILED",layout,route)
+    if name in ("app-dashboard","scanner","strategies","backtest","trackrecord","rooms","models","api","plans"):
+     view={"app-dashboard":"dashboard","rooms":"community","plans":"pricing"}.get(name,name)
+     page.wait_for_function("""v => {
+       const el=document.getElementById("view-"+v);
+       return el&&!el.classList.contains("hidden");
+     }""",arg=view,timeout=12000)
     page.wait_for_timeout(450)
     audit=page.evaluate(AUDIT_JS)
     audit.update({"surface":name,"route":route,"layout":layout,"pageErrors":list(dict.fromkeys(errors))})
@@ -124,7 +130,8 @@ with sync_playwright() as playwright:
     assert me.status==200 and me.json().get("user",{}).get("role")=="admin","V12_TEST_ROLE_INVALID"
     for layout,width,height in [("desktop",1440,900),("mobile",390,844)]:
      for path,name in [("/admin/revenue","revenue"),("/admin/company-floor","company-floor")]:
-      p=context.new_page(viewport={"width":width,"height":height})
+      p=context.new_page()
+      p.set_viewport_size({"width":width,"height":height})
       r=p.goto(BASE+path,wait_until="domcontentloaded",timeout=25000)
       assert r and r.status==200,("V12_ADMIN_VIEW_REJECTED",name,r.status if r else None)
       assert p.locator('body[data-sf-surface="internal"]').count()==1
