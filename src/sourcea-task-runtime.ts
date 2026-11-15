@@ -31,7 +31,7 @@ export async function cancelOwnedCustomerTask(db:Db,userId:string,taskId:string)
  return true;
 }
 export async function retryOwnedCustomerTask(db:Db,userId:string,taskId:string){
- const r=await db.unsafe("UPDATE sourcea_customer_tasks SET status='QUEUED',cancel_requested=false,last_error=NULL,lease_until=NULL,updated_at=NOW() WHERE id=$1 AND user_id=$2 AND status IN ('FAILED','CANCELLED') AND attempt_count<2 RETURNING id::text",[taskId,userId]);
+ const r=await db.unsafe("UPDATE sourcea_customer_tasks SET status='QUEUED',cancel_requested=false,last_error=NULL,lease_until=NULL,artifact=NULL,receipt=NULL,usage=NULL,finished_at=NULL,updated_at=NOW() WHERE id=$1 AND user_id=$2 AND status IN ('FAILED','CANCELLED') AND attempt_count<2 RETURNING id::text",[taskId,userId]);
  if(!r.length)return false;
  await db.unsafe("INSERT INTO sourcea_task_events(task_id,event,details) VALUES($1,'RETRIED','{}'::jsonb)",[taskId]);
  return true;
