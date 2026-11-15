@@ -589,6 +589,20 @@ if(method==="GET"&&path==="/api/web3/pulse"){
 
  // SignalForge owns the user and permission boundary; SourceA supplies only
  // a versioned, portable evidence contract and the local execution adapter.
+ if(path==="/api/account/delete"&&method==="POST"){
+  if(!dbReady||!db)return json({error:"ACCOUNT_STORAGE_UNAVAILABLE"},503);
+  if(!communityOrigin(req))return json({error:"INVALID_ORIGIN"},403);
+  const owner=await userFor(req);if(!owner)return json({error:"SIGN_IN_REQUIRED"},401);
+  if(Number(req.headers.get("content-length")||0)>512)return json({error:"PAYLOAD_TOO_LARGE"},413);
+  const raw=await req.text();if(raw.length>512)return json({error:"PAYLOAD_TOO_LARGE"},413);
+  let input:any;try{input=JSON.parse(raw)}catch{return json({error:"INVALID_JSON"},400)}
+  if(input?.confirm!=="DELETE"||typeof input?.password!=="string")return json({error:"EXPLICIT_ACCOUNT_DELETE_CONFIRMATION_REQUIRED"},400);
+  const rows=await db.unsafe("SELECT password_hash,stripe_subscription_id FROM users WHERE id=$1",[owner.id]);
+  if(!rows.length||!await Bun.password.verify(input.password,rows[0].password_hash))return json({error:"ACCOUNT_PASSWORD_INVALID"},401);
+  if(rows[0].stripe_subscription_id)return json({error:"ACTIVE_BILLING_MUST_BE_MANAGED_BEFORE_ACCOUNT_DELETION",billingPath:"/api/billing/portal"},409);
+  await db.unsafe("DELETE FROM users WHERE id=$1",[owner.id]);
+  return json({deleted:true,scope:"OWN_ACCOUNT_AND_CASCADING_PRIVATE_DATA"},200,{"set-cookie":"sf_session=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0"});
+ }
  if(path==="/api/agent/skills"&&method==="GET")return json({schema:"sourcea.signalforge-skill-catalog.v1",skills:[MARKET_RESEARCH_SKILL],runtime:"SIGNALFORGE_LOCAL_READONLY",remoteSourceAExecutorConnected:false});
  if(path==="/api/agent/tasks"&&["GET","POST"].includes(method)){
   if(!dbReady||!db)return json({error:"RESEARCH_STORAGE_UNAVAILABLE"},503);
