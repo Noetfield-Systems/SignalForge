@@ -93,7 +93,7 @@ with sync_playwright() as playwright:
     if name in ("app-dashboard","scanner","strategies","backtest","trackrecord","rooms","models","api","plans"):
      assert page.locator(".sf-global-launcher").count()==1,("V12_CMD_MISSING",name)
      if name!="app-dashboard":
-      assert page.locator(".sf-view-navigation").count()==1,("V12_DEEP_VIEW_NAV_MISSING",name)
+      assert page.locator("#view-"+{"rooms":"community","plans":"pricing"}.get(name,name)+" .sf-view-navigation").count()==1,("V12_DEEP_VIEW_NAV_MISSING",name)
     if name=="app-dashboard":
      assert page.locator("#sfLegacyNativeChart").count()==1
      page.wait_for_function("!!window.SFMarketChart",timeout=8000)
