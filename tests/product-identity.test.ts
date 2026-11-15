@@ -56,7 +56,7 @@ test("Terminal deep links resolve to real views; current product data/security f
  expect(terminal).toContain('id="priceChart"');
  expect(terminal).toContain("function renderPricing()");
  expect(terminal).toContain("billing");
- expect(radar).toContain("Know what the");
+ expect(radar).toContain("Trace the token.");
 });
 test("Internal code-delivery context loads Founder product lock; consumers never receive workforce secret",()=>{
  expect(delivery).toContain('FOUNDER_PRODUCT_IDENTITY_LOCK_INVALID');

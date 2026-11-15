@@ -92,6 +92,14 @@ test("real database community lifecycle, security boundaries and Company OS cont
   expect((await request("/api/company-os/snapshot")).response.status).toBe(401);
   expect((await request("/api/company-os/snapshot",{headers:{authorization:"Bearer incorrect"}})).response.status).toBe(401);
 
+  // A multi-page browsing session must never consume the signup/login rate bucket.
+  // Previously 14 normal GET /api/auth/me reads blocked a genuine signup.
+  for(let i=0;i<19;i++){
+    const meWithoutSession=await request("/api/auth/me");
+    expect(meWithoutSession.response.status).toBe(200);
+    expect(meWithoutSession.data.user).toBeNull();
+  }
+
   const email="researcher-"+crypto.randomUUID().slice(0,8)+"@signalforge.test";
   let signup=await request("/api/auth/signup",{
     method:"POST",headers:headers(),
@@ -249,7 +257,7 @@ test("real database community lifecycle, security boundaries and Company OS cont
 test("Token Radar public route and invalid-source research boundary", async () => {
   const radar = await fetch(BASE + "/radar");
   expect(radar.status).toBe(200);
-  expect(await radar.text()).toContain("Know what the");
+  expect(await radar.text()).toContain("Trace the token.");
   const validPage = await fetch(BASE + "/tokens/solana/So11111111111111111111111111111111111111112");
   expect(validPage.status).toBe(200);
   expect(await validPage.text()).toContain("Solana token So111");

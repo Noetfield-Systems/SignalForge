@@ -85,7 +85,7 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid #e1c3
 @media(max-width:420px){h1{font-size:44px}.navlinks{gap:7px;font-size:9px}.searchbox{flex-wrap:wrap}.searchbox .btn{width:100%}}
 .brand .mark{width:30px;height:30px;background:transparent;border-radius:0;box-shadow:none;color:#dfbd92;display:grid;place-items:center}.brand .mark svg{width:27px;height:27px;display:block}</style>
 <link rel="stylesheet" href="/assets/sf-ui.css"><script defer src="/assets/sf-ui.js"></script></head>
-<body>
+<body data-sf-surface="radar">
 <div class="wrap">
 <nav aria-label="Main navigation">
 <a class="brand" href="/welcome"><span class="mark" aria-hidden="true"><svg viewBox="0 0 32 32" width="24" height="24" aria-hidden="true" fill="none"><path d="M4 26 15 6h6L10 26H4Zm11 0L26 6h3L18 26h-3Z" fill="currentColor"/><path d="M7 5h7l-3 5H4L7 5Z" fill="#87d8ac"/></svg></span>SignalForge</a>
@@ -93,13 +93,13 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid #e1c3
 </nav>
 <main>
 <section class="hero">
-<div class="eyebrow">Token Intelligence / Read-only research</div>
-<h1>Know what the<br><em>market reveals.</em></h1>
-<p class="lead">Inspect a Solana token's observable pools, liquidity and trading activity. Every number has a source, a timestamp and a clear limit. Start without an account.</p>
+<div class="eyebrow">SIGNALFORGE / SOLANA ONCHAIN RESEARCH</div>
+<h1>Trace the token.</h1>
+<p class="lead">Paste a mint and inspect observable pools, liquidity, age and trading activity. Source and timestamp stay attached to the numbers.</p>
 <form id="search" class="searchbox" autocomplete="off"><label for="mint" class="sr-only" style="position:absolute;left:-9999px">Solana token mint address</label>
 <input id="mint" spellcheck="false" aria-label="Solana token mint address" placeholder="Paste a Solana token mint address" required maxlength="44">
 <button class="btn" id="submit" type="submit">Research token →</button></form>
-<div class="hint">Try a known token: <button type="button" class="linkbutton" id="trySol">Wrapped SOL</button> <span>·</span> Pool data from DEX Screener <span>·</span> No wallet connection required</div>
+<div class="sf-v11-token-actions"><a href="/web3#perps">Perp flows ↗</a><a href="/agent">Ask Market Agent ↗</a><a href="#myRadar">My watchlist ↗</a></div><div class="hint">Try a known token: <button type="button" class="linkbutton" id="trySol">Wrapped SOL</button> <span>·</span> Pool data from DEX Screener <span>·</span> No wallet connection required</div>
 </section>
 <div id="status" class="status" role="status" aria-live="polite">Enter a token mint to begin your research.</div>
 <div id="loading" class="skeleton" hidden aria-label="Loading token market observations"></div>
