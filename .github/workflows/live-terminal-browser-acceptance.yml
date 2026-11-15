@@ -1,0 +1,31 @@
+name: SignalForge production native terminal external browser acceptance
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/live-terminal-browser-acceptance.py"
+      - ".github/workflows/live-terminal-browser-acceptance.yml"
+permissions:
+  contents: read
+jobs:
+  real-public-market-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Playwright Python client (system Chrome supplied by runner)
+        run: python3 -m pip install --disable-pip-version-check --quiet --user playwright==1.58.0
+      - name: Verify real Railway page, native chart and source agent (no fixtures)
+        env:
+          BASE: https://signalforge-web-production.up.railway.app
+          SCREENSHOT_DIR: artifacts/live-terminal
+        run: python3 scripts/live-terminal-browser-acceptance.py
+      - name: Retain exact external production browser screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: signalforge-live-terminal-browser
+          path: artifacts/live-terminal/*.png
+          retention-days: 30
+          if-no-files-found: warn
