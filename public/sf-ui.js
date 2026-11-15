@@ -175,6 +175,7 @@ function initialize(){
  const surface=document.body.dataset.sfSurface;
  if(!surface||surface==="internal")return;
  createDialog();createLauncher();createMobileDock();
+ document.querySelectorAll("[data-sf-open]").forEach(el=>el.addEventListener("click",()=>setOpen(true)));
  window.SFUI.openCommand=()=>setOpen(true);
 }
 window.SFUI={routes:routes.map(({id,label,url})=>({id,label,url})),mountNav,openCommand:()=>{if(dialog)setOpen(true)}};
