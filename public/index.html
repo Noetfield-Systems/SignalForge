@@ -251,7 +251,17 @@ function renderPricing(){
  // Rendering a second pricing UI over those nodes orphaned live event handlers
  // and caused refreshPricing() to access removed #sfProPrice/#sfQuantPrice.
  const canonicalGrowth=document.getElementById("view-pricing");
- if(canonicalGrowth?.querySelector("#sfProPrice")&&canonicalGrowth?.querySelector("#sfQuantPrice"))return;
+ if(canonicalGrowth?.querySelector("#sfProPrice")&&canonicalGrowth?.querySelector("#sfQuantPrice")){
+  // Reinsert the shared product breadcrumb that Growth Assets' legacy
+  // pricingMarkup replaces. Keep its original checkout and referral handlers.
+  if(!canonicalGrowth.querySelector(".sf-view-navigation")){
+   const section=document.createElement("div");section.className="sf-view-navigation";
+   section.setAttribute("aria-label","Pricing workflow shortcuts");
+   section.innerHTML='<span class="sf-view-navigation-title">SIGNALFORGE / 09 / ACCESS</span><nav class="sf-view-navigation-links"><a href="/agent">Try free research ↗</a><a href="/radar">Inspect a token ↗</a></nav>';
+   canonicalGrowth.prepend(section);
+  }
+  return;
+ }
  // If the external Growth Assets service is unavailable, the tested core
  // Pro/Quant checkout UI below is still a functional first-party fallback.
  const active=state.user&&["active","past_due"].includes(state.user.subscription_status);
