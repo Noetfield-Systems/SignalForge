@@ -86,6 +86,7 @@ def check():
                         assert page.locator("#priceChart").count() == 1
                     if path == "/terminal-next":
                         assert page.locator("nav[data-sf-nav]").count() == 1
+                        page.locator('[data-pane="agent"]').click()
                         assert page.locator("#copyPrompt").is_visible()
                         assert page.locator("#inlineAgentResult").count() == 1
                         assert page.evaluate("!!window.LightweightCharts && !!window.SFMarketChart")
