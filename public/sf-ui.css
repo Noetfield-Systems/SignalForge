@@ -297,3 +297,123 @@ body[data-sf-surface="internal"] main{padding-bottom:70px}
  body[data-sf-surface="terminal"] .pagehead{margin-top:16px}
  body[data-sf-surface="terminal"] .pagehead h1{font-size:28px}
 }
+
+
+/* v11 deep-view polish: the legacy /app subviews are real product screens. */
+body[data-sf-surface="terminal"] :is(#view-dashboard,#view-scanner,#view-strategies,#view-backtest,#view-trackrecord,#view-community,#view-models,#view-api,#view-pricing) .pagehead{
+ border-bottom:1px solid #31434b;padding-bottom:16px;
+}
+body[data-sf-surface="terminal"] :is(#view-dashboard,#view-scanner,#view-strategies,#view-backtest,#view-trackrecord,#view-community,#view-models,#view-api,#view-pricing) .pagehead p{
+ color:#b8c6ce;font-size:12px;line-height:1.7;max-width:690px;
+}
+body[data-sf-surface="terminal"] :is(#view-scanner,#view-trackrecord,#view-api) .tablewrap{
+ border:1px solid #31434e;border-radius:10px;overflow:auto;
+}
+body[data-sf-surface="terminal"] :is(#view-scanner,#view-trackrecord) .table thead{
+ background:#1d2d35;color:#d2e2df;
+}
+body[data-sf-surface="terminal"] :is(#view-scanner,#view-trackrecord) .table td{
+ font-variant-numeric:tabular-nums;color:#d0dcdd;
+}
+body[data-sf-surface="terminal"] :is(#view-scanner,#view-trackrecord,#view-backtest,#view-models) .callout{
+ border:1px solid #3d594f;background:#172922;border-radius:9px;color:#b9d8ca;
+}
+body[data-sf-surface="terminal"] .strategygrid :where(.panel,.card){
+ border:1px solid #37474b;border-radius:11px;background:#141f29;
+}
+body[data-sf-surface="terminal"] .strategygrid :where(.panel,.card):hover{
+ border-color:#628477;box-shadow:var(--sf-depth);
+}
+body[data-sf-surface="terminal"] .backtestgrid .formpanel{
+ background:#13212a;border:1px solid #3b514d;padding:20px;
+}
+body[data-sf-surface="terminal"] .backtestgrid :where(input,select){
+ min-height:42px;border-color:#435761;background:#0b161e;
+}
+body[data-sf-surface="terminal"] .backtestgrid :where(label,.statlabel){color:#b1c7c8}
+body[data-sf-surface="terminal"] #view-community .sf-room-hero{
+ border:1px solid #4a5848;border-radius:12px;
+ background:linear-gradient(135deg,#172923,#121b28);
+}
+body[data-sf-surface="terminal"] #view-community .sf-room-hero h2{
+ font-size:clamp(22px,3vw,34px);line-height:1.2;letter-spacing:-.05em;
+}
+body[data-sf-surface="terminal"] #view-community .sf-room-sidecard,
+body[data-sf-surface="terminal"] #view-community .sf-room-feed{
+ background:#121e27;border:1px solid #34494b;border-radius:11px;
+}
+body[data-sf-surface="terminal"] #view-community :where(.sf-room-dialog,.sf-room-modal){
+ border-color:#536456;
+}
+body[data-sf-surface="terminal"] .modelgrid :where(.card,.panel){
+ border:1px solid #33474b;background:#111d28;
+}
+body[data-sf-surface="terminal"] #view-api #apiRoutes{
+ border-top:1px solid #2d434a;margin-top:20px;
+}
+body[data-sf-surface="terminal"] #view-api #apiKeyOutput{
+ overflow-wrap:anywhere;color:#bfe4d8;
+}
+body[data-sf-surface="terminal"] #view-pricing .pricing{
+ grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:stretch;
+}
+body[data-sf-surface="terminal"] #view-pricing .pricecard{
+ background:#131e26;border:1px solid #354951;border-radius:13px;
+ box-shadow:0 10px 27px #0004;overflow:hidden;
+}
+body[data-sf-surface="terminal"] #view-pricing .pricecard.featured{
+ background:linear-gradient(158deg,#202a25,#111d25);border-color:#b19766;
+ box-shadow:0 0 0 1px #d3b88033,0 15px 38px #0005;
+}
+body[data-sf-surface="terminal"] #view-pricing .pricecard .price{
+ font-variant-numeric:tabular-nums;letter-spacing:-.035em;
+}
+body[data-sf-surface="terminal"] #view-pricing .pricecard :where(button,a.primary){
+ min-height:45px;border-radius:8px;
+}
+body[data-sf-surface="terminal"] .modalback .modal{
+ border:1px solid #657064;background:#141e28;border-radius:15px;
+ box-shadow:0 24px 90px #000c;
+}
+body[data-sf-surface="terminal"] .modalback .field :where(input,textarea){
+ border-radius:9px;min-height:45px;
+}
+body[data-sf-surface="agent"] .intelgrid>.intelcard{
+ background:#131f29;border:1px solid #374e4d;border-radius:12px;
+}
+body[data-sf-surface="agent"] .intelgrid>.intelcard h3{
+ font-size:18px;letter-spacing:-.035em;
+}
+body[data-sf-surface="agent"] .intelgrid>.intelcard :where(input,textarea,select){
+ min-height:43px;background:#0d1920;border-color:#435a58;border-radius:8px;
+}
+body[data-sf-surface="agent"] :where(.taskwork,.analysispanel,.workspacev6){
+ border-color:#3d5554;border-radius:12px;
+}
+body[data-sf-surface="agent"] .taskrows :where(button,a){min-height:39px}
+body[data-sf-surface="radar"] .pools :where(a,button){min-height:36px}
+body[data-sf-surface="pulse"] :where(#predList,#perpsList) a{color:#abebcb;text-underline-offset:3px}
+body[data-sf-surface="research-card"] header{
+ background:#0d151de9;border-bottom:1px solid #31454a;
+}
+@media(max-width:850px){
+ body[data-sf-surface="terminal"] #view-pricing .pricing{grid-template-columns:1fr}
+ body[data-sf-surface="terminal"] :is(#view-dashboard,#view-scanner,#view-strategies,#view-backtest,#view-trackrecord,#view-community,#view-models,#view-api,#view-pricing) .pagehead{
+  align-items:stretch;flex-direction:column;
+ }
+}
+@media(max-width:760px){
+ /* The original Agent sidebar monopolized the entire first mobile viewport.
+    The consistent 5-tab dock + command palette now provide its real navigation. */
+ body[data-sf-surface="agent"] .sidebar{display:none!important}
+ body[data-sf-surface="agent"] .main{padding:0 18px 85px}
+ body[data-sf-surface="agent"] .hero{padding-top:21px}
+ body[data-sf-surface="agent"] .hero h1{font-size:clamp(31px,8.5vw,41px);margin:8px 0 11px}
+ body[data-sf-surface="agent"] .hero p{font-size:12px;line-height:1.55}
+ body[data-sf-surface="agent"] .suggest{margin-top:12px}
+ body[data-sf-surface="agent"] .modelstrip{margin:8px 0}
+ body[data-sf-surface="agent"] .sf-v11-agent-workflow{margin:9px 0}
+ body[data-sf-surface="agent"] .composer{margin-top:8px}
+ body[data-sf-surface="agent"] .composer textarea{min-height:70px}
+ body[data-sf-surface="terminal"] .sf-room-hero{padding:15px}
+}
