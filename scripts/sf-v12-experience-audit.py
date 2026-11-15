@@ -59,7 +59,7 @@ with sync_playwright() as playwright:
    for route,name in TARGETS:
     page=context.new_page()
     errors=[]
-    page.on("pageerror",lambda err:errors.append(str(err)[:240]))
+    page.on("pageerror",lambda err:errors.append(str(getattr(err,"stack",str(err)))[:1200]))
     response=page.goto(BASE+route,wait_until="load" if name in ("app-dashboard","scanner","strategies","backtest","trackrecord","rooms","models","api","plans") else "domcontentloaded",timeout=30000)
     assert response and response.status==200,("V12_PUBLIC_ROUTE_FAILED",layout,route)
     if name in ("app-dashboard","scanner","strategies","backtest","trackrecord","rooms","models","api","plans"):
