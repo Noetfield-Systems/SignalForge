@@ -6,7 +6,7 @@ import {compileMarketWorkPacket,buildExecutionArtifactAndReceipt,measuredUsage} 
 
 type Db = {unsafe:(sql:string,args?:any[])=>Promise<any[]>};
 type Deps = {execute:(prompt:string)=>Promise<any>};
-const taskSelect='SELECT id::text,user_id::text AS "userId",prompt,status,attempt_count AS "attempts",created_at AS "createdAt",updated_at AS "updatedAt",finished_at AS "finishedAt",cancel_requested AS "cancelRequested",packet,artifact,receipt,usage,last_error AS "lastError",schedule_id::text AS "scheduleId" FROM sourcea_customer_tasks';
+const taskSelect='SELECT id::text,user_id::text AS "userId",prompt,status,attempt_count AS "attempts",created_at AS "createdAt",updated_at AS "updatedAt",finished_at AS "finishedAt",cancel_requested AS "cancelRequested",packet,artifact,receipt,usage,last_error AS "lastError",schedule_id::text AS "scheduleId",agent_job_id::text AS "persistedJobId" FROM sourcea_customer_tasks';
 export async function newCustomerTask(db:Db,userId:string,prompt:string,scheduleId:string|null=null){
  const taskId=crypto.randomUUID(),compiled=compileMarketWorkPacket(prompt,taskId);
  if("error" in compiled)return {error:compiled.error};
@@ -68,6 +68,12 @@ export async function drainSourceATasks(db:Db,deps:Deps){
    "WHERE id=$1 AND status='RUNNING' AND cancel_requested=false AND attempt_count=$2 RETURNING id::text";
   const updated=await db.unsafe(update,[task.id,task.attempts,success?"SUCCEEDED":"FAILED",artifact?JSON.stringify(artifact):null,receipt?JSON.stringify(receipt):null,JSON.stringify(usage),reason]);
   if(updated.length)await db.unsafe("INSERT INTO sourcea_task_events(task_id,event,details) VALUES($1,$2,$3::text::jsonb)",[task.id,success?"SUCCEEDED":"FAILED",JSON.stringify({attempt:task.attempts,reason,observations:result?.evidence?.length||0})]);
+  if(updated.length&&success){
+   try{
+    const journal=await db.unsafe('INSERT INTO agent_jobs(user_id,prompt,tool,status,mode,result) VALUES($1,$2,$3,$4,$5,$6::text::jsonb) RETURNING id::text',[task.userId,task.prompt,result.tool,result.status,result.mode,JSON.stringify(result)]);
+    await db.unsafe("UPDATE sourcea_customer_tasks SET agent_job_id=$2 WHERE id=$1",[task.id,journal[0].id]);
+   }catch(e){console.error("SourceA task completed but research journal link unavailable",String(e).slice(0,150))}
+  }
   return {processed:1,taskId:task.id,status:updated.length?(success?"SUCCEEDED":"FAILED"):"CANCELLED_OR_SUPERSEDED"};
  }finally{workerBusy=false}
 }
