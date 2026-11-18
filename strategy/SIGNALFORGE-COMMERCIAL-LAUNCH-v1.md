@@ -2,7 +2,7 @@
 
 # SIGNALFORGE — Commercial Launch System and Brand Positioning
 Version: 1.0 · 2026-11-11 · Status: operating plan, not evidence of commercial traction
-Parent/operator: Noetfield Systems Inc. · Product: SignalForge · Mission: M20-SIGNALFORGE-COMMUNITY
+Venture: SignalForge, an **independent Founder venture**. Noetfield Systems Inc. may provide technical development, but is **not its parent, default operator, business manager, CRM owner or investor representative**. Legal entity/operator specifics require SignalForge-specific evidence; unknown status is not automatically assigned to Noetfield. Mission: M20-SIGNALFORGE-COMMUNITY
 
 ## 1. Brand decision
 **Category:** Onchain Research & Change Intelligence.
